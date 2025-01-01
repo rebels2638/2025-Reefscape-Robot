@@ -14,7 +14,7 @@ public interface ModuleIO {
         public double drivePositionMeters;
         public double driveVelocityMetersPerSec;
 
-        public double driveCurrentAmps;
+        public double driveCurrentDrawAmps;
         public double driveAppliedVolts;
         public double driveTemperatureFahrenheit;
 

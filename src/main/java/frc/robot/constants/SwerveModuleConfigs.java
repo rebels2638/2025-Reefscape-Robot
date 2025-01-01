@@ -5,7 +5,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 // TODO: welcom go hell. this took way to long to make :======\
 public final class SwerveModuleConfigs {
-  public static class ModuleConfig {
+  public static class SwerveModuleConfig {
     public static class GeneralConfig {
       public final String kCAN_BUS_NAME;
 
@@ -26,9 +26,10 @@ public final class SwerveModuleConfigs {
       public final double kDRIVE_KI;
       public final double kDRIVE_KD;
 
+      public final double kDRIVE_MAX_VELOCITY_METERS_PER_SEC;
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC;
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC;
-      public final double kDRIVE_MOTION_MAGIC_CRUISE_VELOCITY;
+      
 
       public final boolean kDRIVE_IS_NEUTRAL_MODE_BRAKE;
 
@@ -85,7 +86,7 @@ public final class SwerveModuleConfigs {
         double driveKD,
         double driveMotionMagicVelocityAccel,
         double driveMotionMagicVelocityJerk,
-        double driveMotionMagicCruiseVelocity,
+        double driveMaxVelocityMetersPerSec,
         boolean driveIsNeutralModeBrake,
         double driveMotorToOutputShaftRatio,
         double driveWheelRadiusMeters,
@@ -128,7 +129,7 @@ public final class SwerveModuleConfigs {
         this.kDRIVE_KD = driveKD;
         this.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC = driveMotionMagicVelocityAccel;
         this.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC = driveMotionMagicVelocityJerk;
-        this.kDRIVE_MOTION_MAGIC_CRUISE_VELOCITY = driveMotionMagicCruiseVelocity;
+        this.kDRIVE_MAX_VELOCITY_METERS_PER_SEC = driveMaxVelocityMetersPerSec;
         this.kDRIVE_IS_NEUTRAL_MODE_BRAKE = driveIsNeutralModeBrake;
         this.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO = driveMotorToOutputShaftRatio;
         this.kDRIVE_WHEEL_RADIUS_METERS = driveWheelRadiusMeters;
@@ -186,7 +187,7 @@ public final class SwerveModuleConfigs {
 
     public final GeneralConfig kGENERAL_CONFIG;
     public final SpecificConfig kSPECIFIC_CONFIG;
-    public ModuleConfig(
+    public SwerveModuleConfig(
       int kDRIVE_CAN_ID, 
       int kSTEER_CAN_ID, 
       boolean kDRIVE_IS_INVERTED, 
@@ -207,7 +208,7 @@ public final class SwerveModuleConfigs {
     }
   }
 
-  public static final ModuleConfig.GeneralConfig kSHARED_GENERAL_CONFIG = new ModuleConfig.GeneralConfig(
+  public static final SwerveModuleConfig.GeneralConfig kSHARED_GENERAL_CONFIG = new SwerveModuleConfig.GeneralConfig(
     "rio",
     40.0,
     0.5,
@@ -252,7 +253,7 @@ public final class SwerveModuleConfigs {
     1
   );
 
-  public static final ModuleConfig kFRONT_LEFT_CONFIG = new ModuleConfig(
+  public static final SwerveModuleConfig kFRONT_LEFT_CONFIG = new SwerveModuleConfig(
     1,
     2,
     false,
@@ -264,7 +265,7 @@ public final class SwerveModuleConfigs {
     kSHARED_GENERAL_CONFIG
   );
 
-  public static final ModuleConfig kFRONT_RIGHT_CONFIG = new ModuleConfig(
+  public static final SwerveModuleConfig kFRONT_RIGHT_CONFIG = new SwerveModuleConfig(
     4,
     5,
     false,
@@ -276,7 +277,7 @@ public final class SwerveModuleConfigs {
     kSHARED_GENERAL_CONFIG
   );
 
-  public static final ModuleConfig kBACK_LEFT_CONFIG = new ModuleConfig(
+  public static final SwerveModuleConfig kBACK_LEFT_CONFIG = new SwerveModuleConfig(
     7,
     8,
     false,
@@ -288,7 +289,7 @@ public final class SwerveModuleConfigs {
     kSHARED_GENERAL_CONFIG
   );
 
-  public static final ModuleConfig kBACK_RIGHT_CONFIG = new ModuleConfig(
+  public static final SwerveModuleConfig kBACK_RIGHT_CONFIG = new SwerveModuleConfig(
     10,
     11,
     false,

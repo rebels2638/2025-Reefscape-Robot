@@ -26,7 +26,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.SwerveModuleConfigs.ModuleConfig;
+import frc.robot.constants.SwerveModuleConfigs.SwerveModuleConfig;
+import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
 public class ModuleIOTalonFX implements ModuleIO {
@@ -59,8 +60,11 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final double kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS;
     private final double kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
 
+    private final SwerveModuleConfig config;
     @SuppressWarnings("static-access")
-    public ModuleIOTalonFX(ModuleConfig config) {
+    public ModuleIOTalonFX(SwerveModuleConfig config) {
+        this.config = config;
+
         // TODO: CHECK THIS !!!!!!!!!!!!!
         kDRIVE_MOTOR_ROTATIONS_TO_METERS =
             config.kGENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO * 
@@ -220,7 +224,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         inputs.drivePositionMeters = driveRotations * kDRIVE_MOTOR_ROTATIONS_TO_METERS;
         inputs.driveVelocityMetersPerSec = driveVelocityStatusSignal.getValue().in(RotationsPerSecond) * kDRIVE_MOTOR_ROTATIONS_TO_METERS;
 
-        inputs.driveCurrentAmps = driveSupplyCurrent.getValue().in(Amps);
+        inputs.driveCurrentDrawAmps = driveSupplyCurrent.getValue().in(Amps);
         inputs.driveAppliedVolts = driveAppliedVolts.getValue().in(Volts);
         inputs.driveTemperatureFahrenheit = driveTemperature.getValue().in(Fahrenheit);
 
@@ -240,7 +244,14 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     @Override
     public void setState(SwerveModuleState state) {
-        driveMotor.setControl(driveMotorRequest.withVelocity(state.speedMetersPerSecond * kDRIVE_METERS_TO_MOTOR_ROTATIONS));
+        driveMotor.setControl(driveMotorRequest.withVelocity(
+            RebelUtil.constrain(
+                state.speedMetersPerSecond,
+                -config.kGENERAL_CONFIG.kDRIVE_MAX_VELOCITY_METERS_PER_SEC,
+                config.kGENERAL_CONFIG.kDRIVE_MAX_VELOCITY_METERS_PER_SEC
+            ) * 
+            kDRIVE_METERS_TO_MOTOR_ROTATIONS
+        ));
         steerMotor.setControl(steerMotorRequest.withPosition(state.angle.getRotations() * kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS)); // TODO: ENSURE THAT THE MODULE HAS PROPER CONTINUES WRAP!!!!!!
     }
 
