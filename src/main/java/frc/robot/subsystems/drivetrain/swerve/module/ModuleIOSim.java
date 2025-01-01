@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.MagnetHealthValue;
 
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -138,6 +139,8 @@ public class ModuleIOSim implements ModuleIO {
 
         steerSim.update(dt);
         driveSim.update(dt);
+
+        inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
 
         inputs.driveVelocityMetersPerSec = 
             driveSim.getAngularVelocityRPM() * 
