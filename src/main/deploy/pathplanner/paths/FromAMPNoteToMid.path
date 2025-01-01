@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.6362321955413157,
+        "y": 6.630585568863446
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.6362321955413157,
+        "y": 6.380585568863446
+      },
+      "isLocked": false,
+      "linkedName": "StartMidAmpNote"
+    },
+    {
+      "anchor": {
+        "x": 1.3491521419562087,
+        "y": 5.51843359236209
+      },
+      "prevControl": {
+        "x": 2.183195351754467,
+        "y": 5.5610809516083055
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Mid"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 12.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 180.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "AmpNote",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

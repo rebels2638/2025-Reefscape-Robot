@@ -1,0 +1,58 @@
+t{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7050561319382253,
+        "y": 6.722020177278586
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7524651313716104,
+        "y": 6.552416964369942
+      },
+      "isLocked": false,
+      "linkedName": "AMP"
+    },
+    {
+      "anchor": {
+        "x": 2.613922488900611,
+        "y": 5.820285763253409
+      },
+      "prevControl": {
+        "x": 1.6607516497686534,
+        "y": 6.34801314596716
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "StartAmpMidNote"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": -120.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 136.85072099111756,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "MidNote",
+  "previewStartingState": {
+    "rotation": -120.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

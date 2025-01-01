@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.34,
+        "y": 5.51843359236209
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1457154792772144,
+        "y": 5.51843359236209
+      },
+      "isLocked": false,
+      "linkedName": "Mid"
+    },
+    {
+      "anchor": {
+        "x": 2.67,
+        "y": 5.51843359236209
+      },
+      "prevControl": {
+        "x": 2.2902921778227214,
+        "y": 5.51843359236209
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "StartMidMidNote"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 1.52,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 180.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.2,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "MidNote",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": false
+}
