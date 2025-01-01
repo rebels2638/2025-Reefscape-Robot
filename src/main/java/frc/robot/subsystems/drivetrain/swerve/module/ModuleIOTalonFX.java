@@ -63,95 +63,95 @@ public class ModuleIOTalonFX implements ModuleIO {
     public ModuleIOTalonFX(ModuleConfig config) {
         // TODO: CHECK THIS !!!!!!!!!!!!!
         kDRIVE_MOTOR_ROTATIONS_TO_METERS =
-            config.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO * 
-            2 * Math.PI * config.kDRIVE_WHEEL_RADIUS_METERS;
+            config.kGENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO * 
+            2 * Math.PI * config.kGENERAL_CONFIG.kDRIVE_WHEEL_RADIUS_METERS;
 
         kDRIVE_METERS_TO_MOTOR_ROTATIONS = 1 / kDRIVE_MOTOR_ROTATIONS_TO_METERS;
 
-        kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS = config.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
-        kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS =  1 / config.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
+        kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS = config.kGENERAL_CONFIG.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
+        kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS =  1 / config.kGENERAL_CONFIG.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
 
         // Drive motor
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
         // Motion magic expo TODO: DIFFRENT ACELL AND DECEL SPEEDS?! CAN BE DONE BY MODNFIING THE ACCEL CONSTANT ON THE FLY
-        driveConfig.Slot0.kP = config.kDRIVE_KP;
-        driveConfig.Slot0.kI = config.kDRIVE_KI;
-        driveConfig.Slot0.kD = config.kDRIVE_KD;
-        driveConfig.Slot0.kS = config.kDRIVE_KS;
-        driveConfig.Slot0.kV = config.kDRIVE_KV;
-        driveConfig.Slot0.kA = config.kDRIVE_KA;
+        driveConfig.Slot0.kP = config.kGENERAL_CONFIG.kDRIVE_KP;
+        driveConfig.Slot0.kI = config.kGENERAL_CONFIG.kDRIVE_KI;
+        driveConfig.Slot0.kD = config.kGENERAL_CONFIG.kDRIVE_KD;
+        driveConfig.Slot0.kS = config.kGENERAL_CONFIG.kDRIVE_KS;
+        driveConfig.Slot0.kV = config.kGENERAL_CONFIG.kDRIVE_KV;
+        driveConfig.Slot0.kA = config.kGENERAL_CONFIG.kDRIVE_KA;
 
         driveConfig.MotionMagic.MotionMagicAcceleration = 
-            config.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
+            config.kGENERAL_CONFIG.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
 
         driveConfig.MotionMagic.MotionMagicJerk =
-            config.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
+            config.kGENERAL_CONFIG.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
 
         // encoder 
-        driveConfig.ClosedLoopGeneral.ContinuousWrap = config.kDRIVE_CONTINUOUS_WRAP;
+        driveConfig.ClosedLoopGeneral.ContinuousWrap = config.kGENERAL_CONFIG.kDRIVE_CONTINUOUS_WRAP;
         // driveConfig.Feedback.SensorToMechanismRatio = config.kDRIVE_SENSOR_TO_MECHANISM_RATIO; // TODO: SHOULD WE USE THIS?!
 
         // Current and torque limiting
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        driveConfig.CurrentLimits.SupplyCurrentLimit = config.kDRIVE_SUPPLY_CURRENT_LIMIT;
-        driveConfig.CurrentLimits.SupplyCurrentLowerLimit = config.kDRIVE_SUPPLY_CURRENT_LIMIT_LOWER_LIMIT;
-        driveConfig.CurrentLimits.SupplyCurrentLowerTime = config.kDRIVE_SUPPLY_CURRENT_LIMIT_LOWER_TIME;
+        driveConfig.CurrentLimits.SupplyCurrentLimit = config.kGENERAL_CONFIG.kDRIVE_SUPPLY_CURRENT_LIMIT;
+        driveConfig.CurrentLimits.SupplyCurrentLowerLimit = config.kGENERAL_CONFIG.kDRIVE_SUPPLY_CURRENT_LIMIT_LOWER_LIMIT;
+        driveConfig.CurrentLimits.SupplyCurrentLowerTime = config.kGENERAL_CONFIG.kDRIVE_SUPPLY_CURRENT_LIMIT_LOWER_TIME;
 
         driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        driveConfig.CurrentLimits.StatorCurrentLimit = config.kDRIVE_STATOR_CURRENT_LIMIT;
+        driveConfig.CurrentLimits.StatorCurrentLimit = config.kGENERAL_CONFIG.kDRIVE_STATOR_CURRENT_LIMIT;
 
-        driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.kDRIVE_PEAK_FORWARD_TORQUE_CURRENT;
-        driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.kDRIVE_PEAK_REVERSE_TORQUE_CURRENT;
+        driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.kGENERAL_CONFIG.kDRIVE_PEAK_FORWARD_TORQUE_CURRENT;
+        driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.kGENERAL_CONFIG.kDRIVE_PEAK_REVERSE_TORQUE_CURRENT;
 
-        driveMotor = new TalonFX(config.kDRIVE_CAN_ID, config.kCAN_BUS_NAME);
+        driveMotor = new TalonFX(config.kSPECIFIC_CONFIG.kDRIVE_CAN_ID, config.kGENERAL_CONFIG.kCAN_BUS_NAME);
         driveMotor.getConfigurator().apply(driveConfig);
 
         // ABS encoder
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = config.kCANCODER_ABSOLUTE_SENSOR_DISCONTINUITY_POINT;
-        encoderConfig.MagnetSensor.SensorDirection = config.kCANCODER_SENSOR_DIRECTION;
-        encoderConfig.MagnetSensor.withMagnetOffset(config.kCANCODER_OFFSET_ROTATIONS);
+        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = config.kGENERAL_CONFIG.kCANCODER_ABSOLUTE_SENSOR_DISCONTINUITY_POINT;
+        encoderConfig.MagnetSensor.SensorDirection = config.kGENERAL_CONFIG.kCANCODER_SENSOR_DIRECTION;
+        encoderConfig.MagnetSensor.withMagnetOffset(config.kSPECIFIC_CONFIG.kCANCODER_OFFSET_ROTATIONS);
 
-        steerEncoder = new CANcoder(config.kCANCODER_CAN_ID, config.kCAN_BUS_NAME);
+        steerEncoder = new CANcoder(config.kSPECIFIC_CONFIG.kCANCODER_CAN_ID, config.kGENERAL_CONFIG.kCAN_BUS_NAME);
         steerEncoder.getConfigurator().apply(encoderConfig);
 
         // Steer motor
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
 
         // Motion magic expo
-        steerConfig.Slot0.kP = config.kSTEER_KP;
-        steerConfig.Slot0.kI = config.kSTEER_KI;
-        steerConfig.Slot0.kD = config.kSTEER_KD;
-        steerConfig.Slot0.kS = config.kSTEER_KS;
-        steerConfig.Slot0.kV = config.kSTEER_KV;
-        steerConfig.Slot0.kA = config.kSTEER_KA;
+        steerConfig.Slot0.kP = config.kGENERAL_CONFIG.kSTEER_KP;
+        steerConfig.Slot0.kI = config.kGENERAL_CONFIG.kSTEER_KI;
+        steerConfig.Slot0.kD = config.kGENERAL_CONFIG.kSTEER_KD;
+        steerConfig.Slot0.kS = config.kGENERAL_CONFIG.kSTEER_KS;
+        steerConfig.Slot0.kV = config.kGENERAL_CONFIG.kSTEER_KV;
+        steerConfig.Slot0.kA = config.kGENERAL_CONFIG.kSTEER_KA;
 
-        steerConfig.MotionMagic.MotionMagicExpo_kA = config.kSTEER_MOTION_MAGIC_EXPO_KA;
-        steerConfig.MotionMagic.MotionMagicExpo_kV = config.kSTEER_MOTION_MAGIC_EXPO_KV;
+        steerConfig.MotionMagic.MotionMagicExpo_kA = config.kGENERAL_CONFIG.kSTEER_MOTION_MAGIC_EXPO_KA;
+        steerConfig.MotionMagic.MotionMagicExpo_kV = config.kGENERAL_CONFIG.kSTEER_MOTION_MAGIC_EXPO_KV;
         steerConfig.MotionMagic.MotionMagicCruiseVelocity = 
-            config.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_RAD_PER_SEC * kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
+            config.kGENERAL_CONFIG.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_RAD_PER_SEC * kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
 
         // Cancoder + encoder 
-        steerConfig.ClosedLoopGeneral.ContinuousWrap = config.kSTEER_CONTINUOUS_WRAP;
-        steerConfig.Feedback.FeedbackRemoteSensorID = config.kCANCODER_CAN_ID;
-        steerConfig.Feedback.FeedbackSensorSource = config.kSTEER_CANCODER_FEEDBACK_SENSOR_SOURCE;
+        steerConfig.ClosedLoopGeneral.ContinuousWrap = config.kGENERAL_CONFIG.kSTEER_CONTINUOUS_WRAP;
+        steerConfig.Feedback.FeedbackRemoteSensorID = config.kSPECIFIC_CONFIG.kCANCODER_CAN_ID;
+        steerConfig.Feedback.FeedbackSensorSource = config.kGENERAL_CONFIG.kSTEER_CANCODER_FEEDBACK_SENSOR_SOURCE;
         // steerConfig.Feedback.SensorToMechanismRatio = config.kSTEER_SENSOR_TO_MECHANISM_RATIO;
-        steerConfig.Feedback.RotorToSensorRatio = config.kSTEER_ROTOR_TO_SENSOR_RATIO;
+        steerConfig.Feedback.RotorToSensorRatio = config.kGENERAL_CONFIG.kSTEER_ROTOR_TO_SENSOR_RATIO;
         
         // current and torque limiting
         steerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        steerConfig.CurrentLimits.SupplyCurrentLimit = config.kSTEER_SUPPLY_CURRENT_LIMIT;
-        steerConfig.CurrentLimits.SupplyCurrentLowerLimit = config.kSTEER_SUPPLY_CURRENT_LIMIT_LOWER_LIMIT;
-        steerConfig.CurrentLimits.SupplyCurrentLowerTime = config.kSTEER_SUPPLY_CURRENT_LIMIT_LOWER_TIME;
+        steerConfig.CurrentLimits.SupplyCurrentLimit = config.kGENERAL_CONFIG.kSTEER_SUPPLY_CURRENT_LIMIT;
+        steerConfig.CurrentLimits.SupplyCurrentLowerLimit = config.kGENERAL_CONFIG.kSTEER_SUPPLY_CURRENT_LIMIT_LOWER_LIMIT;
+        steerConfig.CurrentLimits.SupplyCurrentLowerTime = config.kGENERAL_CONFIG.kSTEER_SUPPLY_CURRENT_LIMIT_LOWER_TIME;
 
         steerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        steerConfig.CurrentLimits.StatorCurrentLimit = config.kSTEER_STATOR_CURRENT_LIMIT;
+        steerConfig.CurrentLimits.StatorCurrentLimit = config.kGENERAL_CONFIG.kSTEER_STATOR_CURRENT_LIMIT;
 
-        steerConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.kSTEER_PEAK_FORWARD_TORQUE_CURRENT;
-        steerConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.kSTEER_PEAK_REVERSE_TORQUE_CURRENT;
+        steerConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.kGENERAL_CONFIG.kSTEER_PEAK_FORWARD_TORQUE_CURRENT;
+        steerConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.kGENERAL_CONFIG.kSTEER_PEAK_REVERSE_TORQUE_CURRENT;
 
-        steerMotor = new TalonFX(config.kSTEER_CAN_ID, config.kCAN_BUS_NAME);
+        steerMotor = new TalonFX(config.kSPECIFIC_CONFIG.kSTEER_CAN_ID, config.kGENERAL_CONFIG.kCAN_BUS_NAME);
         steerMotor.getConfigurator().apply(steerConfig);
         
         // status signals
