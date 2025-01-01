@@ -1,14 +1,16 @@
 package frc.robot.subsystems.drivetrain.swerve.gyro;
 
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -83,15 +85,16 @@ public class GyroIOPigeon2 implements GyroIO {
                         accelerationXSignal,
                         accelerationYSignal).isOK();
 
+        // TODO: CHECK FOR FEILD VS GYRO RELATIVE VALUES
         inputs.orientation = new Rotation3d(
-            BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).baseUnitMagnitude(),
-            BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).baseUnitMagnitude(),
-            BaseStatusSignal.getLatencyCompensatedValue(yawSignal, angularVelocitySignal).baseUnitMagnitude()
+            BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).in(Radians),
+            BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).in(Radians),
+            BaseStatusSignal.getLatencyCompensatedValue(yawSignal, angularVelocitySignal).in(Radians)
         );
-        inputs.angularVelocityPs = new Rotation2d(angularVelocitySignal.getValue().baseUnitMagnitude());
-        inputs.accelerationMpsSq = new Translation2d(
-            accelerationXSignal.getValue().baseUnitMagnitude(), 
-            accelerationYSignal.getValue().baseUnitMagnitude()
+        inputs.angularVelocityRadPerSec = angularVelocitySignal.getValue().in(RadiansPerSecond);
+        inputs.accelerationMetersPerSecSec = new Translation2d(
+            accelerationXSignal.getValue().in(MetersPerSecondPerSecond), 
+            accelerationYSignal.getValue().in(MetersPerSecondPerSecond)
         );
     }
 
