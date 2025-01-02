@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 public interface GyroIO {
     @AutoLog
     class GyroIOInputs {
-        public boolean connected = true;
+        public boolean connected = false;
         public Rotation3d orientation = new Rotation3d();
         public double angularVelocityRadPerSec = 0;
         public Translation2d accelerationMetersPerSecSec = new Translation2d();

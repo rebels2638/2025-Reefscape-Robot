@@ -3,9 +3,7 @@ package frc.robot.constants;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-// TODO: welcom go hell. this took way to long to make :======\
-public final class SwerveModuleConfigs {
-  public static class SwerveModuleConfig {
+public class SwerveModuleConfig {
     public static class GeneralConfig {
       public final String kCAN_BUS_NAME;
 
@@ -207,97 +205,3 @@ public final class SwerveModuleConfigs {
           kCANCODER_OFFSET_ROTATIONS);
     }
   }
-
-  public static final SwerveModuleConfig.GeneralConfig kSHARED_GENERAL_CONFIG = new SwerveModuleConfig.GeneralConfig(
-    "rio",
-    40.0,
-    0.5,
-    20.0,
-    40.0,
-    60.0,
-    60.0,
-    0.1,
-    0.2,
-    0.3,
-    0.4,
-    0.0,
-    0.0,
-    3.0,
-    5.0,
-    6.0,
-    true,
-    6.75,
-    0.0762,
-    false,
-    30.0,
-    0.5,
-    15.0,
-    30.0,
-    40.0,
-    40.0,
-    0.1,
-    0.2,
-    0.3,
-    0.4,
-    0.0,
-    0.0,
-    5.0,
-    0, 
-    0, 
-    false,
-    12.8,
-    1.0,
-    false,
-    FeedbackSensorSourceValue.FusedCANcoder,
-    SensorDirectionValue.CounterClockwise_Positive,
-    1
-  );
-
-  public static final SwerveModuleConfig kFRONT_LEFT_CONFIG = new SwerveModuleConfig(
-    1,
-    2,
-    false,
-    false,
-    true,
-    true,
-    3,
-    0.0,
-    kSHARED_GENERAL_CONFIG
-  );
-
-  public static final SwerveModuleConfig kFRONT_RIGHT_CONFIG = new SwerveModuleConfig(
-    4,
-    5,
-    false,
-    false,
-    true,
-    true,
-    6,
-    0.0,
-    kSHARED_GENERAL_CONFIG
-  );
-
-  public static final SwerveModuleConfig kBACK_LEFT_CONFIG = new SwerveModuleConfig(
-    7,
-    8,
-    false,
-    false,
-    true,
-    true,
-    9,
-    0.0,
-    kSHARED_GENERAL_CONFIG
-  );
-
-  public static final SwerveModuleConfig kBACK_RIGHT_CONFIG = new SwerveModuleConfig(
-    10,
-    11,
-    false,
-    false,
-    true,
-    true,
-    12,
-    0.0,
-    kSHARED_GENERAL_CONFIG
-  );
-}
