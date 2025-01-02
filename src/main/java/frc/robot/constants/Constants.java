@@ -4,13 +4,9 @@
 
 package frc.robot.constants;
 
-import com.pathplanner.lib.config.PIDConstants;
-
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -46,50 +42,6 @@ public final class Constants {
     
     public static final double RIGHT_X_DEADBAND = 0.09;
     
-  }
-
-  public static final class Auton
-  {
-
-    public static final PIDConstants TRANSLATION_PID_CONFIG = new PIDConstants(1, 0, 0.0000);
-    public static final PIDConstants ANGLE_PID_CONFIG = new PIDConstants(1, 0, 0.0); 
-
-    public static final double MAX_SPEED = 4;
-    public static final double MAX_ACCELERATION = 2;
-    public static final double MAX_ANGULAR_VELO_RPS = 2; // 1
-    public static final double MAX_ANGULAR_ACCEL_RPS_SQUARED = 1; // 0.5
-
-
-  }
-
-  public static class DrivetrainConstants {
-    public static final double kMAX_SPEED_METERS_PER_SECOND = 4;
-    public static final double kMAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
-    public static final double kMAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2 * Math.PI;
-    public static final double kMAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
-
-    public static final double TRACK_WIDTH_X = Units.inchesToMeters(30);
-    public static final double TRACK_WIDTH_Y = Units.inchesToMeters(30);
-
-
-    // x, y from center of the robot
-    public static final Translation2d kFRONT_RIGHT_POSITION_METERS = new Translation2d(0.38, -0.38);
-    public static final Translation2d kBACK_RIGHT_POSITION_METERS = new Translation2d(-0.38, -0.38);
-    public static final Translation2d kFRONT_LEFT_POSITION_METERS = new Translation2d(0.38, 0.38);
-    public static final Translation2d kBACK_LEFT_POSITION_METERS = new Translation2d(-0.38, 0.38);
-
-    public static final double kFRONT_RIGHT_ANGLE_OFFSET_DEG = 293.37890625;
-    public static final double kBACK_RIGHT_ANGLE_OFFSET_DEG = 182.900390625;
-    public static final double kFRONT_LEFT_ANGLE_OFFSET_DEG = 225.966796875;
-    public static final double kBACK_LEFT_ANGLE_OFFSET_DEG = 257.51953125;
-
-    public static final double kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO =  6.12;
-    public static final double kANGLE_MOTOR_TO_OUTPUT_SHAFT_RATIO = 16.8;
-
-    public static final double kDRIVE_WHEEL_RADIUS_METERS = 0.0508;
-
-    public static final double kMAX_ANGLE_VOLTAGE = 12;
-    public static final double kMAX_DRIVE_VOLTAGE = 12;
   }
 
   public static class FieldConstants {
