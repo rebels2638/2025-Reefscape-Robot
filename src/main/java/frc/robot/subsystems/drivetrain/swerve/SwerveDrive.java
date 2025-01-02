@@ -25,11 +25,7 @@ import frc.robot.constants.*;
 
 public class SwerveDrive extends SubsystemBase {
     // kinematics and module states
-    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-            Constants.DrivetrainConstants.kFRONT_LEFT_POSITION_METERS,
-            Constants.DrivetrainConstants.kFRONT_RIGHT_POSITION_METERS,
-            Constants.DrivetrainConstants.kBACK_LEFT_POSITION_METERS,
-            Constants.DrivetrainConstants.kBACK_RIGHT_POSITION_METERS);
+    private SwerveDriveKinematics kinematics;
 
     private SwerveModulePosition[] currentMeasuredModulePositions = {
             new SwerveModulePosition(),
@@ -131,6 +127,11 @@ public class SwerveDrive extends SubsystemBase {
 
                 break;
         }
+        kinematics = new SwerveDriveKinematics(
+                config.K_SWERVE_DRIVETRAIN_CONFIG.kFRONT_LEFT_POSITION_METERS,
+                config.K_SWERVE_DRIVETRAIN_CONFIG.kFRONT_RIGHT_POSITION_METERS,
+                config.K_SWERVE_DRIVETRAIN_CONFIG.kBACK_LEFT_POSITION_METERS,
+                config.K_SWERVE_DRIVETRAIN_CONFIG.kBACK_RIGHT_POSITION_METERS);
 
         // initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -229,18 +230,14 @@ public class SwerveDrive extends SubsystemBase {
         if (desiredFieldRelativeSpeeds.omegaRadiansPerSecond == 0 && !isRotationLocked) {
             initialRotationLockRad = yaw.getRadians();
             isRotationLocked = true;
-        }
-        else if (desiredFieldRelativeSpeeds.omegaRadiansPerSecond != 0) {
+        } else if (desiredFieldRelativeSpeeds.omegaRadiansPerSecond != 0) {
             isRotationLocked = false;
         }
         if (isRotationLocked) {
-            correctedSpeeds.omegaRadiansPerSecond = 
-                rotationalPositionFeedbackController.calculate(
+            correctedSpeeds.omegaRadiansPerSecond = rotationalPositionFeedbackController.calculate(
                     yaw.getRadians(),
-                    initialRotationLockRad
-                );
-        }
-        else {
+                    initialRotationLockRad);
+        } else {
             correctedSpeeds.omegaRadiansPerSecond = correctedSpeeds.omegaRadiansPerSecond +
                     rotationalPositionFeedbackController.calculate(
                             measuredFieldRelativeSpeeds.omegaRadiansPerSecond,
@@ -292,20 +289,20 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     // public Pose2d getPoseAtTimestamp(double time) {
-    //     double lowestError = Double.MAX_VALUE;
-    //     Pose2d pose = poseQueue.peek().getFirst();
-    //     Logger.recordOutput("SwerveDrive/queueLength", poseQueue.size());
-    //     for (Pair<Pose2d, Double> pair : poseQueue) {
-    //         double currentError = Math.abs(time - pair.getSecond().doubleValue());
-    //         if (currentError < lowestError) {
-    //             lowestError = time - pair.getSecond().doubleValue();
-    //             pose = pair.getFirst();
-    //         } else {
-    //             break;
-    //         }
-    //     }
+    // double lowestError = Double.MAX_VALUE;
+    // Pose2d pose = poseQueue.peek().getFirst();
+    // Logger.recordOutput("SwerveDrive/queueLength", poseQueue.size());
+    // for (Pair<Pose2d, Double> pair : poseQueue) {
+    // double currentError = Math.abs(time - pair.getSecond().doubleValue());
+    // if (currentError < lowestError) {
+    // lowestError = time - pair.getSecond().doubleValue();
+    // pose = pair.getFirst();
+    // } else {
+    // break;
+    // }
+    // }
 
-    //     return pose;
+    // return pose;
     // }
 
     public SwerveModulePosition[] getSwerveModulePositions() {
