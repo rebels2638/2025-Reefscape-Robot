@@ -25,9 +25,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.SwerveConfigBase;
-import frc.robot.constants.SwerveModuleConfig.GeneralConfig;
-import frc.robot.constants.SwerveModuleConfig.SpecificConfig;
+import frc.robot.constants.swerve.SwerveConfigBase;
+import frc.robot.constants.swerve.SwerveModuleConfig.GeneralConfig;
+import frc.robot.constants.swerve.SwerveModuleConfig.SpecificConfig;
 import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
@@ -61,12 +61,14 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final double kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
 
     private final GeneralConfig generalConfig;
+    private final int moduleID;
 
     @SuppressWarnings("static-access")
-    public ModuleIOTalonFX(SwerveConfigBase configBase, SpecificConfig specificConfig) {
-        this.generalConfig = configBase.kSHARED_GENERAL_CONFIG;
+    public ModuleIOTalonFX(SwerveConfigBase configBase, SpecificConfig specificConfig, int moduleID) {
+        this.generalConfig = configBase.getSharedGeneralConfig();
+        this.moduleID = moduleID;
 
-        // TODO: CHECK THIS !!!!!!!!!!!!!
+        // TODO: CHECK THIS !!!!!!!!!!!!! :3 
         kDRIVE_MOTOR_ROTATIONS_TO_METERS = generalConfig.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO *
                 2 * Math.PI * generalConfig.kDRIVE_WHEEL_RADIUS_METERS;
 

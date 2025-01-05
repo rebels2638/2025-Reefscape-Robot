@@ -27,11 +27,9 @@ public final class Constants {
     SIM,
 
     /** Replaying from a log file. */
-    REPLAY_REAL,
-
-    REPLAY_SIM,
+    REPLAY
   }
-  
+
   public static class OperatorConstants {
     public static final int kDRIVER_CONTROLLER_PORT = 0;
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
 
 import frc.robot.constants.Constants;
-import frc.robot.constants.SwerveConfigBase;
+import frc.robot.constants.swerve.SwerveConfigBase;
 import frc.robot.lib.util.RebelUtil;
 
 public class DriveFFController {
@@ -15,14 +15,14 @@ public class DriveFFController {
     @SuppressWarnings("static-access")
     public DriveFFController(SwerveConfigBase config) {
         this.config = config;
-        points = config.K_SWERVE_DRIVETRAIN_CONTROLLER_CONFIG.kDRIVE_FF_POINTS;
+        points = config.getSwerveDrivetrainControllerConfig().kDRIVE_FF_POINTS;
     }
 
     @SuppressWarnings("static-access")
     public double calculate(double imps, double irps) {
 
-        double mps = RebelUtil.constrain(Math.abs(imps), 0, config.K_SWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC);
-        double rps = RebelUtil.constrain(Math.abs(irps), 0, config.K_SWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC);
+        double mps = RebelUtil.constrain(Math.abs(imps), 0, config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC);
+        double rps = RebelUtil.constrain(Math.abs(irps), 0, config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC);
 
         double[] inputPoint = new double[] { mps, rps, 0 };
 
@@ -130,17 +130,17 @@ public class DriveFFController {
         switch (Constants.currentMode) {
             case SIM:
                 r = Math.sqrt(Math.pow(
-                        (a[0] - b[0]) / config.K_SWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC, 2)
+                        (a[0] - b[0]) / config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC, 2)
                         + Math.pow(
-                                (a[1] - b[1]) / config.K_SWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC,
+                                (a[1] - b[1]) / config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC,
                                 2));
                 break;
 
             default:
                 r = Math.sqrt(Math.pow(
-                        (a[0] - b[0]) / config.K_SWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC, 2)
+                        (a[0] - b[0]) / config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC, 2)
                         + Math.pow(
-                                (a[1] - b[1]) / config.K_SWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC,
+                                (a[1] - b[1]) / config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC,
                                 2));
                 break;
         }

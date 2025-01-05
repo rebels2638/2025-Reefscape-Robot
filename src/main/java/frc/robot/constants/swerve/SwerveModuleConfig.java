@@ -1,4 +1,4 @@
-package frc.robot.constants;
+package frc.robot.constants.swerve;
 
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;

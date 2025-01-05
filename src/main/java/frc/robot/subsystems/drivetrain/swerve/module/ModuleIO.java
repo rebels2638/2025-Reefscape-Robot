@@ -8,24 +8,24 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 public interface ModuleIO {
     @AutoLog
     class ModuleIOInputs {
-        public double timestamp;
+        public double timestamp = 0;
 
         // drive
-        public double drivePositionMeters;
-        public double driveVelocityMetersPerSec;
+        public double drivePositionMeters = 0;
+        public double driveVelocityMetersPerSec = 0;
 
-        public double driveCurrentDrawAmps;
-        public double driveAppliedVolts;
-        public double driveTemperatureFahrenheit;
+        public double driveCurrentDrawAmps = 0;
+        public double driveAppliedVolts = 0;
+        public double driveTemperatureFahrenheit = 0;
 
         // steer
-        public Rotation2d steerCANCODERAbsolutePosition;
-        public Rotation2d steerPosition;
-        public double steerVelocityRadPerSec;
+        public Rotation2d steerCANCODERAbsolutePosition = new Rotation2d();
+        public Rotation2d steerPosition = new Rotation2d();
+        public double steerVelocityRadPerSec = 0;
 
-        public double steerCurrentDrawAmps;
-        public double steerAppliedVolts;
-        public double steerTemperatureFahrenheit;
+        public double steerCurrentDrawAmps = 0;
+        public double steerAppliedVolts = 0;
+        public double steerTemperatureFahrenheit = 0;
     }
 
     public default void updateInputs(ModuleIOInputs inputs) {}

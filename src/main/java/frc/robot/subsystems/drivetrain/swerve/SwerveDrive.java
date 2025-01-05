@@ -22,6 +22,9 @@ import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOTalonFX;
 import frc.robot.constants.*;
+import frc.robot.constants.swerve.SwerveConfigBase;
+import frc.robot.constants.swerve.SwerveRealConfig;
+import frc.robot.constants.swerve.SwerveSimConfig;
 
 public class SwerveDrive extends SubsystemBase {
     // kinematics and module states
@@ -68,6 +71,7 @@ public class SwerveDrive extends SubsystemBase {
 
     // IO
     private ModuleIO[] modules;
+
     private ModuleIOInputsAutoLogged[] moduleInputs = {
             new ModuleIOInputsAutoLogged(),
             new ModuleIOInputsAutoLogged(),
@@ -91,10 +95,13 @@ public class SwerveDrive extends SubsystemBase {
             case REAL:
                 config = new SwerveRealConfig();
 
-                modules[0] = new ModuleIOTalonFX(config, config.kFRONT_LEFT_CONFIG.kSPECIFIC_CONFIG);
-                modules[1] = new ModuleIOTalonFX(config, config.kFRONT_RIGHT_CONFIG.kSPECIFIC_CONFIG);
-                modules[2] = new ModuleIOTalonFX(config, config.kBACK_LEFT_CONFIG.kSPECIFIC_CONFIG);
-                modules[3] = new ModuleIOTalonFX(config, config.kBACK_RIGHT_CONFIG.kSPECIFIC_CONFIG);
+                modules = new ModuleIO[] {
+                    new ModuleIOTalonFX(config, config.getFrontLeftConfig().kSPECIFIC_CONFIG, 0),
+                    new ModuleIOTalonFX(config, config.getFrontRightConfig().kSPECIFIC_CONFIG, 1),
+                    new ModuleIOTalonFX(config, config.getBackLeftConfig().kSPECIFIC_CONFIG, 2),
+                    new ModuleIOTalonFX(config, config.getBackRightConfig().kSPECIFIC_CONFIG, 3)
+                };
+                
 
                 gyroIO = new GyroIOPigeon2();
 
@@ -105,33 +112,36 @@ public class SwerveDrive extends SubsystemBase {
             case SIM:
                 config = new SwerveSimConfig();
 
-                modules[0] = new ModuleIOSim(config);
-                modules[1] = new ModuleIOSim(config);
-                modules[2] = new ModuleIOSim(config);
-                modules[3] = new ModuleIOSim(config);
-
-                gyroIO = new GyroIO() {
+                modules = new ModuleIO[] {
+                    new ModuleIOSim(config, 0),
+                    new ModuleIOSim(config, 1),
+                    new ModuleIOSim(config, 2),
+                    new ModuleIOSim(config, 3)
                 };
+
+                gyroIO = new GyroIO() {};
 
                 break;
 
             default:
                 config = new SwerveRealConfig();
 
-                modules[0] = new ModuleIOTalonFX(config, config.kFRONT_LEFT_CONFIG.kSPECIFIC_CONFIG);
-                modules[1] = new ModuleIOTalonFX(config, config.kFRONT_RIGHT_CONFIG.kSPECIFIC_CONFIG);
-                modules[2] = new ModuleIOTalonFX(config, config.kBACK_LEFT_CONFIG.kSPECIFIC_CONFIG);
-                modules[3] = new ModuleIOTalonFX(config, config.kBACK_RIGHT_CONFIG.kSPECIFIC_CONFIG);
+                modules = new ModuleIO[] {
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {}
+                };
 
                 gyroIO = new GyroIOPigeon2();
 
                 break;
         }
         kinematics = new SwerveDriveKinematics(
-                config.K_SWERVE_DRIVETRAIN_CONFIG.kFRONT_LEFT_POSITION_METERS,
-                config.K_SWERVE_DRIVETRAIN_CONFIG.kFRONT_RIGHT_POSITION_METERS,
-                config.K_SWERVE_DRIVETRAIN_CONFIG.kBACK_LEFT_POSITION_METERS,
-                config.K_SWERVE_DRIVETRAIN_CONFIG.kBACK_RIGHT_POSITION_METERS);
+                config.getSwerveDrivetrainConfig().kFRONT_LEFT_POSITION_METERS,
+                config.getSwerveDrivetrainConfig().kFRONT_RIGHT_POSITION_METERS,
+                config.getSwerveDrivetrainConfig().kBACK_LEFT_POSITION_METERS,
+                config.getSwerveDrivetrainConfig().kBACK_RIGHT_POSITION_METERS);
 
         // initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -146,9 +156,9 @@ public class SwerveDrive extends SubsystemBase {
                 new Pose2d());
 
         driveFFController = new DriveFFController(config);
-        rotationalVelocityFeedbackController = config.K_SWERVE_DRIVETRAIN_CONTROLLER_CONFIG.kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
-        translationalVelocityFeedbackController = config.K_SWERVE_DRIVETRAIN_CONTROLLER_CONFIG.kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
-        rotationalPositionFeedbackController = config.K_SWERVE_DRIVETRAIN_CONTROLLER_CONFIG.kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
+        rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
+        translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
+        rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
     }
 
     @Override
@@ -158,9 +168,14 @@ public class SwerveDrive extends SubsystemBase {
         // The read lock is released only after inputs are written via the write lock
         Phoenix6Odometry.getInstance().stateLock.readLock().lock();
         try {
+            Logger.recordOutput("SwerveDrive/stateLockAcquired", true);
             gyroIO.updateInputs(gyroInputs);
+            Logger.processInputs("SwerveDrive/gyro", gyroInputs);
+
             for (int i = 0; i < 4; i++) {
                 modules[i].updateInputs(moduleInputs[i]);
+                Logger.processInputs("SwerveDrive/module" + i, moduleInputs[i]);
+
                 odometryTimestamp = Math.max(odometryTimestamp, moduleInputs[i].timestamp);
             }
         } finally {
@@ -178,6 +193,7 @@ public class SwerveDrive extends SubsystemBase {
                 new SwerveModulePosition(moduleInputs[2].drivePositionMeters, moduleInputs[2].steerPosition),
                 new SwerveModulePosition(moduleInputs[3].drivePositionMeters, moduleInputs[3].steerPosition)
         };
+
 
         // update the yaw of the robot
         if (gyroInputs.connected) {
@@ -198,6 +214,8 @@ public class SwerveDrive extends SubsystemBase {
                 new SwerveModuleState(moduleInputs[3].driveVelocityMetersPerSec, moduleInputs[3].steerPosition)
         };
 
+        Logger.recordOutput("SwerveDrive/measuredModuleStates", measuredModuleStates);
+
         measuredRobotRelativeSpeeds = kinematics.toChassisSpeeds(measuredModuleStates);
         measuredFieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(measuredRobotRelativeSpeeds, yaw);
 
@@ -213,18 +231,18 @@ public class SwerveDrive extends SubsystemBase {
 
         ChassisSpeeds correctedSpeeds = desiredFieldRelativeSpeeds;
         correctedSpeeds.vxMetersPerSecond = correctedSpeeds.vxMetersPerSecond +
-                estimatedVxDriftMetersPerSecond +
+                estimatedVxDriftMetersPerSecond /*+
                 translationalVelocityFeedbackController.calculate(
                         measuredFieldRelativeSpeeds.vxMetersPerSecond,
                         previouslyDesiredFieldRelativeSpeeds.vxMetersPerSecond // correct for past error
-                );
+                )*/;
 
         correctedSpeeds.vyMetersPerSecond = correctedSpeeds.vyMetersPerSecond -
-                estimatedVyDriftMetersPerSecond +
+                estimatedVyDriftMetersPerSecond/*  +
                 translationalVelocityFeedbackController.calculate(
                         measuredFieldRelativeSpeeds.vyMetersPerSecond,
                         previouslyDesiredFieldRelativeSpeeds.vyMetersPerSecond // correct for past error
-                );
+                )*/;
 
         // lock the rotation of the drivetrain when no rotational input is given
         if (desiredFieldRelativeSpeeds.omegaRadiansPerSecond == 0 && !isRotationLocked) {
@@ -260,6 +278,7 @@ public class SwerveDrive extends SubsystemBase {
     public void driveFieldRelative(ChassisSpeeds speeds) {
         previouslyDesiredFieldRelativeSpeeds = desiredFieldRelativeSpeeds;
         desiredFieldRelativeSpeeds = speeds;
+        Logger.recordOutput("SwerveDrive/desiredFieldRelativeSpeeds", desiredFieldRelativeSpeeds);
     }
 
     public void driveRobotRelative(ChassisSpeeds speeds) {

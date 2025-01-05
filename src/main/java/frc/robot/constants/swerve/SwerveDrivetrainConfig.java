@@ -1,4 +1,4 @@
-package frc.robot.constants;
+package frc.robot.constants.swerve;
 
 import edu.wpi.first.math.geometry.Translation2d;
 
