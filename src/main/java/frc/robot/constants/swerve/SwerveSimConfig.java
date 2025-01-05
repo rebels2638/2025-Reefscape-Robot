@@ -19,9 +19,9 @@ public final class SwerveSimConfig extends SwerveConfigBase {
                 60.0,
                 60.0,
                 0.0,
+                0.0013,
                 0.0,
-                0.0,
-                0.0,
+                1.9,
                 0.0,
                 0.0,
                 3.0,
@@ -38,7 +38,7 @@ public final class SwerveSimConfig extends SwerveConfigBase {
                 40.0,
                 40.0,
                 0.0,
-                0.,//0.00156
+                0,//0.00156
                 0.0, //0.015
                 4,//0.01
                 0.0,
