@@ -10,7 +10,6 @@ import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.*;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Threads;
 
 public class Phoenix6Odometry {
