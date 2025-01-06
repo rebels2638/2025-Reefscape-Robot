@@ -55,6 +55,10 @@ public class ModuleIOSim implements ModuleIO {
     private double currentUnwrappedAngleRad = 0;
     private double previousWrappedAngleRad = 0;
 
+    double previousDriveDesiredVeloMps = 0;
+
+    double previousNonZeroDriveSetpoint = 1;
+
     @SuppressWarnings("static-access")
     public ModuleIOSim(SwerveConfigBase configBase, int moduleID) {
         this.generalConfig = configBase.getSharedGeneralConfig();
@@ -102,7 +106,9 @@ public class ModuleIOSim implements ModuleIO {
         steerFeedback.enableContinuousInput(-Math.PI, Math.PI);
 
         driveSlewRateLimiter = new SlewRateLimiter(
-                generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC);
+                generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC,
+                -generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC,
+                0);
 
         steerMotionProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
                 generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_RAD_PER_SEC,
@@ -156,13 +162,37 @@ public class ModuleIOSim implements ModuleIO {
 
     @Override
     public void setState(SwerveModuleState state) {
-        double dt = Timer.getFPGATimestamp() - prevTimeState;
+        // double dt = Timer.getFPGATimestamp() - prevTimeState;
+        double dt = 0.02;
         // a setpoint is the individual setpoint for the motor calculated by the profile
         // while the goal is the end state
         double driveSetpointMetersPerSec = RebelUtil.constrain(
-                driveSlewRateLimiter.calculate(state.speedMetersPerSecond),
+                state.speedMetersPerSecond,
                 -generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC,
                 generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC);
+
+        double driveAccel = (driveSetpointMetersPerSec - previousDriveDesiredVeloMps) / dt;
+        Logger.recordOutput("SwerveDrive/module" + moduleID + "/driveAccel", driveAccel);
+
+        if (driveAccel >= 0 && previousDriveDesiredVeloMps >= 0) {
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC);
+        } 
+        else if (driveAccel <= 0 && previousDriveDesiredVeloMps <= 0) {
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC);
+        }
+        else if (driveAccel >= 0 && previousDriveDesiredVeloMps <= 0) {
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC);
+        }
+        else if (driveAccel <= 0 && previousDriveDesiredVeloMps >= 0) {
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC);
+        }
+        else {
+            driveAccel = 0;
+        }
+
+        driveSetpointMetersPerSec = previousDriveDesiredVeloMps + driveAccel * dt;
+        previousDriveDesiredVeloMps = driveSetpointMetersPerSec;
+
         Logger.recordOutput("SwerveDrive/module" + moduleID + "/driveSetpointMetersPerSec", driveSetpointMetersPerSec);
 
         double desiredAngleRad = MathUtil.angleModulus(state.angle.getRadians());

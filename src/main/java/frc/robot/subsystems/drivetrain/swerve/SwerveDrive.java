@@ -269,8 +269,8 @@ public class SwerveDrive extends SubsystemBase {
         // set the desired module states
         SwerveModuleState[] desiredModuleStates = kinematics.toSwerveModuleStates(correctedSpeeds);
         for (int i = 0; i < 4; i++) {
+            desiredModuleStates[i].optimize(measuredModuleStates[i].angle);
             modules[i].setState(desiredModuleStates[i]);
-            Logger.recordOutput("SwerveDrive/unoptimizedDesiredModuleStates", desiredModuleStates);
         }
         Logger.recordOutput("SwerveDrive/desiredModuleStates", desiredModuleStates);
     }

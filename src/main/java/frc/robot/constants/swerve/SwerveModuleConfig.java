@@ -26,6 +26,7 @@ public class SwerveModuleConfig {
 
       public final double kDRIVE_MAX_VELOCITY_METERS_PER_SEC;
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC;
+      public final double kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC;
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC;
       
 
@@ -83,6 +84,7 @@ public class SwerveModuleConfig {
         double driveKI,
         double driveKD,
         double driveMotionMagicVelocityAccel,
+        double driveMotionMagicVelocityDecl,
         double driveMotionMagicVelocityJerk,
         double driveMaxVelocityMetersPerSec,
         boolean driveIsNeutralModeBrake,
@@ -126,6 +128,7 @@ public class SwerveModuleConfig {
         this.kDRIVE_KI = driveKI;
         this.kDRIVE_KD = driveKD;
         this.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC = driveMotionMagicVelocityAccel;
+        this.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC = driveMotionMagicVelocityDecl;
         this.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC = driveMotionMagicVelocityJerk;
         this.kDRIVE_MAX_VELOCITY_METERS_PER_SEC = driveMaxVelocityMetersPerSec;
         this.kDRIVE_IS_NEUTRAL_MODE_BRAKE = driveIsNeutralModeBrake;

@@ -19,12 +19,13 @@ public final class SwerveRealConfig extends SwerveConfigBase {
                 60.0,
                 60.0,
                 0.0,
+                0.0013,
+                0.0,
+                1.9,
                 0.0,
                 0.0,
-                0.0,
-                0.0,
-                0.0,
-                3.0,
+                5.0,
+                7,
                 5.0,
                 6.0,
                 true,
@@ -38,14 +39,14 @@ public final class SwerveRealConfig extends SwerveConfigBase {
                 40.0,
                 40.0,
                 0.0,
+                0,//0.00156
+                0.0, //0.015
+                4,//0.01
                 0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                5.0,
+                1.2,//0.1
+                0.01,
                 0,
-                0,
+                24,
                 false,
                 12.8,
                 1.0,
@@ -107,7 +108,7 @@ public final class SwerveRealConfig extends SwerveConfigBase {
                 new Translation2d(-0.38, -0.38),
                 new Translation2d(0.38, 0.38),
                 new Translation2d(-0.38, 0.38));
-                
+
         ArrayList<double[]> kDRIVE_FF_POINTS = new ArrayList<double[]>();
         kDRIVE_FF_POINTS.add(new double[] { 0, 0, 0 });
         kDRIVE_FF_POINTS.add(new double[] {
