@@ -1,5 +1,7 @@
 package frc.robot.constants.swerve;
 
+import com.pathplanner.lib.config.RobotConfig;
+
 public class SwerveConfigBase {
     protected SwerveModuleConfig.GeneralConfig kSHARED_GENERAL_CONFIG;
 
@@ -8,9 +10,11 @@ public class SwerveConfigBase {
     protected SwerveModuleConfig kBACK_LEFT_CONFIG;
     protected SwerveModuleConfig kBACK_RIGHT_CONFIG;
 
-    protected SwerveDrivetrainConfig K_SWERVE_DRIVETRAIN_CONFIG;
+    protected SwerveDrivetrainConfig kSWERVE_DRIVETRAIN_CONFIG;
 
-    protected SwerveControllerConfig K_SWERVE_DRIVETRAIN_CONTROLLER_CONFIG;
+    protected SwerveControllerConfig kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG;
+
+    protected RobotConfig kPATHPLANNER_ROBOT_CONFIG;
 
     public SwerveModuleConfig.GeneralConfig getSharedGeneralConfig() {
         return kSHARED_GENERAL_CONFIG;
@@ -33,10 +37,14 @@ public class SwerveConfigBase {
     }
 
     public SwerveDrivetrainConfig getSwerveDrivetrainConfig() {
-        return K_SWERVE_DRIVETRAIN_CONFIG;
+        return kSWERVE_DRIVETRAIN_CONFIG;
     }
 
     public SwerveControllerConfig getSwerveDrivetrainControllerConfig() {
-        return K_SWERVE_DRIVETRAIN_CONTROLLER_CONFIG;
+        return kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG;
+    }
+
+    public RobotConfig getPathplannerRobotConfig() {
+        return kPATHPLANNER_ROBOT_CONFIG;
     }
 }

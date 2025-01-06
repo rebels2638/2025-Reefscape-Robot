@@ -13,6 +13,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.constants.swerve.SwerveConfigBase;
@@ -111,7 +112,7 @@ public class ModuleIOSim implements ModuleIO {
                 0);
 
         steerMotionProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
-                generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_RAD_PER_SEC,
+                Units.rotationsToRadians(generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC),
                 12 / generalConfig.kSTEER_MOTION_MAGIC_EXPO_KA // divide supply voltage to get max acell
         ));
     }

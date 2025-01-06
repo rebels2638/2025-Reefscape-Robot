@@ -2,6 +2,10 @@ package frc.robot.subsystems.drivetrain.swerve;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -12,6 +16,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drivetrain.swerve.controllers.DriveFFController;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
@@ -27,6 +33,8 @@ import frc.robot.constants.swerve.SwerveRealConfig;
 import frc.robot.constants.swerve.SwerveSimConfig;
 
 public class SwerveDrive extends SubsystemBase {
+    private double lastTimestamp = 0;
+
     // kinematics and module states
     private SwerveDriveKinematics kinematics;
 
@@ -69,6 +77,13 @@ public class SwerveDrive extends SubsystemBase {
     private final PIDController translationalVelocityFeedbackController;
     private final PIDController rotationalPositionFeedbackController;
 
+    private final SwerveSetpointGenerator swerveSetpointGenerator;
+    private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
+        new ChassisSpeeds(), 
+        measuredModuleStates, 
+        DriveFeedforwards.zeros(4)
+    );
+
     // IO
     private ModuleIO[] modules;
 
@@ -102,7 +117,6 @@ public class SwerveDrive extends SubsystemBase {
                     new ModuleIOTalonFX(config, config.getBackRightConfig().kSPECIFIC_CONFIG, 3)
                 };
                 
-
                 gyroIO = new GyroIOPigeon2();
 
                 Phoenix6Odometry.getInstance().start();
@@ -156,6 +170,12 @@ public class SwerveDrive extends SubsystemBase {
                 new Pose2d());
 
         driveFFController = new DriveFFController(config);
+        swerveSetpointGenerator = new SwerveSetpointGenerator(
+            config.getPathplannerRobotConfig(), 
+            Units.rotationsToRadians(
+                config.getSharedGeneralConfig().kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC)
+        );
+
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
         translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
         rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
@@ -163,6 +183,8 @@ public class SwerveDrive extends SubsystemBase {
 
     @Override
     public void periodic() {
+        double dt = Timer.getFPGATimestamp() - lastTimestamp;
+
         var odometryTimestamp = 0.0;
         // Thread safe reading of the gyro and swerve inputs.
         // The read lock is released only after inputs are written via the write lock
@@ -193,7 +215,6 @@ public class SwerveDrive extends SubsystemBase {
                 new SwerveModulePosition(moduleInputs[2].drivePositionMeters, moduleInputs[2].steerPosition),
                 new SwerveModulePosition(moduleInputs[3].drivePositionMeters, moduleInputs[3].steerPosition)
         };
-
 
         // update the yaw of the robot
         if (gyroInputs.connected) {
@@ -251,6 +272,7 @@ public class SwerveDrive extends SubsystemBase {
         } else if (desiredFieldRelativeSpeeds.omegaRadiansPerSecond != 0) {
             isRotationLocked = false;
         }
+
         if (isRotationLocked) {
             correctedSpeeds.omegaRadiansPerSecond = rotationalPositionFeedbackController.calculate(
                     yaw.getRadians(),
@@ -263,16 +285,26 @@ public class SwerveDrive extends SubsystemBase {
                     );
         }
 
-        correctedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(correctedSpeeds, getPose().getRotation());
+        correctedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(correctedSpeeds, yaw);
+
+        SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
+            previousSetpoint,
+            correctedSpeeds,
+            dt
+        );
+
+        previousSetpoint = swerveSetpoint;
         Logger.recordOutput("SwerveDrive/correctedSpeeds", correctedSpeeds);
 
         // set the desired module states
-        SwerveModuleState[] desiredModuleStates = kinematics.toSwerveModuleStates(correctedSpeeds);
+        SwerveModuleState[] desiredModuleStates = swerveSetpoint.moduleStates();
         for (int i = 0; i < 4; i++) {
             desiredModuleStates[i].optimize(measuredModuleStates[i].angle);
             modules[i].setState(desiredModuleStates[i]);
         }
         Logger.recordOutput("SwerveDrive/desiredModuleStates", desiredModuleStates);
+
+        lastTimestamp = Timer.getFPGATimestamp();
     }
 
     public void driveFieldRelative(ChassisSpeeds speeds) {

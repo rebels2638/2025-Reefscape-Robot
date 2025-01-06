@@ -25,6 +25,8 @@ public class SwerveModuleConfig {
       public final double kDRIVE_KD;
 
       public final double kDRIVE_MAX_VELOCITY_METERS_PER_SEC;
+      public final double kDRIVE_TRUE_MAX_VELOCITY_METERS_PER_SEC;
+
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC;
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC;
       public final double kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC;
@@ -55,7 +57,7 @@ public class SwerveModuleConfig {
 
       public final double kSTEER_MOTION_MAGIC_EXPO_KA;
       public final double kSTEER_MOTION_MAGIC_EXPO_KV;
-      public final double kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_RAD_PER_SEC;
+      public final double kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC;
 
       public final boolean kSTEER_IS_NEUTRAL_MODE_BRAKE;
 
@@ -87,6 +89,7 @@ public class SwerveModuleConfig {
         double driveMotionMagicVelocityDecl,
         double driveMotionMagicVelocityJerk,
         double driveMaxVelocityMetersPerSec,
+        double driveTrueMaxVelocityMetersPerSec,
         boolean driveIsNeutralModeBrake,
         double driveMotorToOutputShaftRatio,
         double driveWheelRadiusMeters,
@@ -105,7 +108,7 @@ public class SwerveModuleConfig {
         double steerKD,
         double steerMotionMagicExpoKA,
         double steerMotionMagicExpoKV,
-        double steerMotionMagicCruiseVelRadPerSec,
+        double steerMotionMagicCruiseVelRotationsPerSec,
         boolean steerIsNeutralModeBrake,
         double steerMotorToOutputShaftRatio,
         double steerRotorToSensorRatio,
@@ -131,6 +134,7 @@ public class SwerveModuleConfig {
         this.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC = driveMotionMagicVelocityDecl;
         this.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC = driveMotionMagicVelocityJerk;
         this.kDRIVE_MAX_VELOCITY_METERS_PER_SEC = driveMaxVelocityMetersPerSec;
+        this.kDRIVE_TRUE_MAX_VELOCITY_METERS_PER_SEC = driveTrueMaxVelocityMetersPerSec;
         this.kDRIVE_IS_NEUTRAL_MODE_BRAKE = driveIsNeutralModeBrake;
         this.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO = driveMotorToOutputShaftRatio;
         this.kDRIVE_WHEEL_RADIUS_METERS = driveWheelRadiusMeters;
@@ -149,7 +153,7 @@ public class SwerveModuleConfig {
         this.kSTEER_KD = steerKD;
         this.kSTEER_MOTION_MAGIC_EXPO_KA = steerMotionMagicExpoKA;
         this.kSTEER_MOTION_MAGIC_EXPO_KV = steerMotionMagicExpoKV;
-        this.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_RAD_PER_SEC = steerMotionMagicCruiseVelRadPerSec;
+        this.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC = steerMotionMagicCruiseVelRotationsPerSec;
         this.kSTEER_IS_NEUTRAL_MODE_BRAKE = steerIsNeutralModeBrake;
         this.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO = steerMotorToOutputShaftRatio;
         this.kSTEER_ROTOR_TO_SENSOR_RATIO = steerRotorToSensorRatio;
