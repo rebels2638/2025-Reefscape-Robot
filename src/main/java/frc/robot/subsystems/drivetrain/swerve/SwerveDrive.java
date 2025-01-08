@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain.swerve;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drivetrain.swerve.controllers.DriveFFController;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
+import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIONavX;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOPigeon2;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIO;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOInputsAutoLogged;
@@ -29,7 +32,8 @@ import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOTalonFX;
 import frc.robot.constants.*;
 import frc.robot.constants.swerve.SwerveConfigBase;
-import frc.robot.constants.swerve.SwerveRealConfig;
+import frc.robot.constants.swerve.SwerveCrescendoRobotBaseConfig;
+import frc.robot.constants.swerve.SwerveCompConfig;
 import frc.robot.constants.swerve.SwerveSimConfig;
 
 public class SwerveDrive extends SubsystemBase {
@@ -104,11 +108,10 @@ public class SwerveDrive extends SubsystemBase {
 
     @SuppressWarnings("static-access")
     public SwerveDrive() {
-
         // IO
         switch (Constants.currentMode) {
-            case REAL:
-                config = new SwerveRealConfig();
+            case Comp:
+                config = new SwerveCompConfig();
 
                 modules = new ModuleIO[] {
                     new ModuleIOTalonFX(config, config.getFrontLeftConfig().kSPECIFIC_CONFIG, 0),
@@ -118,6 +121,22 @@ public class SwerveDrive extends SubsystemBase {
                 };
                 
                 gyroIO = new GyroIOPigeon2();
+
+                Phoenix6Odometry.getInstance().start();
+
+                break;
+
+            case CrescendoRobotBase:
+                config = new SwerveCrescendoRobotBaseConfig();
+
+                modules = new ModuleIO[] {
+                    new ModuleIOTalonFX(config, config.getFrontLeftConfig().kSPECIFIC_CONFIG, 0),
+                    new ModuleIOTalonFX(config, config.getFrontRightConfig().kSPECIFIC_CONFIG, 1),
+                    new ModuleIOTalonFX(config, config.getBackLeftConfig().kSPECIFIC_CONFIG, 2),
+                    new ModuleIOTalonFX(config, config.getBackRightConfig().kSPECIFIC_CONFIG, 3)
+                };
+                
+                gyroIO = new GyroIONavX();
 
                 Phoenix6Odometry.getInstance().start();
 
@@ -138,7 +157,7 @@ public class SwerveDrive extends SubsystemBase {
                 break;
 
             default:
-                config = new SwerveRealConfig();
+                config = new SwerveCompConfig();
 
                 modules = new ModuleIO[] {
                     new ModuleIO() {},
@@ -151,6 +170,7 @@ public class SwerveDrive extends SubsystemBase {
 
                 break;
         }
+
         kinematics = new SwerveDriveKinematics(
                 config.getSwerveDrivetrainConfig().kFRONT_LEFT_POSITION_METERS,
                 config.getSwerveDrivetrainConfig().kFRONT_RIGHT_POSITION_METERS,
@@ -218,7 +238,7 @@ public class SwerveDrive extends SubsystemBase {
         };
 
         // update the yaw of the robot
-        if (gyroInputs.connected) {
+        if (gyroInputs.isConnected) {
             yaw = new Rotation2d(gyroInputs.orientation.getZ());
         } else {
             Twist2d twist = kinematics.toTwist2d(previousMeasuredModulePositions, currentMeasuredModulePositions);
@@ -291,9 +311,8 @@ public class SwerveDrive extends SubsystemBase {
         SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
             correctedSpeeds,
-            dt
+            dt // between calls of generate setpoint
         );
-
         previousSetpoint = swerveSetpoint;
         Logger.recordOutput("SwerveDrive/correctedSpeeds", correctedSpeeds);
 
@@ -319,19 +338,23 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
+        gyroIO.resetGyro(pose.getRotation());
+        if (gyroInputs.isConnected) {
+            yaw = new Rotation2d(gyroInputs.orientation.getMeasureZ().in(Radians));
+        }
         poseEstimator.resetPosition(yaw, currentMeasuredModulePositions, pose);
         yaw = pose.getRotation(); // update the initial yaw of the robot
     }
 
     public void zeroGyro() {
-        resetPose(getPose());
+        resetPose(new Pose2d(getPose().getTranslation(), new Rotation2d(0)));
     }
 
     public ChassisSpeeds getMeasuredRobotRelativeSpeeds() {
         return measuredRobotRelativeSpeeds;
     }
 
-    public ChassisSpeeds getMeasuredFeildRelativeSpeeds() {
+    public ChassisSpeeds getMeasuredFieldRelativeSpeeds() {
         return measuredFieldRelativeSpeeds;
     }
 
@@ -339,23 +362,6 @@ public class SwerveDrive extends SubsystemBase {
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
-
-    // public Pose2d getPoseAtTimestamp(double time) {
-    // double lowestError = Double.MAX_VALUE;
-    // Pose2d pose = poseQueue.peek().getFirst();
-    // Logger.recordOutput("SwerveDrive/queueLength", poseQueue.size());
-    // for (Pair<Pose2d, Double> pair : poseQueue) {
-    // double currentError = Math.abs(time - pair.getSecond().doubleValue());
-    // if (currentError < lowestError) {
-    // lowestError = time - pair.getSecond().doubleValue();
-    // pose = pair.getFirst();
-    // } else {
-    // break;
-    // }
-    // }
-
-    // return pose;
-    // }
 
     public SwerveModulePosition[] getSwerveModulePositions() {
         return currentMeasuredModulePositions;

@@ -58,6 +58,7 @@
     "edu.wpi.first.math.**.struct.*",
   ],
   "cSpell.words": [
+    "AHRS",
     "CANID",
     "DEADBAND",
     "Feedforward",

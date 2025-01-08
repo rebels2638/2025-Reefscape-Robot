@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -75,7 +76,7 @@ public class GyroIOPigeon2 implements GyroIO {
 
     @Override
     public synchronized void updateInputs(GyroIOInputs inputs) {
-        inputs.connected = BaseStatusSignal.refreshAll(
+        inputs.isConnected = BaseStatusSignal.refreshAll(
                         yawSignal,
                         angularVelocitySignal,
                         rollSignal,
@@ -92,10 +93,15 @@ public class GyroIOPigeon2 implements GyroIO {
             BaseStatusSignal.getLatencyCompensatedValue(yawSignal, angularVelocitySignal).in(Radians)
         );
         inputs.angularVelocityRadPerSec = angularVelocitySignal.getValue().in(RadiansPerSecond);
-        inputs.accelerationMetersPerSecSec = new Translation2d(
+        inputs.worldAccelerationMetersPerSecSec = new Translation2d(
             accelerationXSignal.getValue().in(MetersPerSecondPerSecond), 
             accelerationYSignal.getValue().in(MetersPerSecondPerSecond)
         );
+    }
+
+    @Override
+    public void resetGyro(Rotation2d yaw) {
+        gyro.setYaw(yaw.getDegrees());
     }
 
     @Override

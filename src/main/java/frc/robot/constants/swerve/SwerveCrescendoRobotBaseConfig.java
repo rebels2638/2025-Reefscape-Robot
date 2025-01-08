@@ -11,8 +11,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 
-public final class SwerveRealConfig extends SwerveConfigBase {
-    public SwerveRealConfig() {
+public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
+    public SwerveCrescendoRobotBaseConfig() {
         this.kSHARED_GENERAL_CONFIG = new SwerveModuleConfig.GeneralConfig(
                 "rio",
                 60.0,
@@ -27,13 +27,13 @@ public final class SwerveRealConfig extends SwerveConfigBase {
                 1.9,
                 0.0,
                 0.0,
-                4,
                 7,
+                14,
                 5.0,
+                4.9,
                 5.450,
-                4.5,
                 true,
-                6.75,
+                5.143,
                 0.048,
                 false,
                 30.0,
@@ -108,10 +108,11 @@ public final class SwerveRealConfig extends SwerveConfigBase {
                 3.5,
                 3.7,
                 12,
-                new Translation2d(0.38, -0.38),
-                new Translation2d(-0.38, -0.38),
                 new Translation2d(0.38, 0.38),
-                new Translation2d(-0.38, 0.38));
+                new Translation2d(0.38, -0.38),
+                new Translation2d(-0.38, 0.38),
+                new Translation2d(-0.38, -0.38)
+            );
         
         this.kPATHPLANNER_ROBOT_CONFIG = new RobotConfig(
             74.088, 

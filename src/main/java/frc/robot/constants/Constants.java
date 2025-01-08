@@ -21,7 +21,9 @@ public final class Constants {
   // public static final boolean isSYSID = true; // TODO: change this if sysid
   public static enum Mode {
     /** Running on a real robot. */
-    REAL,
+    CrescendoRobotBase,
+    
+    Comp,
 
     /** Running a physics simulator. */
     SIM,

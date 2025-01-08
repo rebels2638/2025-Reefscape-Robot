@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command; // Base class for commands.
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.SwerveConfigBase;
-import frc.robot.constants.swerve.SwerveRealConfig;
+import frc.robot.constants.swerve.SwerveCompConfig;
 import frc.robot.constants.swerve.SwerveSimConfig;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive; // Swerve drive subsystem for robot movement.
@@ -26,14 +26,14 @@ public class AbsoluteFieldDrive extends Command {
 
     public AbsoluteFieldDrive(SwerveDrive swerve, XboxController xboxDriver) {
         switch (Constants.currentMode) {
-            case REAL:
-                config = new SwerveRealConfig();
+            case Comp:
+                config = new SwerveCompConfig();
                 break;
             case SIM:
                 config = new SwerveSimConfig();
                 break;
             default:
-                config = new SwerveRealConfig();
+                config = new SwerveCompConfig();
                 break;
         }
 
