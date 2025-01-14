@@ -138,8 +138,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         steerConfig.MotionMagic.MotionMagicExpo_kA = generalConfig.kSTEER_MOTION_MAGIC_EXPO_KA;
         steerConfig.MotionMagic.MotionMagicExpo_kV = generalConfig.kSTEER_MOTION_MAGIC_EXPO_KV;
-        steerConfig.MotionMagic.MotionMagicCruiseVelocity = generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC
-                * kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
+        steerConfig.MotionMagic.MotionMagicCruiseVelocity = generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC;
 
         // Cancoder + encoder
         steerConfig.ClosedLoopGeneral.ContinuousWrap = generalConfig.kSTEER_CONTINUOUS_WRAP;

@@ -308,16 +308,17 @@ public class SwerveDrive extends SubsystemBase {
 
         correctedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(correctedSpeeds, yaw);
 
-        SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
-            previousSetpoint,
-            correctedSpeeds,
-            dt // between calls of generate setpoint
-        );
-        previousSetpoint = swerveSetpoint;
+        // SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
+        //     previousSetpoint,
+        //     correctedSpeeds,
+        //     dt // between calls of generate setpoint
+        // );
+        // previousSetpoint = swerveSetpoint;
         Logger.recordOutput("SwerveDrive/correctedSpeeds", correctedSpeeds);
 
-        // set the desired module states
-        SwerveModuleState[] desiredModuleStates = swerveSetpoint.moduleStates();
+        // set the desired module statesx
+        // SwerveModuleState[] desiredModuleStates = swerveSetpoint.moduleStates();
+        SwerveModuleState[] desiredModuleStates = kinematics.toSwerveModuleStates(correctedSpeeds);
         for (int i = 0; i < 4; i++) {
             desiredModuleStates[i].optimize(measuredModuleStates[i].angle);
             modules[i].setState(desiredModuleStates[i]);
