@@ -62,6 +62,10 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         break;
+        
+      case CrescendoRobotBase: 
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
       case SIM:
         // Running a physics simulator, log to NT
