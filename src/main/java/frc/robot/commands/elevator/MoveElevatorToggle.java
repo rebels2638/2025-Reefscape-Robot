@@ -14,7 +14,7 @@ public class MoveElevatorToggle extends Command {
     public void initialize() { 
         currHeight = elevatorSubsystem.getShooterHeightMeters();
         if(currHeight < 0.4)
-            elevatorSubsystem.setHeightMeters(0.5);
+            elevatorSubsystem.setHeightMeters(0.4);
         else
             elevatorSubsystem.setHeightMeters(0);
     }

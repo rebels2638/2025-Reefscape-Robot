@@ -12,17 +12,20 @@ public class ElevatorControlRaw extends Command{
      * @param Elevator
      * @param m_controller
      */
-    public ElevatorControlRaw(XboxController m_controller){
+    public ElevatorControlRaw(XboxController m_controller, Elevator m_Elevator){
         controller = m_controller;
+        addRequirements(ElevatorSubsystem);
     }
 
     @Override
-    public void execute(){    
-        double height = this.ElevatorSubsystem.getShooterHeightMeters();
-        if (controller.getLeftY() > 0.04 || controller.getLeftY() < 0.04) {
-            height += controller.getLeftY()*0.54;
+    public void execute(){   
+        if (controller.getAButton().getAsBoolean()) {
+            ElevatorSubsystem.setVoltage(9);
         }
-        ElevatorSubsystem.setHeightMeters(height);
+
+        else if (controller.getBButton().getAsBoolean()) {
+            ElevatorSubsystem.setVoltage(0);
+        }
     }
 
     @Override

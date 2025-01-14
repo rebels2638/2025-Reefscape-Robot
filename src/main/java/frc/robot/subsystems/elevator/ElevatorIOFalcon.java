@@ -27,7 +27,7 @@ public class ElevatorIOFalcon extends SubsystemBase implements ElevatorIO {
     // Should be where the second stage starts when elavator down. measured from the base of the elevator to the second stage top in meters. do not measure from belly pan. measure from base of elavator
     
     private static final double kMIN_SHOOTER_HEIGHT = 0; // 0.6m offset, stop the cap
-    private static final double kMAX_SHOOTER_HEIGHT= 0.52;
+    private static final double kMAX_SHOOTER_HEIGHT= 0.55;
 
     private static final double kMIN_CLIMBER_HEIGHT = 0;
     private static final double kMAX_CLIMBER_HEIGHT= 0.7;

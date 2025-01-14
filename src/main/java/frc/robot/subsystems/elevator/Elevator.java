@@ -15,15 +15,15 @@ public class Elevator extends SubsystemBase{
 
     // PIDController velocityFeedBackController;
     // ElevatorFeedforward velocityFeedForwardController; //Literally never gonna be used
-    private static final double kPID_TOLERANCE_METERS = 0.01; //this is 1cm 
+    private static final double kPID_TOLERANCE_METERS = 0.03; //this is 1cm 
     private static final double kCLIMB_KG = 12;
     
     private static Elevator instance = null;
     private double goalPositionMeters = 0;
     public Elevator(ElevatorIO io)  {
         Elevator.io = io;
-        positionFeedBackController = new PIDController(12, 0, 0); // 12, 2, 0
-        positionFeedForwardController = new ElevatorFeedforward(0.13, 0.06, 0.2); //0.33, 0.14, 0 
+        positionFeedBackController = new PIDController(4., 0, 2); // 12, 2, 0
+        positionFeedForwardController = new ElevatorFeedforward(0, 0.34, 0.1); //0.33, 0.14, 0 
         climbFeedForwardController = new ElevatorFeedforward(0,0,0); 
         
         
