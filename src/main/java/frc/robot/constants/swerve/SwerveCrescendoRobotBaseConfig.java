@@ -45,9 +45,9 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 2.0,
                 0,//0.00156
                 0.0, //0.015
-                0,//0.01
+                80,//0.01
                 0.0,
-                0,//0.1
+                20,//0.1
                 0.2,
                 0.4,
                 3,
@@ -60,30 +60,19 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 1);
 
         this.kFRONT_LEFT_CONFIG = new SwerveModuleConfig(
-                1,
-                2,
-                false,
-                false,
-                true,
-                true,
-                3,
-                0.0,
-                kSHARED_GENERAL_CONFIG);
-
-        this.kFRONT_RIGHT_CONFIG = new SwerveModuleConfig(
                 4,
                 5,
                 false,
                 false,
                 true,
                 true,
-                6,
+                10,
                 0.0,
                 kSHARED_GENERAL_CONFIG);
 
-        this.kBACK_LEFT_CONFIG = new SwerveModuleConfig(
-                7,
-                8,
+        this.kFRONT_RIGHT_CONFIG = new SwerveModuleConfig(
+                2,
+                3,
                 false,
                 false,
                 true,
@@ -92,14 +81,25 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 0.0,
                 kSHARED_GENERAL_CONFIG);
 
-        this.kBACK_RIGHT_CONFIG = new SwerveModuleConfig(
-                10,
+        this.kBACK_LEFT_CONFIG = new SwerveModuleConfig(
+                7,
+                6,
+                false,
+                false,
+                true,
+                true,
                 11,
+                0.0,
+                kSHARED_GENERAL_CONFIG);
+
+        this.kBACK_RIGHT_CONFIG = new SwerveModuleConfig(
+                1,
+                0,
                 false,
                 false,
                 true,
                 true,
-                12,
+                8,
                 0.0,
                 kSHARED_GENERAL_CONFIG);
 

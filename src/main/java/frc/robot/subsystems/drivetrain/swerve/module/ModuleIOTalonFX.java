@@ -243,7 +243,6 @@ public class ModuleIOTalonFX implements ModuleIO {
         inputs.steerCurrentDrawAmps = steerSupplyCurrent.getValue().in(Amps);
         inputs.steerAppliedVolts = steerAppliedVolts.getValue().in(Volts);
         inputs.steerTemperatureFahrenheit = steerTemperature.getValue().in(Fahrenheit);
-
     }
 
     // TODO: validate this later
