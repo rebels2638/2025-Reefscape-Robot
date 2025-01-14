@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.drivetrain;
 
 import java.util.function.DoubleSupplier;
 
@@ -7,12 +7,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds; // Class to handle chassis s
 import edu.wpi.first.wpilibj.DriverStation; // Driver station for accessing driver settings like alliance.
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command; // Base class for commands.
-import frc.robot.constants.Constants;
-import frc.robot.constants.swerve.SwerveConfigBase;
-import frc.robot.constants.swerve.SwerveCompConfig;
-import frc.robot.constants.swerve.SwerveSimConfig;
+import frc.robot.Constants; // Constants including drivetrain specifications.
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive; // Swerve drive subsystem for robot movement.
+import frc.robot.lib.input.XboxController;
 
 public class AbsoluteFieldDrive extends Command {
 
@@ -21,22 +19,7 @@ public class AbsoluteFieldDrive extends Command {
     private int invert = 1;                        // Variable to invert direction based on alliance color.
     private final XboxController xboxDriver;
     // Constructor to initialize the AbsoluteFieldDrive command.
-    
-    private final SwerveConfigBase config;
-
     public AbsoluteFieldDrive(SwerveDrive swerve, XboxController xboxDriver) {
-        switch (Constants.currentMode) {
-            case Comp:
-                config = new SwerveCompConfig();
-                break;
-            case SIM:
-                config = new SwerveSimConfig();
-                break;
-            default:
-                config = new SwerveCompConfig();
-                break;
-        }
-
         this.swerve = swerve;
         this.vX = () -> -MathUtil.applyDeadband(xboxDriver.getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND);
         this.vY = () -> -MathUtil.applyDeadband(xboxDriver.getLeftX(), Constants.OperatorConstants.LEFT_X_DEADBAND);
@@ -64,17 +47,14 @@ public class AbsoluteFieldDrive extends Command {
     }
 
     // Called repeatedly while the command is scheduled.
-    @SuppressWarnings("static-access")
     @Override
     public void execute() {
         // Calculate speeds based on input and max speed constants.
         ChassisSpeeds speeds = new ChassisSpeeds(
-            vX.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC * invert,
-            vY.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC * invert,
-            heading.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC
+            vX.getAsDouble() * Constants.DrivetrainConstants.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND * invert,
+            vY.getAsDouble() * Constants.DrivetrainConstants.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SECOND * invert,
+            heading.getAsDouble() * Constants.DrivetrainConstants.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SECOND
         );
-
-        swerve.driveFieldRelative(speeds); // Drive the robot using the calculated speeds.
     }
 
     // Called when the command ends or is interrupted.
