@@ -67,7 +67,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 true,
                 true,
                 10,
-                0.0,
+                -0.13,
                 kSHARED_GENERAL_CONFIG);
 
         this.kFRONT_RIGHT_CONFIG = new SwerveModuleConfig(
@@ -78,7 +78,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 true,
                 true,
                 9,
-                0.0,
+                -0.32,
                 kSHARED_GENERAL_CONFIG);
 
         this.kBACK_LEFT_CONFIG = new SwerveModuleConfig(
@@ -89,7 +89,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 true,
                 true,
                 11,
-                0.0,
+                -0.2,
                 kSHARED_GENERAL_CONFIG);
 
         this.kBACK_RIGHT_CONFIG = new SwerveModuleConfig(
@@ -100,7 +100,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 true,
                 true,
                 8,
-                0.0,
+                0,
                 kSHARED_GENERAL_CONFIG);
 
         this.kSWERVE_DRIVETRAIN_CONFIG = new SwerveDrivetrainConfig(
