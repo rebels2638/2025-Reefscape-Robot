@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.alge.AlgayControllerRaw;
 import frc.robot.commands.coralRoller.RollerRun;
 import frc.robot.commands.coralRoller.RollerStop;
 import frc.robot.commands.drivetrain.AbsoluteFieldDrive;
@@ -34,13 +35,14 @@ public class RobotContainer {
     elevator = new Elevator(new ElevatorIOFalcon());
     roller = new Roller();
 
-    elevator.setDefaultCommand(new ElevatorControlRaw(xboxOperator, elevator));
-    xboxOperator.getXButton().onTrue(new RollerRun(roller));
-    xboxOperator.getAButton().onTrue(new RollerStop(roller));
-
+    // elevator.setDefaultCommand(new ElevatorControlRaw(xboxOperator, elevator));
+    // xboxOperator.getXButton().onTrue(new RollerRun(roller));
+    // xboxOperator.getAButton().onTrue(new RollerStop(roller));
     // this.xboxDriver.getAButton().onTrue((new MoveElevatorToggle()));
 
-    swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
+    roller.setDefaultCommand(new AlgayControllerRaw(xboxOperator, roller));
+
+    // swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> swerveDrive.zeroGyro()));
   }
 
