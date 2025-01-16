@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -16,6 +18,8 @@ import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -89,6 +93,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveConfig.Slot0.kS = generalConfig.kDRIVE_KS;
         driveConfig.Slot0.kV = generalConfig.kDRIVE_KV;
         driveConfig.Slot0.kA = generalConfig.kDRIVE_KA;
+        driveConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         driveConfig.MotionMagic.MotionMagicAcceleration = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC
                 * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
@@ -135,6 +140,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerConfig.Slot0.kS = generalConfig.kSTEER_KS;
         steerConfig.Slot0.kV = generalConfig.kSTEER_KV;
         steerConfig.Slot0.kA = generalConfig.kSTEER_KA;
+        steerConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         steerConfig.MotionMagic.MotionMagicExpo_kA = generalConfig.kSTEER_MOTION_MAGIC_EXPO_KA;
         steerConfig.MotionMagic.MotionMagicExpo_kV = generalConfig.kSTEER_MOTION_MAGIC_EXPO_KV;

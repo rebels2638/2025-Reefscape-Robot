@@ -42,15 +42,15 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 40.0,
                 40.0,
                 -40.0,
-                2.0,
-                0,//0.00156
-                0.0, //0.015
-                80,//0.01
+                1.5,
+                1.17,//0.00156
+                0.50, //0.015
+                350,//0.01
                 0.0,
-                20,//0.1
-                0.2,
-                0.4,
-                3,
+                10,//0.1
+                0.25,
+                2.6,
+                0,
                 true,
                 21.428,
                 21.428,
@@ -82,8 +82,8 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 kSHARED_GENERAL_CONFIG);
 
         this.kBACK_LEFT_CONFIG = new SwerveModuleConfig(
-                7,
                 6,
+                7,
                 false,
                 false,
                 true,
