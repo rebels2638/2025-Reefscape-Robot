@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
@@ -21,6 +22,8 @@ public class RobotContainer {
 
     swerveDrive = new SwerveDrive();
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
+
+    xboxDriver.getXButton().onTrue(new InstantCommand(() -> swerveDrive.zeroGyro()));
   }
 
   public static RobotContainer getInstance() {

@@ -115,14 +115,14 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
             );
         
         this.kPATHPLANNER_ROBOT_CONFIG = new RobotConfig(
-            74.088, 
-            6.883,
+            27.088, 
+            3.5,
             new ModuleConfig(
                 kSHARED_GENERAL_CONFIG.kDRIVE_WHEEL_RADIUS_METERS,
                 kSHARED_GENERAL_CONFIG.kDRIVE_TRUE_MAX_VELOCITY_METERS_PER_SEC,
                 1.2,
                 // TODO: CHECK THIS REDUCTION!!!
-                DCMotor.getKrakenX60Foc(1).withReduction(kSHARED_GENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO),
+                DCMotor.getFalcon500(1).withReduction(kSHARED_GENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO),
                 kSHARED_GENERAL_CONFIG.kDRIVE_STATOR_CURRENT_LIMIT,
                 1
             ),
