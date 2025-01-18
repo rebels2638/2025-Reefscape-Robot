@@ -25,12 +25,12 @@ public class GyroIONavX implements GyroIO {
         inputs.isConnected = gyro.isConnected();
         if (inputs.isConnected) {
             inputs.orientation = new Rotation3d(
-                Math.toRadians(gyro.getRoll()) + yawOffset.getRadians(),
-                Math.toRadians(gyro.getPitch()),
-                Math.toRadians(gyro.getYaw())
+                Math.toRadians(-gyro.getRoll()) + yawOffset.getRadians(),
+                Math.toRadians(-gyro.getPitch()),
+                Math.toRadians(-gyro.getYaw())
             );
 
-            inputs.angularVelocityRadPerSec = Math.toRadians(gyro.getRate());
+            inputs.angularVelocityRadPerSec = Math.toRadians(-gyro.getRate());
             inputs.worldAccelerationMetersPerSecSec = new Translation2d(
                 gyro.getWorldLinearAccelX(),
                 gyro.getWorldLinearAccelY()

@@ -69,8 +69,8 @@ public class AbsoluteFieldDrive extends Command {
     public void execute() {
         // Calculate speeds based on input and max speed constants.
         ChassisSpeeds speeds = new ChassisSpeeds(
-            vX.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC * invert,
-            vY.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC * invert,
+            vX.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC * invert,
+            vY.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC * invert,
             heading.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC
         );
 
