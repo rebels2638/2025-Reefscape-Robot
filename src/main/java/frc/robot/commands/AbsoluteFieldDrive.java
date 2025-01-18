@@ -1,12 +1,15 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds; // Class to handle chassis speed calculations.
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation; // Driver station for accessing driver settings like alliance.
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command; // Base class for commands.
+import frc.robot.RobotState;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.SwerveConfigBase;
 import frc.robot.constants.swerve.SwerveCompConfig;
@@ -16,73 +19,57 @@ import frc.robot.subsystems.drivetrain.swerve.SwerveDrive; // Swerve drive subsy
 
 public class AbsoluteFieldDrive extends Command {
 
-    private final SwerveDrive swerve;             // Reference to the swerve drive subsystem.
-    private final DoubleSupplier vX, vY, heading; // Supplier functions for velocity inputs and heading.
-    private int invert = 1;                        // Variable to invert direction based on alliance color.
-    private final XboxController xboxDriver;
-    // Constructor to initialize the AbsoluteFieldDrive command.
-    
+    private static final double deadband = 0.2;
+    private static final double rotation_coeff = 0.75;
+    private final SwerveDrive swerveSubsystem;
+    private final DoubleSupplier xSupplier;
+    private final DoubleSupplier ySupplier;
+    private final DoubleSupplier angularSupplier;
+    private final BooleanSupplier joystick;
     private final SwerveConfigBase config;
 
-    public AbsoluteFieldDrive(SwerveDrive swerve, XboxController xboxDriver) {
-        switch (Constants.currentMode) {
-            case Comp:
-                config = new SwerveCompConfig();
-                break;
-            case SIM:
-                config = new SwerveSimConfig();
-                break;
-            default:
-                config = new SwerveCompConfig();
-                break;
-        }
-
-        this.swerve = swerve;
-        this.vX = () -> -MathUtil.applyDeadband(xboxDriver.getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND);
-        this.vY = () -> -MathUtil.applyDeadband(xboxDriver.getLeftX(), Constants.OperatorConstants.LEFT_X_DEADBAND);
-        this.heading = () -> -MathUtil.applyDeadband(xboxDriver.getRightX(), Constants.OperatorConstants.RIGHT_X_DEADBAND);
-        this.xboxDriver = xboxDriver;
+    public AbsoluteFieldDrive(
+        SwerveDrive swerve,
+        DoubleSupplier x,
+        DoubleSupplier y,
+        DoubleSupplier ang,
+        BooleanSupplier joystick,
+        SwerveConfigBase config) {
+            this.config = config;
+            this.swerveSubsystem = swerve;
+            this.xSupplier = x;
+            this.ySupplier = y;
+            this.joystick = joystick;
+            this.angularSupplier = ang;
 
         addRequirements(swerve); // Specify that this command requires the swerve subsystem.
     }
 
-    // Called when the command is initialized.
-    @Override
-    public void initialize() {
-        boolean isRed = false;
-        var alliance = DriverStation.getAlliance(); // Get the current alliance.
-
-        // Check if the alliance is Red and set invert accordingly.
-        if (alliance.isPresent()) {
-            isRed = alliance.get() == DriverStation.Alliance.Red;
-        }
-
-        // Invert drive direction if the robot is on the Red alliance.
-        if (isRed) {
-            invert = -1;
-        }
-    }
-
-    // Called repeatedly while the command is scheduled.
-    @SuppressWarnings("static-access")
     @Override
     public void execute() {
-        // Calculate speeds based on input and max speed constants.
-        ChassisSpeeds speeds = new ChassisSpeeds(
-            vX.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC * invert,
-            vY.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC * invert,
-            heading.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC
-        );
+        double xMag = MathUtil.applyDeadband(xSupplier.getAsDouble(), deadband);
+        double yMag = MathUtil.applyDeadband(ySupplier.getAsDouble(), deadband);
+        double angMag = MathUtil.applyDeadband(angularSupplier.getAsDouble(), deadband);
 
-        swerve.driveFieldRelative(speeds); // Drive the robot using the calculated speeds.
+        xMag = Math.copySign(xMag*xMag, xMag);
+        yMag = Math.copySign(yMag*yMag, yMag);
+        angMag = Math.copySign(angMag*angMag, angMag);
+
+        double Vx = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 
+            -xMag * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC : 
+            xMag * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC;
+
+        double Vy = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ?
+            -yMag * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC :
+            yMag * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC;
+
+        double omega = angMag * 12; // drivetrain_omega_max
+        omega *= joystick.getAsBoolean() ? 1.0 : rotation_coeff;
+
+        ChassisSpeeds setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(Vx, Vy, omega, RobotState.getInstance().getOdometryPose().getRotation());
+        swerveSubsystem.setTargetSpeed(setpoint);
+
     }
-
-    // Called when the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        // Cleanup or reset logic can be added here if necessary.
-    }
-
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {

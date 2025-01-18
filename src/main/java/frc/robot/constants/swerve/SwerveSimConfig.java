@@ -155,10 +155,10 @@ public final class SwerveSimConfig extends SwerveConfigBase {
                 new double[] { kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC / 2,
                         kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC / 2, 0.2 }); // .2
 
-        this.kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG = new SwerveControllerConfig(
-                kDRIVE_FF_POINTS,
-                new PIDController(0, 0, 0),
-                new PIDController(0, 0, 0),
-                new PIDController(0, 0, 0));
+        // this.kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG = new SwerveControllerConfig(
+        //         kDRIVE_FF_POINTS,
+        //         new PIDController(0, 0, 0),
+        //         new PIDController(0, 0, 0),
+        //         new PIDController(0, 0, 0));
     }
 }

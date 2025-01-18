@@ -22,6 +22,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -63,6 +64,10 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     private final double kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS;
     private final double kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
+
+    private double modulePosition;
+    private double moduleVelocity;
+    private Rotation2d moduleAngle;
 
     private final GeneralConfig generalConfig;
     private final int moduleID;
@@ -245,10 +250,15 @@ public class ModuleIOTalonFX implements ModuleIO {
         inputs.steerPosition = new Rotation2d(
                 Units.rotationsToRadians(steerRotations));
         inputs.steerVelocityRadPerSec = steerVelocityStatusSignal.getValue().in(RadiansPerSecond);
-
         inputs.steerCurrentDrawAmps = steerSupplyCurrent.getValue().in(Amps);
         inputs.steerAppliedVolts = steerAppliedVolts.getValue().in(Volts);
         inputs.steerTemperatureFahrenheit = steerTemperature.getValue().in(Fahrenheit);
+
+        this.moduleAngle = inputs.steerCANCODERAbsolutePosition;
+        this.modulePosition = inputs.drivePositionMeters;
+        this.moduleVelocity = inputs.driveVelocityMetersPerSec;
+
+
     }
 
     // TODO: validate this later
@@ -269,6 +279,33 @@ public class ModuleIOTalonFX implements ModuleIO {
                 steerMotorRequest.withPosition(
                         state.angle.getRotations())); // TODO: ENSURE THAT THE MODULE HAS PROPER
                                                                               // CONTINUES WRAP!!!!!!
+    }
+
+    @Override
+    public SwerveModuleState setTargetState(SwerveModuleState state) {
+        SwerveModuleState optimizedState = optimize(state, moduleAngle);
+        setState(optimizedState);
+        return optimizedState;
+    }
+
+    private SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+      var delta = desiredState.angle.minus(currentAngle);
+      if (Math.abs(delta.getDegrees()) > 90.0) {
+        return new SwerveModuleState(
+            -desiredState.speedMetersPerSecond, desiredState.angle.rotateBy(Rotation2d.kPi));
+      } else {
+        return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+      }
+    }
+
+    @Override
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(this.moduleVelocity, this.moduleAngle);
+    }
+
+    @Override
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(this.modulePosition, this.moduleAngle);
     }
 
     @Override
