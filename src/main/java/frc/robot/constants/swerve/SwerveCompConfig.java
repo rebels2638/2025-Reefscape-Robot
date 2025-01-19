@@ -156,8 +156,22 @@ public final class SwerveCompConfig extends SwerveConfigBase {
 
         this.kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG = new SwerveControllerConfig(
                 kDRIVE_FF_POINTS,
+                
                 new PIDController(0, 0, 0),
+                0.0,
+
                 new PIDController(0, 0, 0),
-                new PIDController(0, 0, 0));
+                0.0,
+
+                new PIDController(0, 0, 0),
+                0.0,
+
+                new PIDController(0, 0, 0),
+                0.0,
+
+                new PIDController(0, 0, 0),
+                0.0
+        );
+
     }
 }

@@ -199,7 +199,7 @@ public class SwerveDrive extends SubsystemBase {
 
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
         translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
-        rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
+        rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kLOCK_ROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
     }
 
     @Override
