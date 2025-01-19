@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.AbsoluteFieldDrive;
+import frc.robot.commands.autoAligment.DriveToPose;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
@@ -9,8 +10,8 @@ public class RobotContainer {
   public static RobotContainer instance = null;
 
   private final XboxController xboxTester;
-  private final XboxController xboxDriver;
   private final XboxController xboxOperator;
+  private final XboxController xboxDriver;
   
   private final SwerveDrive swerveDrive;
 
@@ -21,6 +22,8 @@ public class RobotContainer {
 
     swerveDrive = new SwerveDrive();
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
+
+    xboxDriver.getBButton().onTrue(new DriveToPose(swerveDrive));
   }
 
   public static RobotContainer getInstance() {

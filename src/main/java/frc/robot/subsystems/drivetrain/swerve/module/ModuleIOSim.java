@@ -163,8 +163,7 @@ public class ModuleIOSim implements ModuleIO {
 
     @Override
     public void setState(SwerveModuleState state) {
-        // double dt = Timer.getFPGATimestamp() - prevTimeState;
-        double dt = 0.02;
+        double dt = Timer.getFPGATimestamp() - prevTimeState;
         // a setpoint is the individual setpoint for the motor calculated by the profile
         // while the goal is the end state
         double driveSetpointMetersPerSec = RebelUtil.constrain(
