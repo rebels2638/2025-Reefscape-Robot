@@ -103,11 +103,12 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 0.0,
                 kSHARED_GENERAL_CONFIG);
 
+        //change this later if needed
         this.kSWERVE_DRIVETRAIN_CONFIG = new SwerveDrivetrainConfig(
-                4,
+                4.5,
                 3.5,
                 3.7,
-                12,
+                7.5,
                 new Translation2d(0.38, -0.38),
                 new Translation2d(-0.38, -0.38),
                 new Translation2d(0.38, 0.38),
@@ -154,23 +155,24 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 new double[] { kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC / 2,
                         kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC / 2, 0.2 }); // .2
 
+        //TODO: fix later this is very temporary
         this.kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG = new SwerveControllerConfig(
                 kDRIVE_FF_POINTS,
                 
-                new PIDController(0, 0, 0),
-                0.0,
+                new PIDController(4, 0, 1.2),
+                0.05,
 
-                new PIDController(0, 0, 0),
-                0.0,
+                new PIDController(1.9, 0, 0.1),
+                0.1,
 
-                new PIDController(0, 0, 0),
-                0.0,
+                new PIDController(4, 0, 1.2),
+                0.05,
 
-                new PIDController(0, 0, 0),
-                0.0,
+                new PIDController(4, 0, 1.2),
+                0.05,
 
-                new PIDController(0, 0, 0),
-                0.0
+                new PIDController(1.9, 0, 0.1),
+                0.1
         );
 
     }
