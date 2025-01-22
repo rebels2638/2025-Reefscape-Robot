@@ -4,20 +4,15 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.ElementConstants;
-import frc.robot.constants.swerve.SwerveModuleConfig.GeneralConfig;
 import frc.robot.constants.swerve.SwerveCompConfig;
-import frc.robot.constants.swerve.SwerveConfigBase;
-import frc.robot.constants.swerve.SwerveDrivetrainConfig;
-import frc.robot.constants.swerve.SwerveSimConfig;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
 public class AutoAlign extends Command {
@@ -64,6 +59,7 @@ public class AutoAlign extends Command {
             )
         );
         this.rotationalFeedbackController = config.getSwerveDrivetrainControllerConfig().kAUTO_ALIGN_ROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
+        rotationalFeedbackController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(swerveDrive);
     }
@@ -102,14 +98,11 @@ public class AutoAlign extends Command {
 
     @Override
     public void execute() {
-        Logger.recordOutput("AutoAlign/currentMaxVelo", config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC);
-        Logger.recordOutput("AutoAlign/currentMaxAccel", config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_TRANSLATIONAL_ACCELERATION_METERS_PER_SEC_SEC);
-        Logger.recordOutput("AutoAlign/currentMaxAngVelo", config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC);
-        Logger.recordOutput("AutoAlign/currentMaxAngAccel", config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_ACCELERATION_RADIANS_PER_SEC_SEC);
-
         double dt = Timer.getFPGATimestamp() - previousTimestamp;
         previousTimestamp = Timer.getFPGATimestamp();
 
+        Logger.recordOutput("AutoAlign/calculatedAngleToPose", calculateAngle(currentPose, targetPose));
+        Logger.recordOutput("AutoAlign/calculatedDistanceToPose", calculateDistance(currentPose, targetPose));
         // get the setpoints from the motion profiles
         currentTranslationalSetpoint = translationalMotionProfile.calculate(
                     dt,
@@ -124,8 +117,7 @@ public class AutoAlign extends Command {
         currentUnwrappedRotationRad += rotationDelta;
 
         double desiredRotationRad = MathUtil.angleModulus(targetPose.getRotation().getRadians());
-        double rotationError = desiredRotationRad - currentUnwrappedRotationRad;
-        rotationError = MathUtil.inputModulus(rotationError, -Math.PI, Math.PI);
+        double rotationError = MathUtil.inputModulus(desiredRotationRad - currentUnwrappedRotationRad, -Math.PI, Math.PI);
 
         currentRotationalSetpoint = rotationalMotionProfile.calculate(
                     dt,
@@ -140,15 +132,12 @@ public class AutoAlign extends Command {
         double vx, vy, omega;
         double angle = calculateAngle(swerveDrive.getPose(), targetPose);
 
-        // xTranslationalFeedbackController.setSetpoint(targetPose.getTranslation().getX());
         vx = currentTranslationalSetpoint.velocity * Math.cos(angle) + xTranslationalFeedbackController.calculate(swerveDrive.getPose().getTranslation().getX(),
                                                                                                                   targetPose.getTranslation().getX());
         
-        // yTranslationalFeedbackController.setSetpoint(targetPose.getTranslation().getY());
         vy = currentTranslationalSetpoint.velocity * Math.sin(angle) + yTranslationalFeedbackController.calculate(swerveDrive.getPose().getTranslation().getY(),
                                                                                                                   targetPose.getTranslation().getY());                    
 
-        // rotationalFeedbackController.setSetpoint(targetPose.getRotation().getRadians());
         omega = currentRotationalSetpoint.velocity + rotationalFeedbackController.calculate(swerveDrive.getPose().getRotation().getRadians(),
                                                                                             targetPose.getRotation().getRadians());
 
@@ -173,6 +162,38 @@ public class AutoAlign extends Command {
     }
 
     private static double calculateAngle(Pose2d currentPose, Pose2d targetPose) {
-        return Math.atan2(currentPose.relativeTo(targetPose).getY(), currentPose.relativeTo(targetPose).getX());
+        double calculatedDistanceToPose = calculateDistance(currentPose, targetPose);
+
+        Pose2d angleEndpoint = new Pose2d(targetPose.getX() + calculatedDistanceToPose * -Math.cos(targetPose.getRotation().getRadians()),
+                                          targetPose.getY() + calculatedDistanceToPose * -Math.sin(targetPose.getRotation().getRadians()),
+                                          targetPose.getRotation());
+        Logger.recordOutput("AutoAlign/angleEndpoint", angleEndpoint);
+        Translation2d currentTranslation = new Translation2d(targetPose.getX() - currentPose.getX(),
+                                                             targetPose.getY() - currentPose.getY());
+        Translation2d angleTranslation = new Translation2d(angleEndpoint.getX() - targetPose.getX(),
+                                                           angleEndpoint.getY() - targetPose.getY());
+
+        double dotMagProduct = MathUtil.clamp(((currentTranslation.getX() * angleTranslation.getX()) +
+                         (currentTranslation.getY() * angleTranslation.getY())) / 
+                         (calculatedDistanceToPose * calculateDistance(targetPose, angleEndpoint)),
+                         -1, 1);
+        double calculatedAngle = Math.acos(dotMagProduct);
+
+        return calculatedAngle;
+    }
+
+    //make a formula for time calculations! how long it takes pid to do stuff
+    private static Pose2d getNewTarget(Pose2d currentPose, Pose2d targetPose) {
+        double distanceToTarget = calculateDistance(currentPose, targetPose);
+        double robotRadius = 0.6;
+        double theta = calculateAngle(currentPose, targetPose);
+
+        if (distanceToTarget < 5) {
+            if (Math.abs(targetPose.getRotation().getRadians() - 
+            currentPose.getRotation().getRadians()) < Math.toRadians(45)) {
+                return new Pose2d();
+            }
+        }
+        return targetPose;
     }
 }

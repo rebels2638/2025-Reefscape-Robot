@@ -108,7 +108,7 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 4.5,
                 3.5,
                 3.7,
-                7.5,
+                12,
                 new Translation2d(0.38, -0.38),
                 new Translation2d(-0.38, -0.38),
                 new Translation2d(0.38, 0.38),
@@ -171,7 +171,7 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 new PIDController(4, 0, 1.2),
                 0.05,
 
-                new PIDController(1.9, 0, 0.1),
+                new PIDController(1.9, 0.01, 0),
                 0.1
         );
 
