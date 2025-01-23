@@ -1,6 +1,11 @@
 package frc.robot.subsystems.drivetrain.swerve;
 
 import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -61,8 +66,18 @@ public class SwerveDrive extends SubsystemBase {
     private boolean isRotationLockEnabled = false;
 
     private double lastTimestamp = Double.NEGATIVE_INFINITY;
-    private double translationCoeffecient = 0.5;
+    private double translationCoefficient = 0.5;
     private double rotationCoefficient = 0.5;
+
+    SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    SwerveModuleState[] moduleStates = new SwerveModuleState[4];
+
+    private final SwerveSetpointGenerator swerveSetpointGenerator;
+    private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
+        new ChassisSpeeds(), 
+        moduleStates, 
+        DriveFeedforwards.zeros(4)
+    );
 
     @SuppressWarnings("static-access")
     public SwerveDrive() {
@@ -78,6 +93,8 @@ public class SwerveDrive extends SubsystemBase {
                 
                 gyroIO = new GyroIOPigeon2();
                 Phoenix6Odometry.getInstance().start();
+
+                swerveSetpointGenerator = new SwerveSetpointGenerator(null, null)
                 break;
 
             case CrescendoRobotBase:
@@ -149,12 +166,11 @@ public class SwerveDrive extends SubsystemBase {
             odometryTimestamp = HALUtil.getFPGATime() / 1.0e6;
         }
 
-        SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-        SwerveModuleState[] moduleStates = new SwerveModuleState[4];
         for (int i = 0; i < 4; i++) {
             modulePositions[i] = modules[i].getPosition();
             moduleStates[i] = modules[i].getState();
         }
+
         RobotState.getInstance()
             .addOdometryObservation(
                 new RobotState.OdometryObservation(
@@ -175,8 +191,8 @@ public class SwerveDrive extends SubsystemBase {
         ChassisSpeeds desiredSpeeds = speeds;
 
         if (isTranslationSlowdownEnabled) {
-            desiredSpeeds.vxMetersPerSecond *= this.translationCoeffecient;
-            desiredSpeeds.vyMetersPerSecond *= this.translationCoeffecient;
+            desiredSpeeds.vxMetersPerSecond *= this.translationCoefficient;
+            desiredSpeeds.vyMetersPerSecond *= this.translationCoefficient;
         }
 
         if (isRotationSlowdownEnabled) {
@@ -209,7 +225,7 @@ public class SwerveDrive extends SubsystemBase {
         lastTimestamp = timestamp;
 
         if (isRotationLockEnabled) { // get the curr rot from robotstate and the argument from here
-            double rotatationalVelocity = MathUtil.clamp(
+            double rotationalVelocity = MathUtil.clamp(
                 rotationalVelocityFeedbackController.calculate(
                     RobotState.getInstance().getOdometryPose().getRotation().getRadians(),
                     this.rotationLock.getRadians()), 
@@ -217,9 +233,19 @@ public class SwerveDrive extends SubsystemBase {
                 config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC);
 
             ChassisSpeeds fieldRel = ChassisSpeeds.fromRobotRelativeSpeeds(adjustedSpeeds, RobotState.getInstance().getOdometryPose().getRotation());
-            fieldRel.omegaRadiansPerSecond = rotatationalVelocity;
+            fieldRel.omegaRadiansPerSecond = rotationalVelocity;
             adjustedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRel, RobotState.getInstance().getOdometryPose().getRotation());
         }
+
+        SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
+            previousSetpoint,
+            correctedSpeeds,
+            dt // between calls of generate setpoint
+        );
+        
+        previousSetpoint = swerveSetpoint;
+        Logger.recordOutput("SwerveDrive/correctedSpeeds", correctedSpeeds);
+
 
         SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(adjustedSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(
