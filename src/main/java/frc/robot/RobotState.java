@@ -10,10 +10,14 @@ package frc.robot;
 import edu.wpi.first.math.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.interpolation.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Timer;
+
 import java.util.NoSuchElementException;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -24,13 +28,14 @@ public class RobotState {
     return instance;
   }
   
-  public record OdometryObservation(SwerveModulePosition[] wheelPositions, Rotation2d gyroAngle, double timestamp) {}
+  public record OdometryObservation(SwerveModulePosition[] modulePositions, SwerveModuleState[] moduleStates, Rotation2d gyroAngle, double timestamp) {}
   public record VisionObservation(Pose2d visionPose, double timestamp, Matrix<N3, N1> stdDevs) {}
 
   private static final double poseBufferSizeSeconds = 2.0;
 
   private Pose2d odometryPose = new Pose2d();
   private Pose2d estimatedPose = new Pose2d();
+  private double lastEstimatedPoseUpdateTime = 0;
 
   private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(poseBufferSizeSeconds);
   private final Matrix<N3, N1> qStdDevs = new Matrix<>(Nat.N3(), Nat.N1());
@@ -45,7 +50,7 @@ public class RobotState {
     };
 
   private Rotation2d lastGyroAngle = new Rotation2d();
-  private Twist2d robotVelocity = new Twist2d();
+  private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
 
   private RobotState() {
     for (int i = 0; i < 3; ++i) {
@@ -60,9 +65,8 @@ public class RobotState {
 
   /** Add odometry observation */
   public void addOdometryObservation(OdometryObservation observation) {
-
-    Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.wheelPositions());
-    lastWheelPositions = observation.wheelPositions();
+    Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.modulePositions());
+    lastWheelPositions = observation.modulePositions();
 
     if (observation.gyroAngle != null) {
       // Update dtheta for twist if gyro connected
@@ -76,6 +80,9 @@ public class RobotState {
     poseBuffer.addSample(observation.timestamp(), odometryPose);
     // Calculate diff from last odometry pose and add onto pose estimate
     estimatedPose = estimatedPose.exp(twist);
+    lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
+
+    robotRelativeVelocity = kinematics.toChassisSpeeds(observation.moduleStates);
   }
 
   public void addVisionObservation(VisionObservation observation) {
@@ -136,17 +143,8 @@ public class RobotState {
     // Recalculate current estimate by applying scaled transform to old estimate
     // then replaying odometry data
     estimatedPose = estimateAtTime.plus(scaledTransform).plus(sampleToOdometryTransform);
+    lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
   }
-
-  public void addVelocityData(Twist2d robotVelocity) {
-    this.robotVelocity = robotVelocity;
-  }
-
-//   public ModuleLimits getModuleLimits() {
-//     return flywheelAccelerating && !DriverStation.isAutonomousEnabled()
-//         ? DriveConstants.moduleLimitsFlywheelSpinup
-//         : DriveConstants.moduleLimitsFree;
-//   }
 
   /**
    * Reset estimated pose and odometry pose to pose <br>
@@ -158,28 +156,21 @@ public class RobotState {
     poseBuffer.clear();
   }
 
-  public Twist2d fieldVelocity() {
-
-    Translation2d linearFieldVelocity =
-        new Translation2d(robotVelocity.dx, robotVelocity.dy).rotateBy(estimatedPose.getRotation());
-
-    return new Twist2d(
-        linearFieldVelocity.getX(), linearFieldVelocity.getY(), robotVelocity.dtheta);
-  }
-
   public Pose2d getEstimatedPose() {
     return estimatedPose;
   }
 
   public Pose2d getPredictedPose(double translationLookaheadS, double rotationLookaheadS) {
-    // Twist2d velocity = DriverStation.isAutonomousEnabled() ? trajectoryVelocity : robotVelocity;
-    Twist2d velocity = robotVelocity;
     return getEstimatedPose()
         .transformBy(
             new Transform2d(
-                velocity.dx * translationLookaheadS,
-                velocity.dy * translationLookaheadS,
-                Rotation2d.fromRadians(velocity.dtheta * rotationLookaheadS)));
+                robotRelativeVelocity.vxMetersPerSecond * translationLookaheadS,
+                robotRelativeVelocity.vyMetersPerSecond * translationLookaheadS,
+                Rotation2d.fromRadians(robotRelativeVelocity.omegaRadiansPerSecond * rotationLookaheadS)));
+  }
+
+  public Pose2d getPredictedPose(double timestamp) {
+    return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
   }
 
   @AutoLogOutput(key = "RobotState/OdometryPose")

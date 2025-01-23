@@ -111,7 +111,9 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 new Translation2d(0.38, -0.38),
                 new Translation2d(-0.38, -0.38),
                 new Translation2d(0.38, 0.38),
-                new Translation2d(-0.38, 0.38));
+                new Translation2d(-0.38, 0.38),
+                0
+            );
         
         this.kPATHPLANNER_ROBOT_CONFIG = new RobotConfig(
             74.088, 

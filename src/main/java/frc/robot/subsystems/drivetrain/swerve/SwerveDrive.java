@@ -15,6 +15,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drivetrain.swerve.controllers.DriveFFController;
@@ -79,6 +81,8 @@ public class SwerveDrive extends SubsystemBase {
         DriveFeedforwards.zeros(4)
     );
 
+    double previousSetpointCallTime = Timer.getFPGATimestamp();
+
     @SuppressWarnings("static-access")
     public SwerveDrive() {
         switch (Constants.currentMode) {
@@ -94,7 +98,6 @@ public class SwerveDrive extends SubsystemBase {
                 gyroIO = new GyroIOPigeon2();
                 Phoenix6Odometry.getInstance().start();
 
-                swerveSetpointGenerator = new SwerveSetpointGenerator(null, null)
                 break;
 
             case CrescendoRobotBase:
@@ -137,7 +140,12 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         driveFFController = new DriveFFController(config);
-
+        swerveSetpointGenerator = new SwerveSetpointGenerator(
+            config.getPathplannerRobotConfig(), 
+            Units.rotationsToRadians(
+                config.getSharedGeneralConfig().kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC)
+        );
+        
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
         translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
         rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
@@ -199,7 +207,7 @@ public class SwerveDrive extends SubsystemBase {
             desiredSpeeds.omegaRadiansPerSecond *= this.rotationCoefficient;
         }
 
-        var angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec*0.5); // TODO: make a coeff
+        var angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec * config.getSwerveDrivetrainConfig().kROTATION_COMPENSATION_COEFFICIENT); // TODO: make a coeff
         if (angularVelocity.getRadians() != 0.0) {
             desiredSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
                 speeds.vxMetersPerSecond,
@@ -239,28 +247,20 @@ public class SwerveDrive extends SubsystemBase {
 
         SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
-            correctedSpeeds,
-            dt // between calls of generate setpoint
+            adjustedSpeeds,
+            Timer.getFPGATimestamp() - previousSetpointCallTime // between calls of generate setpoint
         );
-        
+        previousSetpointCallTime = Timer.getFPGATimestamp();
+
         previousSetpoint = swerveSetpoint;
-        Logger.recordOutput("SwerveDrive/correctedSpeeds", correctedSpeeds);
+        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.robotRelativeSpeeds());
 
+        SwerveModuleState[] optimizedSetpoints = swerveSetpoint.moduleStates();
+        for (int i = 0; i < 4; i++) {
+            optimizedSetpoints[i] = modules[i].setTargetState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
+        }
+        Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
 
-        SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(adjustedSpeeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            setpointStates, 
-            adjustedSpeeds, 
-            4, 
-            4, 
-            210); // TODO: Grabage values + create constants
-        
-            SwerveModuleState[] optimizedSetpoints = new SwerveModuleState[4];
-            for (int i = 0; i < 4; i++) {
-                optimizedSetpoints[i] = modules[i].setTargetState(setpointStates[i]); // setTargetState's helper method is kind of funny
-            }
-
-            // TODO: add logging statements
     }
 
     public double gyroAngularVelocity() {
@@ -269,7 +269,6 @@ public class SwerveDrive extends SubsystemBase {
 
     public void setRotationLock() {
         isRotationLockEnabled = true;
-        this.rotationLock = rotationLock;
     }
 
     public void disableRotationLock() {
@@ -277,13 +276,13 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void setSlowdownCoeffs(double transCoeff, double rotCoeff) {
-        this.translationCoeffecient = transCoeff;
+        this.translationCoefficient = transCoeff;
         this.rotationCoefficient = rotCoeff;
         isTranslationSlowdownEnabled = true;
         isRotationSlowdownEnabled = true;
     }
 
-    public void diableSlowdownCoeffs() {
+    public void disableSlowdownCoeffs() {
         isTranslationSlowdownEnabled = false;
         isRotationSlowdownEnabled = false;
     }
