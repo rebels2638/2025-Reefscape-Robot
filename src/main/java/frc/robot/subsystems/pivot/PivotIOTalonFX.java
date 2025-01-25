@@ -37,12 +37,8 @@ public class PivotIOTalonFX implements PivotIO {
 
     private final MotionMagicExpoTorqueCurrentFOC pivotMotorRequest = new MotionMagicExpoTorqueCurrentFOC(0);
 
-    private final PivotConfigBase config;
-
     @SuppressWarnings("static-access")
     public PivotIOTalonFX(PivotConfigBase config) {
-        this.config = config;
-
         // pivot motor
         TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
 
