@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -73,6 +74,11 @@ public class PivotIOTalonFX implements PivotIO {
 
         pivotConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.getPeakForwardTorqueCurrent();
         pivotConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.getPeakReverseTorqueCurrent();
+
+        pivotConfig.MotorOutput.NeutralMode = 
+            config.isNeutralModeBrake() ? 
+                        NeutralModeValue.Brake : 
+                        NeutralModeValue.Coast;
 
         pivotMotor = new TalonFX(config.getCANID());
         pivotMotor.getConfigurator().apply(pivotConfig);

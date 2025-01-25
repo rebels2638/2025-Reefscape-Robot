@@ -10,11 +10,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.pivot.PivotConfigBase;
+import frc.robot.constants.claw.ClawConfigBase;
 
 public class ClawIOTalonFX implements ClawIO {
     private TalonFX clawMotor;
@@ -26,7 +28,7 @@ public class ClawIOTalonFX implements ClawIO {
     private final StatusSignal<Temperature> clawTemperature;
 
     @SuppressWarnings("static-access")
-    public ClawIOTalonFX(PivotConfigBase config) {
+    public ClawIOTalonFX(ClawConfigBase config) {
         // pivot motor
         TalonFXConfiguration clawConfig = new TalonFXConfiguration();
 
@@ -41,6 +43,11 @@ public class ClawIOTalonFX implements ClawIO {
 
         clawConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.getPeakForwardTorqueCurrent();
         clawConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.getPeakReverseTorqueCurrent();
+
+        clawConfig.MotorOutput.NeutralMode = 
+            config.isNeutralModeBrake() ? 
+                        NeutralModeValue.Brake : 
+                        NeutralModeValue.Coast;
 
         clawMotor = new TalonFX(config.getCANID());
         clawMotor.getConfigurator().apply(clawConfig);
