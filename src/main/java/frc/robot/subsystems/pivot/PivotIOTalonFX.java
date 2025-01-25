@@ -97,9 +97,6 @@ public class PivotIOTalonFX implements PivotIO {
                 pivotVelocityStatusSignal
         );
 
-        Phoenix6Odometry.getInstance().registerSignal(pivotMotor, pivotPositionStatusSignal);
-        Phoenix6Odometry.getInstance().registerSignal(pivotMotor, pivotVelocityStatusSignal);
-
         pivotMotor.optimizeBusUtilization();
     }
 
