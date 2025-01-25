@@ -2,8 +2,7 @@ package frc.robot.constants.pivot;
 
 public class PivotConfigProto extends PivotConfigBase {
     private static PivotConfigProto instance;
-    @Override
-    public PivotConfigProto getInstance() {
+    public static PivotConfigProto getInstance() {
         if (instance != null) {
             instance = new PivotConfigProto();
         }

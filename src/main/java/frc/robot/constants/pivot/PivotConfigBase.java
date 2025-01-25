@@ -1,7 +1,6 @@
 package frc.robot.constants.pivot;
 
 public abstract class PivotConfigBase {
-    public abstract PivotConfigBase getInstance();
     // CAN ID
     public abstract int getCANID();
 

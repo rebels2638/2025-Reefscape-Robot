@@ -19,25 +19,25 @@ public class Pivot extends SubsystemBase {
         // IO
         switch (Constants.currentMode) {
             case Comp:
-                config = new PivotConfigProto();
+                config = PivotConfigProto.getInstance();
                 pivotIO = new PivotIOTalonFX(config);
 
                 break;
 
             case CrescendoRobotBase:
-                config = new PivotConfigProto();
+                config = PivotConfigProto.getInstance();
                 pivotIO = new PivotIOTalonFX(config);
 
                 break;
 
             case SIM:
-                config = new PivotConfigSim();
+                config = PivotConfigSim.getInstance();
                 pivotIO = new PivotIOSim(config);
 
                 break;
 
             default:
-                config = new PivotConfigProto();
+                config = PivotConfigProto.getInstance();
                 pivotIO = new PivotIO() {};
 
                 break;
