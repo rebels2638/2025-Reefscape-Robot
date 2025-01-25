@@ -82,7 +82,7 @@ public class PivotIOTalonFX implements PivotIO {
         pivotTemperature = pivotMotor.getDeviceTemp().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                100,
+                40,
                 pivotAppliedVolts,
                 pivotSupplyCurrent,
                 pivotTemperature
@@ -92,7 +92,7 @@ public class PivotIOTalonFX implements PivotIO {
         pivotVelocityStatusSignal = pivotMotor.getVelocity().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                100,
+                70,
                 pivotPositionStatusSignal,
                 pivotVelocityStatusSignal
         );
@@ -116,7 +116,6 @@ public class PivotIOTalonFX implements PivotIO {
         
         double pivotRotations = BaseStatusSignal
                 .getLatencyCompensatedValue(pivotPositionStatusSignal, pivotVelocityStatusSignal).in(Rotation);
-
         inputs.pivotPositionRad = new Rotation2d(
                 Units.rotationsToRadians(pivotRotations));
         inputs.pivotVelocityRadPerSec = pivotVelocityStatusSignal.getValue().in(RadiansPerSecond);
