@@ -127,6 +127,7 @@ public class AutoAlign extends Command {
                             0
                     )
         );
+        targetPose = getNewTarget(currentPose, targetPose, rotationalMotionProfile, translationalMotionProfile);
 
         // calculate the outputs
         double vx, vy, omega;
@@ -140,7 +141,6 @@ public class AutoAlign extends Command {
 
         omega = currentRotationalSetpoint.velocity + rotationalFeedbackController.calculate(swerveDrive.getPose().getRotation().getRadians(),
                                                                                             targetPose.getRotation().getRadians());
-
         // set the outputs
         swerveDrive.driveFieldRelative(new ChassisSpeeds(vx, vy, omega));
     }
@@ -182,17 +182,21 @@ public class AutoAlign extends Command {
         return calculatedAngle;
     }
 
-    //make a formula for time calculations! how long it takes pid to do stuff
-    private static Pose2d getNewTarget(Pose2d currentPose, Pose2d targetPose) {
+    //bit scuffed but should work after some simple fixing
+    private static Pose2d getNewTarget(Pose2d currentPose, Pose2d targetPose, TrapezoidProfile rotationProfile, TrapezoidProfile translationalProfile) {
         double distanceToTarget = calculateDistance(currentPose, targetPose);
         double robotRadius = 0.6;
         double theta = calculateAngle(currentPose, targetPose);
+        Pose2d angleEndpoint = new Pose2d(targetPose.getX() + (robotRadius + 0.2) * -Math.cos(targetPose.getRotation().getRadians()),
+                                          targetPose.getY() + (robotRadius + 0.2) * -Math.sin(targetPose.getRotation().getRadians()),
+                                          targetPose.getRotation());
+        double timeToRotationalTarget = rotationProfile.timeLeftUntil(targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
+        double timeToTranslationalTarget = translationalProfile.timeLeftUntil(distanceToTarget);
 
-        if (distanceToTarget < 5) {
-            if (Math.abs(targetPose.getRotation().getRadians() - 
-            currentPose.getRotation().getRadians()) < Math.toRadians(45)) {
-                return new Pose2d();
-            }
+        if (distanceToTarget < robotRadius && currentPose.getRotation().getRadians() > Math.toRadians(45)) {
+            targetPose = angleEndpoint;
+        } else if (timeToRotationalTarget > timeToTranslationalTarget) {
+            targetPose = angleEndpoint;
         }
         return targetPose;
     }
