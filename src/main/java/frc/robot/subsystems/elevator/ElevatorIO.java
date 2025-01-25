@@ -2,13 +2,9 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-
 public interface ElevatorIO { 
     @AutoLog
-    class ModuleIOInputs {
+    class ElevatorIOInputsAutoLogged {
         public double timestamp = 0;
 
         public double m1PositionMeters = 0;
@@ -28,7 +24,7 @@ public interface ElevatorIO {
         public boolean reachedSetpoint = false;
     }
 
-    public default void updateInputs(ModuleIOInputs inputs) {}
+    public default void updateInputs(ElevatorIOInputsAutoLogged inputs) {}
     public default double getPosition() {return 0.0;}
     public default double getVelocity() {return 0.0;}
     public default void setPosition(double posiiton) {}

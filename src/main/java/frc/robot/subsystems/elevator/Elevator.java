@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputsAutoLogged;
 
 public class Elevator extends SubsystemBase {
 
@@ -12,24 +13,22 @@ public class Elevator extends SubsystemBase {
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
     
     private double setpointMeters;
-    private boolean reachedSetpoint;
 
     public Elevator(ElevatorIO io) {
         switch (Constants.currentMode) {
             case SIM:
-                io = new ElevatorIOSim();
+               // io = new ElevatorIOSim();
             default:
                 io = new ElevatorIOFalcon();
         }
 
         this.setpointMeters = 0.0;
-        this.reachedSetpoint = false;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("Elevator", inputs);
+        // Logger.processInputs("Elevator", inputs);
         io.setPosition(setpointMeters);
         Logger.recordOutput("Elevator/desiredHeight", setpointMeters);
     }

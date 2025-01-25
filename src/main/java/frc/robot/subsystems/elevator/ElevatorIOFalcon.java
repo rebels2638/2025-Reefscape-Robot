@@ -86,7 +86,7 @@ public class ElevatorIOFalcon implements ElevatorIO {
 
     @Override
     @SuppressWarnings("static-access")
-    public void updateInputs(ModuleIOInputs inputs) {
+    public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
 
         dt = Timer.getTimestamp() - dt;
 
