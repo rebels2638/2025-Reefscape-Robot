@@ -45,7 +45,7 @@ public class Roller extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Roller", inputs);
-
+        inRoller = io.isInRoller();
         io.setVoltage(dv);
     }
 

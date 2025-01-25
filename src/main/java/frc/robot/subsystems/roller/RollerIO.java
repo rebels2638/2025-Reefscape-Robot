@@ -16,4 +16,5 @@ public interface RollerIO {
     public default void updateInputs(RollerIOInputs inputs) {}
     public default void setVoltage(double volts) {}
     public default void setVelocityRadSec(double goalVelocity, SimpleMotorFeedforward ff, PIDController fb) {}
+    public default boolean isInRoller() {return true;}
 }
