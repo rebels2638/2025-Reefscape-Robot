@@ -9,9 +9,11 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -22,6 +24,7 @@ public class ClawIOTalonFX implements ClawIO {
     private TalonFX clawMotor;
 
     private final StatusSignal<AngularVelocity> clawVelocityStatusSignal;
+    private final StatusSignal<AngularAcceleration> clawAccelerationStatusSignal;
 
     private final StatusSignal<Voltage> clawAppliedVolts;
     private final StatusSignal<Current> clawSupplyCurrent;
@@ -64,10 +67,12 @@ public class ClawIOTalonFX implements ClawIO {
         );
 
         clawVelocityStatusSignal = clawMotor.getVelocity().clone();
+        clawAccelerationStatusSignal = clawMotor.getAcceleration().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 70,
-                clawVelocityStatusSignal
+                clawVelocityStatusSignal,
+                clawAccelerationStatusSignal
         );
 
         clawMotor.optimizeBusUtilization();
@@ -83,7 +88,9 @@ public class ClawIOTalonFX implements ClawIO {
             clawTemperature
         );
 
-        inputs.clawVelocityRadPerSec = clawVelocityStatusSignal.getValue().in(RadiansPerSecond);
+        double clawVel = BaseStatusSignal.getLatencyCompensatedValue(clawVelocityStatusSignal, clawAccelerationStatusSignal).in(RadiansPerSecond);
+
+        inputs.clawVelocityRadPerSec = clawVel;
 
         inputs.clawCurrentDrawAmps = clawSupplyCurrent.getValue().in(Amps);
         inputs.clawAppliedVolts = clawAppliedVolts.getValue().in(Volts);
@@ -95,6 +102,13 @@ public class ClawIOTalonFX implements ClawIO {
     public void setTorqueCurrentFOC(double baseUnitMagnitude) {
         clawMotor.setControl(
             new TorqueCurrentFOC(baseUnitMagnitude)
+        );
+    }
+
+    @Override
+    public void setVoltage(double baseUnitMagnitude) {
+        clawMotor.setControl(
+            new VoltageOut(baseUnitMagnitude)
         );
     }
 }

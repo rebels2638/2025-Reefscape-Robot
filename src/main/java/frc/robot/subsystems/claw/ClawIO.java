@@ -14,4 +14,6 @@ public interface ClawIO {
 
     public default void updateInputs(ClawIOInputs inputs) {}
     public default void setTorqueCurrentFOC(double baseUnitMagnitude) {}    
+    public default void setVoltage(double baseUnitMagnitude) {}    
+
 }

@@ -52,4 +52,8 @@ public class Claw extends SubsystemBase {
     public void setTorqueCurrentFOC(double current) {
         clawIO.setTorqueCurrentFOC(current);
     }
+
+    public void setVoltage(double voltage) {
+        clawIO.setVoltage(voltage);
+    }
 }

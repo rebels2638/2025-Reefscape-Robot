@@ -3,7 +3,7 @@ package frc.robot.constants.pivot;
 public class PivotConfigProto extends PivotConfigBase {
     private static PivotConfigProto instance;
     public static PivotConfigProto getInstance() {
-        if (instance != null) {
+        if (instance == null) {
             instance = new PivotConfigProto();
         }
 
@@ -13,13 +13,13 @@ public class PivotConfigProto extends PivotConfigBase {
     // CANID
     @Override
     public int getCANID() {
-        return 1;
+        return 21;
     }
 
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 30.0;
+        return 13.0;
     }
 
     @Override
@@ -29,24 +29,24 @@ public class PivotConfigProto extends PivotConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 20.0;
+        return 10.0;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 35.0;
+        return 10.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 40.0;
+        return 10.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -40.0;
+        return -10.0;
     }
 
     // Characterization / Gains

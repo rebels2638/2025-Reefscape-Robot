@@ -3,7 +3,7 @@ package frc.robot.constants.pivot;
 public class PivotConfigSim extends PivotConfigBase {
     private static PivotConfigSim instance;
     public static PivotConfigSim getInstance() {
-        if (instance != null) {
+        if (instance == null) {
             instance = new PivotConfigSim();
         }
 
