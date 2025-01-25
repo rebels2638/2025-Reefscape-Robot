@@ -35,10 +35,7 @@ import frc.robot.constants.swerve.SwerveCompConfig;
 import frc.robot.constants.swerve.SwerveSimConfig;
 
 public class SwerveDrive extends SubsystemBase {
-    private final DriveFFController driveFFController;
     private final PIDController rotationalVelocityFeedbackController;
-    private final PIDController translationalVelocityFeedbackController;
-    private final PIDController rotationalPositionFeedbackController;
 
     private Rotation2d rotationLock;
 
@@ -139,7 +136,7 @@ public class SwerveDrive extends SubsystemBase {
                 break;
         }
 
-        driveFFController = new DriveFFController(config);
+        // driveFFController = new DriveFFController(config);
         swerveSetpointGenerator = new SwerveSetpointGenerator(
             config.getPathplannerRobotConfig(), 
             Units.rotationsToRadians(
@@ -147,8 +144,8 @@ public class SwerveDrive extends SubsystemBase {
         );
         
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
-        translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
-        rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
+        // translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
+        // rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
     }
 
     @Override
@@ -183,6 +180,7 @@ public class SwerveDrive extends SubsystemBase {
             .addOdometryObservation(
                 new RobotState.OdometryObservation(
                     modulePositions,
+                    moduleStates,
                     new Rotation2d(gyroInputs.orientation.getZ()),
                     odometryTimestamp
                     ));
@@ -259,6 +257,7 @@ public class SwerveDrive extends SubsystemBase {
         for (int i = 0; i < 4; i++) {
             optimizedSetpoints[i] = modules[i].setTargetState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
         }
+
         Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
 
     }
