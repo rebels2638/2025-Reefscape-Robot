@@ -19,5 +19,6 @@ public interface ElevatorIO {
 
     public default void updateInputs(ElevatorIOInputs inputs) {}
     public default void setHeight(double height) {}
-    public default void setTorqueCurrentFOC(double baseUnitMagnitude) {}    
+    public default void setTorqueCurrentFOC(double baseUnitMagnitude) {}
+    public default void setVoltage(double baseUnitMagnitude) {}
 }

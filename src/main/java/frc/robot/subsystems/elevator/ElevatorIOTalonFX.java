@@ -12,11 +12,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -43,10 +45,18 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     private final StatusSignal<Current> elevatorSupplyCurrent2;
     private final StatusSignal<Temperature> elevatorTemperature2;
 
-    private final MotionMagicExpoTorqueCurrentFOC elevatorMotorRequest = new MotionMagicExpoTorqueCurrentFOC(0);
+    private final MotionMagicExpoTorqueCurrentFOC elevatorPositionRequest = new MotionMagicExpoTorqueCurrentFOC(0);
+    private final TorqueCurrentFOC elevatorTorqueRequest = new TorqueCurrentFOC(0);
+    private final VoltageOut elevatorVoltageRequest = new VoltageOut(0).withEnableFOC(true);
+
+    private final double kMAX_HEIGHT_METERS;
+    private final double kMIN_HEIGHT_METERS;
 
     @SuppressWarnings("static-access")
     public ElevatorIOTalonFX(ElevatorConfigBase config) {
+        kMAX_HEIGHT_METERS = config.getMaxHeightMeters();
+        kMIN_HEIGHT_METERS = config.getMinHeightMeters();
+
         // pivot motor
         TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
 
@@ -167,23 +177,36 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     @Override
     public void setHeight(double height) {
+        height = MathUtil.clamp(height, kMIN_HEIGHT_METERS, kMAX_HEIGHT_METERS);
+        
         elevatorMotor1.setControl(
-            elevatorMotorRequest.withPosition(height)
+            elevatorPositionRequest.withPosition(height)
         ); 
 
         elevatorMotor2.setControl(
-            elevatorMotorRequest.withPosition(height)
+            elevatorPositionRequest.withPosition(height)
         ); 
     }
 
     @Override
     public void setTorqueCurrentFOC(double baseUnitMagnitude) {
         elevatorMotor1.setControl(
-            new TorqueCurrentFOC(baseUnitMagnitude)
+            elevatorTorqueRequest.withOutput(baseUnitMagnitude)
         );
 
         elevatorMotor2.setControl(
-            new TorqueCurrentFOC(baseUnitMagnitude)
+            elevatorTorqueRequest.withOutput(baseUnitMagnitude)
+        );
+    }
+    
+    @Override
+    public void setVoltage(double baseUnitMagnitude) {
+        elevatorMotor1.setControl(
+            elevatorVoltageRequest.withOutput(baseUnitMagnitude)
+        );
+
+        elevatorMotor2.setControl(
+            elevatorVoltageRequest.withOutput(baseUnitMagnitude)
         );
     }
 }

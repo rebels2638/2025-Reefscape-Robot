@@ -117,4 +117,14 @@ public class ElevatorConfigProto extends ElevatorConfigBase {
     public double getMotorToOutputShaftRatio() {
         return 100.0;
     }
+
+    @Override
+    public double getMaxHeightMeters() {
+        return 1;
+    }
+
+    @Override 
+    public double getMinHeightMeters() {
+        return -1;
+    }
 }

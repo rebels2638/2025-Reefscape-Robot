@@ -2,18 +2,14 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.elevator.ElevatorConfigBase;
 import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
-import frc.robot.constants.pivot.PivotConfigBase;
-import frc.robot.constants.pivot.PivotConfigProto;
-import frc.robot.constants.pivot.PivotConfigSim;
 
 public class Elevator extends SubsystemBase {
-    private ElevatorIO pivotIO;
+    private ElevatorIO elevatorIO;
     private ElevatorIOInputsAutoLogged elevatorIOInputs = new ElevatorIOInputsAutoLogged();
 
     private final ElevatorConfigBase config;
@@ -23,13 +19,13 @@ public class Elevator extends SubsystemBase {
         switch (Constants.currentMode) {
             case Comp:
                 config = ElevatorConfigProto.getInstance();
-                pivotIO = new ElevatorIOTalonFX(config);
+                elevatorIO = new ElevatorIOTalonFX(config);
 
                 break;
 
             case CrescendoRobotBase:
                 config = ElevatorConfigProto.getInstance();
-                pivotIO = new ElevatorIOTalonFX(config);
+                elevatorIO = new ElevatorIOTalonFX(config);
 
                 break;
 
@@ -41,7 +37,7 @@ public class Elevator extends SubsystemBase {
 
             default:
                 config = ElevatorConfigProto.getInstance();
-                pivotIO = new ElevatorIO() {};
+                elevatorIO = new ElevatorIO() {};
 
                 break;
         }
@@ -49,15 +45,19 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        pivotIO.updateInputs(elevatorIOInputs);
+        elevatorIO.updateInputs(elevatorIOInputs);
         Logger.processInputs("Pivot", elevatorIOInputs);
     }
 
     public void setHeight(double height) {
-        pivotIO.setHeight(height);
+        elevatorIO.setHeight(height);
     }
 
     public void setTorqueCurrentFOC(double torque) {
-        pivotIO.setTorqueCurrentFOC(torque);
+        elevatorIO.setTorqueCurrentFOC(torque);
+    }
+
+    public void setVoltage(double voltage) {
+        elevatorIO.setVoltage(voltage);
     }
 }

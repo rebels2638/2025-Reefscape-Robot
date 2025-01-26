@@ -17,7 +17,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.constants.pivot.PivotConfigBase;
 import frc.robot.constants.roller.RollerConfigBase;
 
 public class RollerIOTalonFX implements RollerIO {
@@ -28,6 +27,9 @@ public class RollerIOTalonFX implements RollerIO {
     private final StatusSignal<Voltage> rollerAppliedVolts;
     private final StatusSignal<Current> rollerSupplyCurrent;
     private final StatusSignal<Temperature> rollerTemperature;
+
+    private final TorqueCurrentFOC rollerTorqueRequest = new TorqueCurrentFOC(0);
+    private final VoltageOut rollerVoltageRequest = new VoltageOut(0).withEnableFOC(true);
 
     @SuppressWarnings("static-access")
     public RollerIOTalonFX(RollerConfigBase config) {
@@ -96,14 +98,14 @@ public class RollerIOTalonFX implements RollerIO {
     @Override
     public void setTorqueCurrentFOC(double baseUnitMagnitude) {
         rollerMotor.setControl(
-            new TorqueCurrentFOC(baseUnitMagnitude)
+            rollerTorqueRequest.withOutput(baseUnitMagnitude)
         );
     }
 
     @Override
     public void setVoltage(double baseUnitMagnitude) {
         rollerMotor.setControl(
-            new VoltageOut(baseUnitMagnitude)
+            rollerVoltageRequest.withOutput(baseUnitMagnitude)
         );
     }
 }

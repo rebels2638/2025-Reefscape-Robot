@@ -36,4 +36,8 @@ public abstract class ElevatorConfigBase {
 
     // Gear ratio
     public abstract double getMotorToOutputShaftRatio();
+
+    public abstract double getMaxHeightMeters();
+    public abstract double getMinHeightMeters();
+
 }

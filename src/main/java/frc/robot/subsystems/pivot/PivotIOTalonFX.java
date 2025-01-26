@@ -40,7 +40,7 @@ public class PivotIOTalonFX implements PivotIO {
     private final MotionMagicExpoTorqueCurrentFOC pivotPositionRequest = 
         new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
     private final TorqueCurrentFOC pivotTorqueRequest = new TorqueCurrentFOC(0);
-    private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
+    private final VoltageOut pivotVoltageRequest = new VoltageOut(0).withEnableFOC(true);
 
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
