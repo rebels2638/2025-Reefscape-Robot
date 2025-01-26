@@ -54,4 +54,19 @@ public class ClawConfigProto extends ClawConfigBase {
     public boolean isNeutralModeBrake() {
         return true;
     }
+
+    @Override
+    public double getHighPassFilterTimeConstant() {
+        return 0.1;
+    }
+
+    @Override
+    public double getHighPassFilterUpperTrip() {
+        return 10;
+    }
+
+    @Override
+    public double getHighPassFilterLowerTrip() {
+        return 10;
+    }
 }

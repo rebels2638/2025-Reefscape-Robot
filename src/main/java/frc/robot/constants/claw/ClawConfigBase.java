@@ -18,4 +18,11 @@ public abstract class ClawConfigBase {
 
     // Neutral mode
     public abstract boolean isNeutralModeBrake();
+
+    // filtering
+    public abstract double getHighPassFilterTimeConstant();
+    public abstract double getHighPassFilterUpperTrip();
+    public abstract double getHighPassFilterLowerTrip();
+
+
 }
