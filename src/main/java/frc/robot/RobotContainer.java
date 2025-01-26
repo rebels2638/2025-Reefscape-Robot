@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
+import frc.robot.commands.claw.IntakeAlgay;
+import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.claw.Claw;
   
@@ -25,7 +27,8 @@ public class RobotContainer {
     claw = new Claw();
 
     xboxOperator.getAButton().onTrue(new InstantCommand(() -> claw.setVoltage(12)));
-    xboxOperator.getBButton().onTrue(new InstantCommand(() -> claw.setVoltage(0)));
+    xboxOperator.getXButton().onTrue(new IntakeAlgay(claw));
+    xboxOperator.getBButton().onTrue(new StopClaw(claw));
 
     //swerveDrive = new SwerveDrive();
     //swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
