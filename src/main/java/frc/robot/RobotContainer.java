@@ -5,6 +5,7 @@ import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.autoAligment.AutoAlign;
 import frc.robot.constants.swerve.SwerveCompConfig;
 import frc.robot.lib.input.XboxController;
+import frc.robot.subsystems.dashboard.ElasticDashboard;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
 public class RobotContainer {
@@ -16,6 +17,8 @@ public class RobotContainer {
   
   private final SwerveDrive swerveDrive;
 
+  private final ElasticDashboard dashboard;
+
   public RobotContainer() {
     this.xboxTester = new XboxController(1);
     this.xboxOperator = new XboxController(2);
@@ -23,6 +26,8 @@ public class RobotContainer {
 
     swerveDrive = new SwerveDrive();
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
+
+    dashboard = new ElasticDashboard(swerveDrive);
 
     xboxDriver.getAButton().onTrue(new AutoAlign(swerveDrive, new SwerveCompConfig()));
   }

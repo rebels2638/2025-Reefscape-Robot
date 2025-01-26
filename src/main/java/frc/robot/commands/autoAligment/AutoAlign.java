@@ -127,7 +127,8 @@ public class AutoAlign extends Command {
                             0
                     )
         );
-        targetPose = getNewTarget(currentPose, targetPose, rotationalMotionProfile, translationalMotionProfile);
+        // bummy code no work adfdgagddfbkjfbjkewheghj
+        // targetPose = getNewTarget(currentPose, targetPose, rotationalMotionProfile, translationalMotionProfile);
 
         // calculate the outputs
         double vx, vy, omega;
@@ -186,18 +187,18 @@ public class AutoAlign extends Command {
     private static Pose2d getNewTarget(Pose2d currentPose, Pose2d targetPose, TrapezoidProfile rotationProfile, TrapezoidProfile translationalProfile) {
         double distanceToTarget = calculateDistance(currentPose, targetPose);
         double robotRadius = 0.6;
-        double theta = calculateAngle(currentPose, targetPose);
+        double angleError = targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
         Pose2d angleEndpoint = new Pose2d(targetPose.getX() + (robotRadius + 0.2) * -Math.cos(targetPose.getRotation().getRadians()),
                                           targetPose.getY() + (robotRadius + 0.2) * -Math.sin(targetPose.getRotation().getRadians()),
                                           targetPose.getRotation());
-        double timeToRotationalTarget = rotationProfile.timeLeftUntil(targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
+        double timeToRotationalTarget = rotationProfile.timeLeftUntil(angleError);
         double timeToTranslationalTarget = translationalProfile.timeLeftUntil(distanceToTarget);
 
-        if (distanceToTarget < robotRadius && currentPose.getRotation().getRadians() > Math.toRadians(45)) {
+        if (distanceToTarget < robotRadius && angleError > Math.toRadians(45)) {
             targetPose = angleEndpoint;
-        } else if (timeToRotationalTarget > timeToTranslationalTarget) {
+        } /*else if (timeToRotationalTarget > timeToTranslationalTarget) {
             targetPose = angleEndpoint;
-        }
+        } */
         return targetPose;
     }
 }
