@@ -27,7 +27,7 @@ public class RobotContainer {
     swerveDrive = new SwerveDrive();
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
 
-    dashboard = new ElasticDashboard(swerveDrive);
+    dashboard = new ElasticDashboard(swerveDrive, new AutoAlign(swerveDrive, new SwerveCompConfig()));
 
     xboxDriver.getAButton().onTrue(new AutoAlign(swerveDrive, new SwerveCompConfig()));
   }

@@ -160,19 +160,19 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 kDRIVE_FF_POINTS,
                 
                 new PIDController(4, 0, 1.2),
-                0.05,
+                0.03,
 
                 new PIDController(1.9, 0, 0.1),
-                0.1,
+                0.085,
 
                 new PIDController(4, 0, 1.2),
-                0.05,
+                0.03,
 
                 new PIDController(4, 0, 1.2),
-                0.05,
+                0.03,
 
-                new PIDController(1.9, 0.01, 0),
-                0.1
+                new PIDController(1.9, 0, 0),
+                0.085
         );
 
     }

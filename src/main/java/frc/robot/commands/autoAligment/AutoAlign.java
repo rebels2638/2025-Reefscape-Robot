@@ -173,7 +173,9 @@ public class AutoAlign extends Command {
                                                              targetPose.getY() - currentPose.getY());
         Translation2d angleTranslation = new Translation2d(angleEndpoint.getX() - targetPose.getX(),
                                                            angleEndpoint.getY() - targetPose.getY());
+        Logger.recordOutput("AutoAlign/angleTranslation", angleTranslation);
 
+        //marked issues after here
         double dotMagProduct = MathUtil.clamp(((currentTranslation.getX() * angleTranslation.getX()) +
                          (currentTranslation.getY() * angleTranslation.getY())) / 
                          (calculatedDistanceToPose * calculateDistance(targetPose, angleEndpoint)),
