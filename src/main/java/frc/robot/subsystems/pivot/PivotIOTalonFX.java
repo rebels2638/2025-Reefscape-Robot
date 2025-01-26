@@ -10,12 +10,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -24,7 +26,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.pivot.PivotConfigBase;
-import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
 public class PivotIOTalonFX implements PivotIO {
     private TalonFX pivotMotor;
@@ -36,14 +37,23 @@ public class PivotIOTalonFX implements PivotIO {
     private final StatusSignal<Current> pivotSupplyCurrent;
     private final StatusSignal<Temperature> pivotTemperature;
 
-    private final MotionMagicExpoTorqueCurrentFOC pivotMotorRequest = new MotionMagicExpoTorqueCurrentFOC(0);
+    private final MotionMagicExpoTorqueCurrentFOC pivotPositionRequest = 
+        new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
+    private final TorqueCurrentFOC pivotTorqueRequest = new TorqueCurrentFOC(0);
+    private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
 
+    private final double kMAX_ANGLE_ROTATIONS;
+    private final double kMIN_ANGLE_ROTATIONS;
     @SuppressWarnings("static-access")
     public PivotIOTalonFX(PivotConfigBase config) {
+        kMAX_ANGLE_ROTATIONS = config.getMaxAngleRotations();
+        kMIN_ANGLE_ROTATIONS = config.getMinAngleRotations();
+
         // pivot motor
         TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
 
         // Motion magic expo
+        //fuck
         pivotConfig.Slot0.kP = config.getKP();
         pivotConfig.Slot0.kI = config.getKI();
         pivotConfig.Slot0.kD = config.getKD();
@@ -132,14 +142,27 @@ public class PivotIOTalonFX implements PivotIO {
     @Override
     public void setAngle(Rotation2d state) {
         pivotMotor.setControl(
-            pivotMotorRequest.withPosition(state.getRotations())
+            pivotPositionRequest.withPosition(
+                MathUtil.clamp(
+                    state.getRotations(),
+                    kMIN_ANGLE_ROTATIONS,
+                    kMAX_ANGLE_ROTATIONS
+                )
+            )
         ); 
+    }
+
+    @Override
+    public void setTorqueCurrentFOC(double baseUnitMagnitude) {
+        pivotMotor.setControl(
+            pivotTorqueRequest.withOutput(baseUnitMagnitude)
+        );
     }
 
     @Override
     public void setVoltage(double baseUnitMagnitude) {
         pivotMotor.setControl(
-            new VoltageOut(baseUnitMagnitude)
+            pivotVoltageRequest.withOutput(baseUnitMagnitude)
         );
     }
 }

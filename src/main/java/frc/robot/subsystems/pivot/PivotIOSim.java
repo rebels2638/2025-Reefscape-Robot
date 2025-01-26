@@ -96,7 +96,7 @@ public class PivotIOSim implements PivotIO {
     }
 
     @Override
-    public void setVoltage(double voltage) {
+    public void setTorqueCurrentFOC(double voltage) {
         appliedVolts = voltage;
         pivotSim.setInputVoltage(voltage);
 

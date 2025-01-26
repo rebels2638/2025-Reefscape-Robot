@@ -3,6 +3,7 @@ package frc.robot.subsystems.pivot;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Torque;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.pivot.PivotConfigBase;
@@ -52,6 +53,10 @@ public class Pivot extends SubsystemBase {
 
     public void setAngle(Rotation2d angle) {
         pivotIO.setAngle(angle);
+    }
+
+    public void setTorqueCurrentFOC(double torque) {
+        pivotIO.setTorqueCurrentFOC(torque);
     }
 
     public void setVoltage(double voltage) {

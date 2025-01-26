@@ -35,4 +35,8 @@ public abstract class PivotConfigBase {
 
     // Gear ratio
     public abstract double getMotorToOutputShaftRatio();
+
+    // limits
+    public abstract double getMaxAngleRotations();
+    public abstract double getMinAngleRotations();
 }

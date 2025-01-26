@@ -112,4 +112,14 @@ public class PivotConfigSim extends PivotConfigBase {
     public double getMotorToOutputShaftRatio() {
         return 100.0;
     }
+
+    @Override
+    public double getMaxAngleRotations() {
+        return 1;
+    }
+
+    @Override 
+    public double getMinAngleRotations() {
+        return -1;
+    }
 }

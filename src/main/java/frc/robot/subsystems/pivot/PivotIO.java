@@ -16,5 +16,6 @@ public interface PivotIO {
 
     public default void updateInputs(PivotIOInputs inputs) {}
     public default void setAngle(Rotation2d angle) {}
+    public default void setTorqueCurrentFOC(double baseUnitMagnitude) {}
     public default void setVoltage(double baseUnitMagnitude) {}    
 }
