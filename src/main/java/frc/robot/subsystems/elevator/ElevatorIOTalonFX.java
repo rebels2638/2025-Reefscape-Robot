@@ -47,7 +47,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     private final MotionMagicExpoTorqueCurrentFOC elevatorPositionRequest = new MotionMagicExpoTorqueCurrentFOC(0);
     private final TorqueCurrentFOC elevatorTorqueRequest = new TorqueCurrentFOC(0);
-    private final VoltageOut elevatorVoltageRequest = new VoltageOut(0).withEnableFOC(true);
+    private final VoltageOut elevatorVoltageRequest = new VoltageOut(0).withEnableFOC(false);
 
     private final double kMAX_HEIGHT_METERS;
     private final double kMIN_HEIGHT_METERS;
@@ -178,7 +178,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     @Override
     public void setHeight(double height) {
         height = MathUtil.clamp(height, kMIN_HEIGHT_METERS, kMAX_HEIGHT_METERS);
-        
+
         elevatorMotor1.setControl(
             elevatorPositionRequest.withPosition(height)
         ); 

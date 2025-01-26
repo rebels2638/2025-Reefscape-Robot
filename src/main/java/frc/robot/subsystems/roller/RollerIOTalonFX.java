@@ -29,7 +29,7 @@ public class RollerIOTalonFX implements RollerIO {
     private final StatusSignal<Temperature> rollerTemperature;
 
     private final TorqueCurrentFOC rollerTorqueRequest = new TorqueCurrentFOC(0);
-    private final VoltageOut rollerVoltageRequest = new VoltageOut(0).withEnableFOC(true);
+    private final VoltageOut rollerVoltageRequest = new VoltageOut(0).withEnableFOC(false);
 
     @SuppressWarnings("static-access")
     public RollerIOTalonFX(RollerConfigBase config) {
