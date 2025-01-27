@@ -24,6 +24,8 @@ import frc.robot.constants.swerve.*;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 public class RobotState {
   private static RobotState instance;
   public static RobotState getInstance() {
@@ -86,7 +88,9 @@ public class RobotState {
     robotRelativeVelocity = kinematics.toChassisSpeeds(observation.moduleStates);
 
     // Add pose to buffer at timestamp
-    poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition());    
+    poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition()); 
+     
+    Logger.recordOutput("RobotState/estimatedPosition", swerveDrivePoseEstimator.getEstimatedPosition());  
   }
 
   public void addVisionObservation(VisionObservation observation) {
@@ -110,6 +114,9 @@ public class RobotState {
 
     swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
     lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
+
+    Logger.recordOutput("RobotState/estimatedPosition", swerveDrivePoseEstimator.getEstimatedPosition());  
+
   }
 
   /**

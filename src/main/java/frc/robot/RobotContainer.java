@@ -20,14 +20,8 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
 
     swerveDrive = new SwerveDrive();
-    swerveDrive.setDefaultCommand(
-      new AbsoluteFieldDrive(swerveDrive, 
-        () -> -xboxDriver.getLeftX(),
-        () -> -xboxDriver.getLeftY(), 
-        () -> -xboxDriver.getRightX(),
-        () -> xboxDriver.getBButton().getAsBoolean(),
-        null
-        ));
+    swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
+
   }
 
   public static RobotContainer getInstance() {

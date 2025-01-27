@@ -195,6 +195,7 @@ public class SwerveDrive extends SubsystemBase {
 
     public void setTargetSpeed(ChassisSpeeds speeds) {
         ChassisSpeeds desiredSpeeds = speeds;
+        Logger.recordOutput("SwerveDrive/desiredSpeeds", desiredSpeeds);
 
         if (isTranslationSlowdownEnabled) {
             desiredSpeeds.vxMetersPerSecond *= this.translationCoefficient;
@@ -214,22 +215,6 @@ public class SwerveDrive extends SubsystemBase {
                 RobotState.getInstance().getEstimatedPose().getRotation().plus(angularVelocity));
         }
 
-        ChassisSpeeds adjustedSpeeds = desiredSpeeds;
-
-        double timestamp = HALUtil.getFPGATime()/ 1.0e6;
-
-        if (isChassisSpeedsDiscretizeEnabled && lastTimestamp > 0.0) {
-            double dt = timestamp-lastTimestamp;
-
-            adjustedSpeeds = ChassisSpeeds.discretize(
-                desiredSpeeds.vxMetersPerSecond, 
-                desiredSpeeds.vyMetersPerSecond,
-                desiredSpeeds.omegaRadiansPerSecond,
-                dt);
-        }
-
-        lastTimestamp = timestamp;
-
         if (isRotationLockEnabled) { // get the curr rot from robotstate and the argument from here
             double rotationalVelocity = MathUtil.clamp(
                 rotationalVelocityFeedbackController.calculate(
@@ -238,19 +223,19 @@ public class SwerveDrive extends SubsystemBase {
                 -config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC, 
                 config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC);
 
-            ChassisSpeeds fieldRel = ChassisSpeeds.fromRobotRelativeSpeeds(adjustedSpeeds, RobotState.getInstance().getEstimatedPose().getRotation());
-            fieldRel.omegaRadiansPerSecond = rotationalVelocity;
-            adjustedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRel, RobotState.getInstance().getEstimatedPose().getRotation());
+            desiredSpeeds.omegaRadiansPerSecond = rotationalVelocity;
         }
 
+        Logger.recordOutput("SwerveDrive/lockedRotationLock", desiredSpeeds);
+        
         SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
-            adjustedSpeeds,
+            desiredSpeeds,
             Timer.getFPGATimestamp() - previousSetpointCallTime // between calls of generate setpoint
         );
         previousSetpointCallTime = Timer.getFPGATimestamp();
-
         previousSetpoint = swerveSetpoint;
+
         Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.robotRelativeSpeeds());
 
         SwerveModuleState[] optimizedSetpoints = swerveSetpoint.moduleStates();
