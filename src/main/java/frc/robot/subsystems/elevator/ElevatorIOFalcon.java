@@ -90,7 +90,7 @@ public class ElevatorIOFalcon implements ElevatorIO {
 
         dt = Timer.getTimestamp() - dt;
 
-        double m1Rotations = BaseStatusSignal
+        double m1Rotations =  BaseStatusSignal
                 .getLatencyCompensatedValue(m1PositionStatusSignal, m1VelocityStatusSignal).in(Rotation);
         double m2Rotations = BaseStatusSignal
                 .getLatencyCompensatedValue(m2PositionStatusSignal, m2VelocityStatusSignal).in(Rotation);
