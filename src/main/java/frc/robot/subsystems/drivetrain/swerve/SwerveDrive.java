@@ -241,7 +241,9 @@ public class SwerveDrive extends SubsystemBase {
         previousSetpointCallTime = Timer.getFPGATimestamp();
         previousSetpoint = swerveSetpoint;
 
-        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.toString());
+        Logger.recordOutput("SwerveDrive/SetpointDT", previousSetpointCallTime);
+
+        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.robotRelativeSpeeds());
 
         SwerveModuleState[] optimizedSetpoints = swerveSetpoint.moduleStates();
         for (int i = 0; i < 4; i++) {
