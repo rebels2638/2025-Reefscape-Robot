@@ -211,7 +211,7 @@ public class SwerveDrive extends SubsystemBase {
                 speeds.vxMetersPerSecond,
                 speeds.vyMetersPerSecond,
                 speeds.omegaRadiansPerSecond,
-                RobotState.getInstance().getOdometryPose().getRotation().plus(angularVelocity));
+                RobotState.getInstance().getEstimatedPose().getRotation().plus(angularVelocity));
         }
 
         ChassisSpeeds adjustedSpeeds = desiredSpeeds;
@@ -233,14 +233,14 @@ public class SwerveDrive extends SubsystemBase {
         if (isRotationLockEnabled) { // get the curr rot from robotstate and the argument from here
             double rotationalVelocity = MathUtil.clamp(
                 rotationalVelocityFeedbackController.calculate(
-                    RobotState.getInstance().getOdometryPose().getRotation().getRadians(),
+                    RobotState.getInstance().getEstimatedPose().getRotation().getRadians(),
                     this.rotationLock.getRadians()), 
                 -config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC, 
                 config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC);
 
-            ChassisSpeeds fieldRel = ChassisSpeeds.fromRobotRelativeSpeeds(adjustedSpeeds, RobotState.getInstance().getOdometryPose().getRotation());
+            ChassisSpeeds fieldRel = ChassisSpeeds.fromRobotRelativeSpeeds(adjustedSpeeds, RobotState.getInstance().getEstimatedPose().getRotation());
             fieldRel.omegaRadiansPerSecond = rotationalVelocity;
-            adjustedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRel, RobotState.getInstance().getOdometryPose().getRotation());
+            adjustedSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRel, RobotState.getInstance().getEstimatedPose().getRotation());
         }
 
         SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(

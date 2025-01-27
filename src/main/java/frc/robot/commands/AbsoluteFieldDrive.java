@@ -66,7 +66,7 @@ public class AbsoluteFieldDrive extends Command {
         double omega = angMag * 12; // drivetrain_omega_max
         omega *= joystick.getAsBoolean() ? 1.0 : rotation_coeff;
 
-        ChassisSpeeds setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(Vx, Vy, omega, RobotState.getInstance().getOdometryPose().getRotation());
+        ChassisSpeeds setpoint = ChassisSpeeds.fromFieldRelativeSpeeds(Vx, Vy, omega, RobotState.getInstance().getEstimatedPose().getRotation());
         swerveSubsystem.setTargetSpeed(setpoint);
 
     }
