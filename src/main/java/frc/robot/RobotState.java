@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.*;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.interpolation.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,27 +19,31 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.constants.swerve.*;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class RobotState {
   private static RobotState instance;
   public static RobotState getInstance() {
-    if (instance == null) instance = new RobotState();
+    if (instance == null) instance = new RobotState(new SwerveCrescendoRobotBaseConfig());
     return instance;
   }
   
   public record OdometryObservation(SwerveModulePosition[] modulePositions, SwerveModuleState[] moduleStates, Rotation2d gyroAngle, double timestamp) {}
   public record VisionObservation(Pose2d visionPose, double timestamp, Matrix<N3, N1> stdDevs) {}
 
-  private static final double poseBufferSizeSeconds = 2.0;
 
-  private Pose2d odometryPose = new Pose2d();
-  private Pose2d estimatedPose = new Pose2d();
+  private static final double poseBufferSizeSeconds = 2.0;
+  private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(poseBufferSizeSeconds);
+
+  private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
   private double lastEstimatedPoseUpdateTime = 0;
 
-  private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(poseBufferSizeSeconds);
+  //TODO: DO THIS
   private final Matrix<N3, N1> qStdDevs = new Matrix<>(Nat.N3(), Nat.N1());
 
   // Odometry
@@ -52,15 +58,16 @@ public class RobotState {
   private Rotation2d lastGyroAngle = new Rotation2d();
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
 
-  private RobotState() {
-    for (int i = 0; i < 3; ++i) {
-      qStdDevs.set(i, 0, 0); // TODO: stdev measurements
-    }
+  //TODO: FIX THE CONFIGS!!!! THEY SUCK - the writer of the configs
+  private RobotState(SwerveConfigBase config) {
     kinematics = new SwerveDriveKinematics(
-        new Translation2d(0.38, -0.38),
-        new Translation2d(-0.38, -0.38),
-        new Translation2d(0.38, 0.38),
-        new Translation2d(-0.38, 0.38)); 
+        config.getSwerveDrivetrainConfig().kFRONT_LEFT_POSITION_METERS,
+        config.getSwerveDrivetrainConfig().kFRONT_RIGHT_POSITION_METERS,
+        config.getSwerveDrivetrainConfig().kBACK_LEFT_POSITION_METERS,
+        config.getSwerveDrivetrainConfig().kBACK_RIGHT_POSITION_METERS
+    ); 
+
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, lastGyroAngle, lastWheelPositions, new Pose2d());
   }
 
   /** Add odometry observation */
@@ -69,24 +76,22 @@ public class RobotState {
     lastWheelPositions = observation.modulePositions();
 
     if (observation.gyroAngle != null) {
-      // Update dtheta for twist if gyro connected
-      twist = new Twist2d(twist.dx, twist.dy, observation.gyroAngle().minus(lastGyroAngle).getRadians());
-      lastGyroAngle = observation.gyroAngle();
+        lastGyroAngle = observation.gyroAngle();
+    }
+    else {
+        lastGyroAngle = lastGyroAngle.plus(new Rotation2d(twist.dtheta));
     }
 
     // Add twist to odometry pose
-    odometryPose = odometryPose.exp(twist);
-    // Add pose to buffer at timestamp
-    poseBuffer.addSample(observation.timestamp(), odometryPose);
-    // Calculate diff from last odometry pose and add onto pose estimate
-    estimatedPose = estimatedPose.exp(twist);
+    swerveDrivePoseEstimator.updateWithTime(observation.timestamp, lastGyroAngle, lastWheelPositions);
     lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
-
     robotRelativeVelocity = kinematics.toChassisSpeeds(observation.moduleStates);
+
+    // Add pose to buffer at timestamp
+    poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition());    
   }
 
   public void addVisionObservation(VisionObservation observation) {
-
     // If measurement is old enough to be outside the pose buffer's timespan, skip.
     try {
       if (poseBuffer.getInternalBuffer().lastKey() - poseBufferSizeSeconds > observation.timestamp()) {
@@ -99,50 +104,13 @@ public class RobotState {
     }
 
     // Get odometry based pose at timestamp
-    var sample = poseBuffer.getSample(observation.timestamp());
+    Optional<Pose2d>  sample = poseBuffer.getSample(observation.timestamp());
     if (sample.isEmpty()) {
       // exit if not there
       return;
     }
 
-    // sample --> odometryPose transform and backwards of that
-    var sampleToOdometryTransform = new Transform2d(sample.get(), odometryPose);
-    var odometryToSampleTransform = new Transform2d(odometryPose, sample.get());
-    // get old estimate by applying odometryToSample Transform
-    Pose2d estimateAtTime = estimatedPose.plus(odometryToSampleTransform);
-
-    // Calculate 3 x 3 vision matrix
-    var r = new double[3];
-    for (int i = 0; i < 3; ++i) {
-      r[i] = observation.stdDevs().get(i, 0) * observation.stdDevs().get(i, 0);
-    }
-    // Solve for closed form Kalman gain for continuous Kalman filter with A = 0
-    // and C = I. See wpimath/algorithms.md.
-    Matrix<N3, N3> visionK = new Matrix<>(Nat.N3(), Nat.N3());
-    for (int row = 0; row < 3; ++row) {
-      double stdDev = qStdDevs.get(row, 0);
-      if (stdDev == 0.0) {
-        visionK.set(row, row, 0.0);
-      } else {
-        visionK.set(row, row, stdDev / (stdDev + Math.sqrt(stdDev * r[row])));
-      }
-    }
-    // difference between estimate and vision pose
-    Transform2d transform = new Transform2d(estimateAtTime, observation.visionPose());
-    // scale transform by visionK
-    var kTimesTransform =
-        visionK.times(
-            VecBuilder.fill(
-                transform.getX(), transform.getY(), transform.getRotation().getRadians()));
-    Transform2d scaledTransform =
-        new Transform2d(
-            kTimesTransform.get(0, 0),
-            kTimesTransform.get(1, 0),
-            Rotation2d.fromRadians(kTimesTransform.get(2, 0)));
-
-    // Recalculate current estimate by applying scaled transform to old estimate
-    // then replaying odometry data
-    estimatedPose = estimateAtTime.plus(scaledTransform).plus(sampleToOdometryTransform);
+    swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
     lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
   }
 
@@ -151,13 +119,12 @@ public class RobotState {
    * Clear pose buffer
    */
   public void resetPose(Pose2d initialPose) {
-    estimatedPose = initialPose;
-    odometryPose = initialPose;
+    swerveDrivePoseEstimator.resetPosition(lastGyroAngle, lastWheelPositions, initialPose);
     poseBuffer.clear();
   }
 
   public Pose2d getEstimatedPose() {
-    return estimatedPose;
+    return swerveDrivePoseEstimator.getEstimatedPosition();
   }
 
   public Pose2d getPredictedPose(double translationLookaheadS, double rotationLookaheadS) {
@@ -171,10 +138,5 @@ public class RobotState {
 
   public Pose2d getPredictedPose(double timestamp) {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
-  }
-
-  @AutoLogOutput(key = "RobotState/OdometryPose")
-  public Pose2d getOdometryPose() {
-    return odometryPose;
   }
 }
