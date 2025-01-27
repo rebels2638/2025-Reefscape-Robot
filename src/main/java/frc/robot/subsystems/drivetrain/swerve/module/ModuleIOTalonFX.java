@@ -18,11 +18,12 @@ import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -65,12 +66,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final double kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS;
     private final double kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
 
-    private double modulePosition;
-    private double moduleVelocity;
-    private Rotation2d moduleAngle;
-
     private final GeneralConfig generalConfig;
     private final int moduleID;
+
+    private double currentDriveVelo;
 
     @SuppressWarnings("static-access")
     public ModuleIOTalonFX(SwerveConfigBase configBase, SpecificConfig specificConfig, int moduleID) {
@@ -100,16 +99,25 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveConfig.Slot0.kA = generalConfig.kDRIVE_KA;
         driveConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
-        driveConfig.MotionMagic.MotionMagicAcceleration = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC
-                * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
-
-        driveConfig.MotionMagic.MotionMagicJerk = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC
-                * kDRIVE_METERS_TO_MOTOR_ROTATIONS;
-
+        driveConfig.MotionMagic.MotionMagicAcceleration = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC;
+        driveConfig.MotionMagic.MotionMagicJerk = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC;
         // encoder
+        // Cancoder + encoder
         driveConfig.ClosedLoopGeneral.ContinuousWrap = generalConfig.kDRIVE_CONTINUOUS_WRAP;
-        // driveConfig.Feedback.SensorToMechanismRatio =
-        // config.kDRIVE_SENSOR_TO_MECHANISM_RATIO; // TODO: SHOULD WE USE THIS?!
+        driveConfig.Feedback.SensorToMechanismRatio = 
+                generalConfig.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO /
+                (generalConfig.kDRIVE_WHEEL_RADIUS_METERS * 
+                2 * Math.PI);
+
+        driveConfig.MotorOutput.NeutralMode = 
+                generalConfig.kDRIVE_IS_NEUTRAL_MODE_BRAKE ? 
+                        NeutralModeValue.Brake : 
+                        NeutralModeValue.Coast;
+
+        driveConfig.MotorOutput.Inverted = 
+                specificConfig.kDRIVE_IS_INVERTED ?
+                InvertedValue.Clockwise_Positive :
+                InvertedValue.CounterClockwise_Positive;
 
         // Current and torque limiting
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -151,6 +159,16 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerConfig.MotionMagic.MotionMagicExpo_kV = generalConfig.kSTEER_MOTION_MAGIC_EXPO_KV;
         steerConfig.MotionMagic.MotionMagicCruiseVelocity = generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC;
 
+        steerConfig.MotorOutput.NeutralMode = 
+                generalConfig.kSTEER_IS_NEUTRAL_MODE_BRAKE ? 
+                        NeutralModeValue.Brake : 
+                        NeutralModeValue.Coast;
+
+        steerConfig.MotorOutput.Inverted = 
+                specificConfig.kSTEER_IS_INVERTED ?
+                InvertedValue.Clockwise_Positive :
+                InvertedValue.CounterClockwise_Positive;
+                
         // Cancoder + encoder
         steerConfig.ClosedLoopGeneral.ContinuousWrap = generalConfig.kSTEER_CONTINUOUS_WRAP;
         steerConfig.Feedback.FeedbackRemoteSensorID = specificConfig.kCANCODER_CAN_ID;
@@ -231,17 +249,17 @@ public class ModuleIOTalonFX implements ModuleIO {
     @Override
     @SuppressWarnings("static-access")
     public void updateInputs(ModuleIOInputs inputs) {
-
-        double driveRotations = BaseStatusSignal
+        double drivePosition = BaseStatusSignal
                 .getLatencyCompensatedValue(drivePositionStatusSignal, driveVelocityStatusSignal).in(Rotation);
+
         double steerRotations = BaseStatusSignal
                 .getLatencyCompensatedValue(steerPositionStatusSignal, steerVelocityStatusSignal).in(Rotation);
 
         inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
 
-        inputs.drivePositionMeters = driveRotations * kDRIVE_MOTOR_ROTATIONS_TO_METERS;
+        inputs.drivePositionMeters = drivePosition;
         inputs.driveVelocityMetersPerSec = driveVelocityStatusSignal.getValue().in(RotationsPerSecond);
-
+        
         inputs.driveCurrentDrawAmps = driveSupplyCurrent.getValue().in(Amps);
         inputs.driveAppliedVolts = driveAppliedVolts.getValue().in(Volts);
         inputs.driveTemperatureFahrenheit = driveTemperature.getValue().in(Fahrenheit);
@@ -250,15 +268,15 @@ public class ModuleIOTalonFX implements ModuleIO {
         inputs.steerPosition = new Rotation2d(
                 Units.rotationsToRadians(steerRotations));
         inputs.steerVelocityRadPerSec = steerVelocityStatusSignal.getValue().in(RadiansPerSecond);
+
         inputs.steerCurrentDrawAmps = steerSupplyCurrent.getValue().in(Amps);
         inputs.steerAppliedVolts = steerAppliedVolts.getValue().in(Volts);
         inputs.steerTemperatureFahrenheit = steerTemperature.getValue().in(Fahrenheit);
 
-        this.moduleAngle = inputs.steerCANCODERAbsolutePosition;
-        this.modulePosition = inputs.drivePositionMeters;
-        this.moduleVelocity = inputs.driveVelocityMetersPerSec;
+        Logger.recordOutput("SwerveDrive/module" + moduleID + "/driveClosedLoopReference", driveMotor.getClosedLoopReference().getValueAsDouble());
+        Logger.recordOutput("SwerveDrive/module" + moduleID + "/driveClosedLoopOutput", driveMotor.getClosedLoopOutput().getValueAsDouble());
 
-
+        currentDriveVelo = inputs.driveVelocityMetersPerSec;
     }
 
     // TODO: validate this later
@@ -273,39 +291,17 @@ public class ModuleIOTalonFX implements ModuleIO {
                         state.speedMetersPerSecond,
                         -generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC,
                         generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC)
-                        ));
-                        
+                        ).
+                withAcceleration(
+                        Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
+                        generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC :
+                        generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC
+                ));
+        
         steerMotor.setControl(
                 steerMotorRequest.withPosition(
                         state.angle.getRotations())); // TODO: ENSURE THAT THE MODULE HAS PROPER
                                                                               // CONTINUES WRAP!!!!!!
-    }
-
-    @Override
-    public SwerveModuleState setTargetState(SwerveModuleState state) {
-        SwerveModuleState optimizedState = optimize(state, moduleAngle);
-        setState(optimizedState);
-        return optimizedState;
-    }
-
-    private SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
-      var delta = desiredState.angle.minus(currentAngle);
-      if (Math.abs(delta.getDegrees()) > 90.0) {
-        return new SwerveModuleState(
-            -desiredState.speedMetersPerSecond, desiredState.angle.rotateBy(Rotation2d.kPi));
-      } else {
-        return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
-      }
-    }
-
-    @Override
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(this.moduleVelocity, this.moduleAngle);
-    }
-
-    @Override
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(this.modulePosition, this.moduleAngle);
     }
 
     @Override
