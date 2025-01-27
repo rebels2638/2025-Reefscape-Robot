@@ -13,9 +13,6 @@ public class Claw extends SubsystemBase {
     private ClawIO clawIO;
     private ClawIOInputsAutoLogged clawIOInputs = new ClawIOInputsAutoLogged();
 
-    private final LinearFilter currentFilter;
-    private boolean inClaw = false;
-
     private final ClawConfigBase config;
     
 
@@ -46,30 +43,16 @@ public class Claw extends SubsystemBase {
 
                 break;
         }
-
-        currentFilter = LinearFilter.highPass(config.getHighPassFilterTimeConstant(), 0.02);
     }
 
     @Override
     public void periodic() {
         clawIO.updateInputs(clawIOInputs);
         Logger.processInputs("Claw", clawIOInputs);
-
-        double filteredSpeed = currentFilter.calculate(clawIOInputs.clawVelocityRadPerSec);
-        if (filteredSpeed >= config.getHighPassFilterUpperTrip()) {
-            inClaw = true;
-        }
-        else if (filteredSpeed <= config.getHighPassFilterLowerTrip()) {
-            inClaw = false;
-        }
-        Logger.recordOutput("Claw/filteredSpeed", filteredSpeed);
-        Logger.recordOutput("Claw/inClaw", inClaw);
-
     }
 
-    // this only will activate once the filter was 
-    public boolean inClaw() {
-        return inClaw;
+    public double getVelocityRadPerSec() {
+        return clawIOInputs.clawVelocityRadPerSec;
     }
 
     public void setTorqueCurrentFOC(double current) {

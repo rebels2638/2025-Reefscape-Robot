@@ -7,6 +7,8 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.superstructure.Superstructure.CoralState;
+import frc.robot.superstructure.Superstructure.AlgayState;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -30,6 +32,11 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static class SuperstructureConfig {
+    public static final CoralState kCORAL_STARTING_STATE = CoralState.OUT_SIDE;
+    public static final AlgayState kALGAY_STARTING_STATE = AlgayState.OUT_SIDE;
   }
 
   public static class OperatorConstants {

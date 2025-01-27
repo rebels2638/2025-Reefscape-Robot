@@ -7,6 +7,7 @@ import frc.robot.commands.claw.IntakeAlgay;
 import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.claw.Claw;
+import frc.robot.superstructure.Superstructure;
   
 public class RobotContainer {
   public static RobotContainer instance = null;
@@ -18,6 +19,7 @@ public class RobotContainer {
   //private final SwerveDrive swerveDrive;
 
   private final Claw claw;
+  private final Superstructure superstructure;
   
   public RobotContainer() {
     this.xboxTester = new XboxController(1);
@@ -25,9 +27,10 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
 
     claw = new Claw();
+    superstructure = new Superstructure(claw);
 
     xboxOperator.getAButton().onTrue(new InstantCommand(() -> claw.setVoltage(12)));
-    xboxOperator.getXButton().onTrue(new IntakeAlgay(claw));
+    xboxOperator.getXButton().onTrue(new IntakeAlgay(claw, superstructure));
     xboxOperator.getBButton().onTrue(new StopClaw(claw));
 
     //swerveDrive = new SwerveDrive();
