@@ -24,8 +24,6 @@ import frc.robot.constants.swerve.*;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-
 public class RobotState {
   private static RobotState instance;
   public static RobotState getInstance() {
