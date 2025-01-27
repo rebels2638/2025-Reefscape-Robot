@@ -69,7 +69,12 @@ public class SwerveDrive extends SubsystemBase {
     private double rotationCoefficient = 0.5;
 
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-    SwerveModuleState[] moduleStates = new SwerveModuleState[4];
+    SwerveModuleState[] moduleStates = { // has to be set to a value so not null
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState(),
+        new SwerveModuleState()
+    };
 
     private final SwerveSetpointGenerator swerveSetpointGenerator;
     private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
@@ -172,8 +177,8 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         for (int i = 0; i < 4; i++) {
-            modulePositions[i] = modules[i].getPosition();
-            moduleStates[i] = modules[i].getState();
+            modulePositions[i] = new SwerveModulePosition(moduleInputs[i].drivePositionMeters, moduleInputs[i].steerPosition);
+            moduleStates[i] = new SwerveModuleState(moduleInputs[i].driveVelocityMetersPerSec, moduleInputs[i].steerPosition);
         }
 
         RobotState.getInstance()
@@ -236,7 +241,7 @@ public class SwerveDrive extends SubsystemBase {
         previousSetpointCallTime = Timer.getFPGATimestamp();
         previousSetpoint = swerveSetpoint;
 
-        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.robotRelativeSpeeds());
+        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.toString());
 
         SwerveModuleState[] optimizedSetpoints = swerveSetpoint.moduleStates();
         for (int i = 0; i < 4; i++) {
