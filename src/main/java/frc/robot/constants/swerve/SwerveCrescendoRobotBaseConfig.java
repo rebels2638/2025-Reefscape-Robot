@@ -21,20 +21,20 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 60.0,
                 60.0,
                 -60.0,
+                2.5,
+                0.2,
+                4.2,
+                15,
                 0.0,
-                0.00,
-                0.0,
-                0,
-                0.0,
-                0.0,
+                3,
                 7,
                 14,
-                5.0,
+                40.0,
                 4,
                 4,
                 true,
-                5.143,
-                0.048,
+                6.12,
+                0.04861,
                 false,
                 30.0,
                 1.5,
@@ -56,51 +56,51 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 21.428,
                 true,
                 FeedbackSensorSourceValue.FusedCANcoder,
-                SensorDirectionValue.Clockwise_Positive,
+                SensorDirectionValue.CounterClockwise_Positive,
                 1);
 
         this.kFRONT_LEFT_CONFIG = new SwerveModuleConfig(
                 4,
                 5,
-                false,
-                false,
+                true,
+                true,
                 true,
                 true,
                 10,
-                -0.13,
+                -0.86,
                 kSHARED_GENERAL_CONFIG);
 
         this.kFRONT_RIGHT_CONFIG = new SwerveModuleConfig(
                 2,
                 3,
-                false,
-                false,
+                true,
+                true,
                 true,
                 true,
                 9,
-                -0.32,
+                -0.68,
                 kSHARED_GENERAL_CONFIG);
 
         this.kBACK_LEFT_CONFIG = new SwerveModuleConfig(
                 6,
                 7,
-                false,
-                false,
+                true,
+                true,
                 true,
                 true,
                 11,
-                -0.2,
+                -0.78,
                 kSHARED_GENERAL_CONFIG);
 
         this.kBACK_RIGHT_CONFIG = new SwerveModuleConfig(
                 1,
                 0,
-                false,
-                false,
+                true,
+                true,
                 true,
                 true,
                 8,
-                0,
+                -0.98,
                 kSHARED_GENERAL_CONFIG);
 
         this.kSWERVE_DRIVETRAIN_CONFIG = new SwerveDrivetrainConfig(
@@ -116,14 +116,14 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
             );
         
         this.kPATHPLANNER_ROBOT_CONFIG = new RobotConfig(
-            74.088, 
-            6.883,
+            27.088, 
+            3.5,
             new ModuleConfig(
                 kSHARED_GENERAL_CONFIG.kDRIVE_WHEEL_RADIUS_METERS,
                 kSHARED_GENERAL_CONFIG.kDRIVE_TRUE_MAX_VELOCITY_METERS_PER_SEC,
                 1.2,
                 // TODO: CHECK THIS REDUCTION!!!
-                DCMotor.getKrakenX60Foc(1).withReduction(kSHARED_GENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO),
+                DCMotor.getFalcon500(1).withReduction(kSHARED_GENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO),
                 kSHARED_GENERAL_CONFIG.kDRIVE_STATOR_CURRENT_LIMIT,
                 1
             ),
@@ -145,18 +145,17 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 new double[] { 0, kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC, 0 });
         kDRIVE_FF_POINTS
                 .add(new double[] { kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC,
-                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC, 1.8 }); // 1.6
+                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC, 0 }); // 1.6
         kDRIVE_FF_POINTS.add(
                 new double[] { kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC / 2,
-                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC, 0.8 }); // .6
+                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC, 0 }); // .6
         kDRIVE_FF_POINTS
                 .add(new double[] { kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC,
-                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC / 2, 0.25 });// 0.2
+                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC / 2, 0 });// 0.2
         kDRIVE_FF_POINTS.add(
                 new double[] { kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_TRANSLATIONAL_VELOCITY_METERS_PER_SEC / 2,
-                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC / 2, 0.2 }); // .2
+                        kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC / 2, 0 }); // .2
 
-        // instanciate after drivetrain config
         this.kSWERVE_DRIVETRAIN_CONTROLLER_CONFIG = new SwerveControllerConfig(
                 kDRIVE_FF_POINTS,
                 new PIDController(0, 0, 0),
