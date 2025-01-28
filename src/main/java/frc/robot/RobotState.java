@@ -72,7 +72,11 @@ public class RobotState {
 
   /** Add odometry observation */
   public void addOdometryObservation(OdometryObservation observation) {
-    Logger.recordOutput("RobotState", observation);
+    Logger.recordOutput("RobotState/observation/timestamp", observation.timestamp);
+    Logger.recordOutput("RobotState/observation/gyroAngle", observation.gyroAngle);
+    Logger.recordOutput("RobotState/observation/modulePositions", observation.modulePositions);
+    Logger.recordOutput("RobotState/observation/moduleStates", observation.moduleStates);
+
     Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.modulePositions());
     lastWheelPositions = observation.modulePositions();
 
@@ -82,7 +86,8 @@ public class RobotState {
     else {
         lastGyroAngle = lastGyroAngle.plus(new Rotation2d(twist.dtheta));
     }
-
+    Logger.recordOutput("RobotState/lastGyroAngle", lastGyroAngle);
+    
     // Add twist to odometry pose
     swerveDrivePoseEstimator.updateWithTime(observation.timestamp, lastGyroAngle, lastWheelPositions);
     lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
@@ -91,7 +96,7 @@ public class RobotState {
     // Add pose to buffer at timestamp
     poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition()); 
      
-    Logger.recordOutput("RobotState/estimatedPosition", swerveDrivePoseEstimator.getEstimatedPosition());  
+    Logger.recordOutput("RobotState/estimatedPosition", getEstimatedPose());  
   }
 
   public void addVisionObservation(VisionObservation observation) {

@@ -182,6 +182,9 @@ public class SwerveDrive extends SubsystemBase {
             moduleStates[i] = new SwerveModuleState(moduleInputs[i].driveVelocityMetersPerSec, moduleInputs[i].steerPosition);
         }
 
+        Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
+        Logger.recordOutput("SwerveDrive/measuredModulePositions", modulePositions);
+
         RobotState.getInstance()
             .addOdometryObservation(
                 new RobotState.OdometryObservation(
@@ -198,9 +201,6 @@ public class SwerveDrive extends SubsystemBase {
                 DriveFeedforwards.zeros(4)
             );
         }
-
-        Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
-        Logger.recordOutput("SwerveDrive/measuredModulePositions", modulePositions);
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
