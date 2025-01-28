@@ -134,6 +134,10 @@ public class RobotState {
     poseBuffer.clear();
   }
 
+  public void zeroGyro() {
+    resetPose(new Pose2d(getEstimatedPose().getTranslation(), new Rotation2d()));
+  }
+
   public Pose2d getEstimatedPose() {
     return swerveDrivePoseEstimator.getEstimatedPosition();
   }
