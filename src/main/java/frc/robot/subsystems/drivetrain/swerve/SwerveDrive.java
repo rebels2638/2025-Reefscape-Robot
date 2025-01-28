@@ -2,6 +2,8 @@ package frc.robot.subsystems.drivetrain.swerve;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -149,7 +152,8 @@ public class SwerveDrive extends SubsystemBase {
             Units.rotationsToRadians(
                 config.getSharedGeneralConfig().kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC)
         );
-        Logger.recordOutput("aidjnwekfjnds",config.getPathplannerRobotConfig().MOI);
+        
+        // Logger.recordOutput("aidjnwekfjnds",config.getPathplannerRobotConfig().MOI);
         
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
         // translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
@@ -242,19 +246,17 @@ public class SwerveDrive extends SubsystemBase {
         
         double dt = Timer.getFPGATimestamp() - previousSetpointCallTime; 
         Logger.recordOutput("SwerveDrive/dt", dt);
-        SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
+        previousSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
             desiredSpeeds,
             dt // between calls of generate setpoint
         );
         previousSetpointCallTime = Timer.getFPGATimestamp();
-        previousSetpoint = swerveSetpoint;
 
         Logger.recordOutput("SwerveDrive/SetpointDT", previousSetpointCallTime);
+        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
 
-        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", swerveSetpoint.robotRelativeSpeeds());
-
-        SwerveModuleState[] optimizedSetpoints = swerveSetpoint.moduleStates();
+        SwerveModuleState[] optimizedSetpoints = previousSetpoint.moduleStates();
         for (int i = 0; i < 4; i++) {
             optimizedSetpoints[i] = modules[i].setTargetState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
         }
