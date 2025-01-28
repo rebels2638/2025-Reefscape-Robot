@@ -31,7 +31,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 14,
                 40.0,
                 4,
-                4,
+                5.4,
                 true,
                 6.12,
                 0.04861,
@@ -50,7 +50,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 10,//0.1
                 0.25,
                 2.6,
-                3,
+                6,
                 true,
                 21.428,
                 21.428,
