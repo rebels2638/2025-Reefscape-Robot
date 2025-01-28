@@ -75,11 +75,7 @@ public class SwerveDrive extends SubsystemBase {
     };
 
     private final SwerveSetpointGenerator swerveSetpointGenerator;
-    private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
-        new ChassisSpeeds(), 
-        moduleStates, 
-        DriveFeedforwards.zeros(4)
-    );
+    private SwerveSetpoint previousSetpoint = null;
 
     double previousSetpointCallTime = Timer.getFPGATimestamp();
 
@@ -199,6 +195,14 @@ public class SwerveDrive extends SubsystemBase {
 
         // ChassisSpeeds actualChassisSpeeds = RobotState.getInstance().getChassisSpeeds();
 
+        if (previousSetpoint == null) {
+            previousSetpoint = new SwerveSetpoint(
+                RobotState.getInstance().getRobotRelativeSpeeds(), 
+                moduleStates, 
+                DriveFeedforwards.zeros(4)
+            );
+        }
+
         Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
         Logger.recordOutput("SwerveDrive/measuredModulePositions", modulePositions);
         // Logger.recordOutput("SwerveDrive/measuredChassisSpeeds", actualChassisSpeeds);
@@ -218,6 +222,7 @@ public class SwerveDrive extends SubsystemBase {
     }
     
     public void driveRobotRelative(ChassisSpeeds desiredSpeeds) {
+        if (previousSetpoint == null) { return; }
         Logger.recordOutput("SwerveDrive/desiredSpeeds", desiredSpeeds);
 
         if (isTranslationSlowdownEnabled) {
@@ -252,13 +257,13 @@ public class SwerveDrive extends SubsystemBase {
             dt // between calls of generate setpoint
         );
         previousSetpointCallTime = Timer.getFPGATimestamp();
-
         Logger.recordOutput("SwerveDrive/SetpointDT", previousSetpointCallTime);
         Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
 
         SwerveModuleState[] optimizedSetpoints = previousSetpoint.moduleStates();
         for (int i = 0; i < 4; i++) {
-            optimizedSetpoints[i] = modules[i].setTargetState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
+            optimizedSetpoints[i].optimize(moduleStates[i].angle);
+            modules[i].setState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
         }
 
         Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);

@@ -131,18 +131,18 @@ public final class SwerveSimConfig extends SwerveConfigBase {
             27.088, 
             3.5,
             new ModuleConfig(
-                kSHARED_GENERAL_CONFIG.kDRIVE_WHEEL_RADIUS_METERS,
-                kSHARED_GENERAL_CONFIG.kDRIVE_TRUE_MAX_VELOCITY_METERS_PER_SEC,
+                this.kSHARED_GENERAL_CONFIG.kDRIVE_WHEEL_RADIUS_METERS,
+                this.kSHARED_GENERAL_CONFIG.kDRIVE_TRUE_MAX_VELOCITY_METERS_PER_SEC,
                 1.2,
                 // TODO: CHECK THIS REDUCTION!!!
-                DCMotor.getFalcon500(1).withReduction(kSHARED_GENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO),
-                kSHARED_GENERAL_CONFIG.kDRIVE_STATOR_CURRENT_LIMIT,
+                DCMotor.getFalcon500(1).withReduction(this.kSHARED_GENERAL_CONFIG.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO),
+                this.kSHARED_GENERAL_CONFIG.kDRIVE_STATOR_CURRENT_LIMIT,
                 1
             ),
-            kSWERVE_DRIVETRAIN_CONFIG.kFRONT_LEFT_POSITION_METERS,
-            kSWERVE_DRIVETRAIN_CONFIG.kFRONT_RIGHT_POSITION_METERS,
-            kSWERVE_DRIVETRAIN_CONFIG.kBACK_LEFT_POSITION_METERS,
-            kSWERVE_DRIVETRAIN_CONFIG.kBACK_RIGHT_POSITION_METERS
+            this.kSWERVE_DRIVETRAIN_CONFIG.kFRONT_LEFT_POSITION_METERS,
+            this.kSWERVE_DRIVETRAIN_CONFIG.kFRONT_RIGHT_POSITION_METERS,
+            this.kSWERVE_DRIVETRAIN_CONFIG.kBACK_LEFT_POSITION_METERS,
+            this.kSWERVE_DRIVETRAIN_CONFIG.kBACK_RIGHT_POSITION_METERS
         );
         ArrayList<double[]> kDRIVE_FF_POINTS = new ArrayList<double[]>();
         kDRIVE_FF_POINTS.add(new double[] { 0, 0, 0 });

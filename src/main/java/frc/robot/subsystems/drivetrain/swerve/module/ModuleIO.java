@@ -31,6 +31,6 @@ public interface ModuleIO {
 
     public default void updateInputs(ModuleIOInputs inputs) {}
     public default void setState(SwerveModuleState state) {}
-    public default SwerveModuleState setTargetState(SwerveModuleState state) {return new SwerveModuleState(0.0, new Rotation2d());}
+   // public default SwerveModuleState setTargetState(SwerveModuleState state) {return new SwerveModuleState(0.0, new Rotation2d());}
     public default void setDriveVoltage(double baseUnitMagnitude) {}
 }

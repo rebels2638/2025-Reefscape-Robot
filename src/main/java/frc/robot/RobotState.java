@@ -132,6 +132,9 @@ public class RobotState {
     return swerveDrivePoseEstimator.getEstimatedPosition();
   }
 
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return robotRelativeVelocity;
+  }
   public Pose2d getPredictedPose(double translationLookaheadS, double rotationLookaheadS) {
     return getEstimatedPose()
         .transformBy(
