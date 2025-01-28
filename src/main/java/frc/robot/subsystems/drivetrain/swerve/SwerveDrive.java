@@ -41,12 +41,7 @@ public class SwerveDrive extends SubsystemBase {
 
     private ModuleIO[] modules;
 
-    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-                new Translation2d(0.38, -0.38),
-                new Translation2d(-0.38, -0.38),
-                new Translation2d(0.38, 0.38),
-                new Translation2d(-0.38, 0.38));
-
+    private SwerveDriveKinematics kinematics;
     private ModuleIOInputsAutoLogged[] moduleInputs = {
             new ModuleIOInputsAutoLogged(),
             new ModuleIOInputsAutoLogged(),
@@ -68,8 +63,8 @@ public class SwerveDrive extends SubsystemBase {
     private double translationCoefficient = 0.5;
     private double rotationCoefficient = 0.5;
 
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-    SwerveModuleState[] moduleStates = { // has to be set to a value so not null
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    private SwerveModuleState[] moduleStates = { // has to be set to a value so not null
         new SwerveModuleState(),
         new SwerveModuleState(),
         new SwerveModuleState(),
@@ -140,6 +135,13 @@ public class SwerveDrive extends SubsystemBase {
 
                 break;
         }
+
+        kinematics = new SwerveDriveKinematics(
+            config.getSwerveDrivetrainConfig().kFRONT_LEFT_POSITION_METERS,
+            config.getSwerveDrivetrainConfig().kFRONT_RIGHT_POSITION_METERS,
+            config.getSwerveDrivetrainConfig().kBACK_LEFT_POSITION_METERS,
+            config.getSwerveDrivetrainConfig().kBACK_RIGHT_POSITION_METERS
+        ); 
 
         // driveFFController = new DriveFFController(config);
         swerveSetpointGenerator = new SwerveSetpointGenerator(
@@ -238,10 +240,12 @@ public class SwerveDrive extends SubsystemBase {
 
         Logger.recordOutput("SwerveDrive/lockedRotationLock", desiredSpeeds);
         
+        double dt = Timer.getFPGATimestamp() - previousSetpointCallTime; 
+        Logger.recordOutput("SwerveDrive/dt", dt);
         SwerveSetpoint swerveSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
             desiredSpeeds,
-            Timer.getFPGATimestamp() - previousSetpointCallTime // between calls of generate setpoint
+            dt // between calls of generate setpoint
         );
         previousSetpointCallTime = Timer.getFPGATimestamp();
         previousSetpoint = swerveSetpoint;
