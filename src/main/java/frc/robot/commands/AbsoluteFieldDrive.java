@@ -74,7 +74,7 @@ public class AbsoluteFieldDrive extends Command {
             heading.getAsDouble() * config.getSwerveDrivetrainConfig().kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC
         );
 
-        swerve.setTargetSpeed(speeds); // Drive the robot using the calculated speeds.
+        swerve.driveFieldRelative(speeds); // Drive the robot using the calculated speeds.
     }
 
     // Called when the command ends or is interrupted.

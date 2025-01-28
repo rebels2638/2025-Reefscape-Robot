@@ -147,6 +147,7 @@ public class SwerveDrive extends SubsystemBase {
             Units.rotationsToRadians(
                 config.getSharedGeneralConfig().kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC)
         );
+        Logger.recordOutput("aidjnwekfjnds",config.getPathplannerRobotConfig().MOI);
         
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
         // translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
@@ -195,11 +196,22 @@ public class SwerveDrive extends SubsystemBase {
         Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
         Logger.recordOutput("SwerveDrive/measuredModulePositions", modulePositions);
         // Logger.recordOutput("SwerveDrive/measuredChassisSpeeds", actualChassisSpeeds);
-
     }
 
-    public void setTargetSpeed(ChassisSpeeds speeds) {
-        ChassisSpeeds desiredSpeeds = speeds;
+    private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
+        Rotation2d angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec * config.getSwerveDrivetrainConfig().kROTATION_COMPENSATION_COEFFICIENT);
+        if (angularVelocity.getRadians() != 0.0) {
+            speeds = ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
+                speeds.vxMetersPerSecond,
+                speeds.vyMetersPerSecond,
+                speeds.omegaRadiansPerSecond,
+                RobotState.getInstance().getEstimatedPose().getRotation().plus(angularVelocity));
+        }
+
+        return ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotState.getInstance().getEstimatedPose().getRotation());
+    }
+    
+    public void driveRobotRelative(ChassisSpeeds desiredSpeeds) {
         Logger.recordOutput("SwerveDrive/desiredSpeeds", desiredSpeeds);
 
         if (isTranslationSlowdownEnabled) {
@@ -211,14 +223,7 @@ public class SwerveDrive extends SubsystemBase {
             desiredSpeeds.omegaRadiansPerSecond *= this.rotationCoefficient;
         }
 
-        var angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec * config.getSwerveDrivetrainConfig().kROTATION_COMPENSATION_COEFFICIENT); // TODO: make a coeff
-        if (angularVelocity.getRadians() != 0.0) {
-            desiredSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
-                speeds.vxMetersPerSecond,
-                speeds.vyMetersPerSecond,
-                speeds.omegaRadiansPerSecond,
-                RobotState.getInstance().getEstimatedPose().getRotation().plus(angularVelocity));
-        }
+        desiredSpeeds = compensateRobotRelativeSpeeds(desiredSpeeds);
 
         if (isRotationLockEnabled) { // get the curr rot from robotstate and the argument from here
             double rotationalVelocity = MathUtil.clamp(
@@ -252,6 +257,11 @@ public class SwerveDrive extends SubsystemBase {
 
         Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
 
+    }
+
+    public void driveFieldRelative(ChassisSpeeds speeds) {
+        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotState.getInstance().getEstimatedPose().getRotation());
+        driveRobotRelative(speeds);
     }
 
     public double gyroAngularVelocity() {
