@@ -148,9 +148,7 @@ public class SwerveDrive extends SubsystemBase {
             Units.rotationsToRadians(
                 config.getSharedGeneralConfig().kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC)
         );
-        
-        // Logger.recordOutput("aidjnwekfjnds",config.getPathplannerRobotConfig().MOI);
-        
+                
         rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
         // translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
         // rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
@@ -193,8 +191,6 @@ public class SwerveDrive extends SubsystemBase {
                     odometryTimestamp
                     ));
 
-        // ChassisSpeeds actualChassisSpeeds = RobotState.getInstance().getChassisSpeeds();
-
         if (previousSetpoint == null) {
             previousSetpoint = new SwerveSetpoint(
                 RobotState.getInstance().getRobotRelativeSpeeds(), 
@@ -205,7 +201,6 @@ public class SwerveDrive extends SubsystemBase {
 
         Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
         Logger.recordOutput("SwerveDrive/measuredModulePositions", modulePositions);
-        // Logger.recordOutput("SwerveDrive/measuredChassisSpeeds", actualChassisSpeeds);
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
@@ -267,7 +262,6 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
-
     }
 
     public void driveFieldRelative(ChassisSpeeds speeds) {

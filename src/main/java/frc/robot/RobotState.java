@@ -72,6 +72,7 @@ public class RobotState {
 
   /** Add odometry observation */
   public void addOdometryObservation(OdometryObservation observation) {
+    Logger.recordOutput("RobotState", observation);
     Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.modulePositions());
     lastWheelPositions = observation.modulePositions();
 
@@ -106,7 +107,7 @@ public class RobotState {
     }
 
     // Get odometry based pose at timestamp
-    Optional<Pose2d>  sample = poseBuffer.getSample(observation.timestamp());
+    Optional<Pose2d> sample = poseBuffer.getSample(observation.timestamp());
     if (sample.isEmpty()) {
       // exit if not there
       return;
