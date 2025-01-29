@@ -9,7 +9,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.lib.input.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.ElementConstants;
 import frc.robot.constants.swerve.SwerveCompConfig;
@@ -18,8 +20,10 @@ import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 public class AutoAlign extends Command {
     private final SwerveDrive swerveDrive;
     private final SwerveCompConfig config;
+    private final XboxController xboxController;
 
-    private Pose2d targetPose = ElementConstants.kPOSE_ARR[0];
+    private Pose2d targetPose = ElementConstants.Reef.centerFaces[0];
+    private Pose2d closestTarget = targetPose;
     private Pose2d currentPose;
 
     private final TrapezoidProfile translationalMotionProfile;
@@ -36,11 +40,14 @@ public class AutoAlign extends Command {
     private double currentUnwrappedRotationRad = 0;
     private double previousWrappedRotationRad = 0;
 
+    private double directionInput = 2;
+
     double previousTimestamp = Timer.getFPGATimestamp();
 
-    public AutoAlign(SwerveDrive swerveDrive, SwerveCompConfig config) {
+    public AutoAlign(SwerveDrive swerveDrive, SwerveCompConfig config, XboxController xboxController) {
         this.swerveDrive = swerveDrive;
         this.config = config;
+        this.xboxController = xboxController;
 
         this.translationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
@@ -69,10 +76,11 @@ public class AutoAlign extends Command {
         double distanceToPose;
         currentPose = swerveDrive.getPose();
 
-        for (int i = 0; i < ElementConstants.kPOSE_ARR.length; i++) {
-            distanceToPose = calculateDistance(currentPose, ElementConstants.kPOSE_ARR[i]);
+        for (int i = 0; i < ElementConstants.Reef.centerFaces.length; i++) {
+            distanceToPose = calculateDistance(currentPose, ElementConstants.Reef.centerFaces[i]);
             if (distanceToPose < calculateDistance(currentPose, targetPose)) {
-                targetPose = ElementConstants.kPOSE_ARR[i];
+                targetPose = ElementConstants.Reef.centerFaces[i];
+                closestTarget = targetPose;
             }
         }
         
@@ -128,7 +136,8 @@ public class AutoAlign extends Command {
                     )
         );
         // bummy code no work adfdgagddfbkjfbjkewheghj
-        // targetPose = getNewTarget(currentPose, targetPose, rotationalMotionProfile, translationalMotionProfile);
+        targetPose = getNewTarget(currentPose, moveToCoral(currentPose, targetPose, xboxController), 
+                                rotationalMotionProfile, translationalMotionProfile);
 
         // calculate the outputs
         double vx, vy, omega;
@@ -155,6 +164,7 @@ public class AutoAlign extends Command {
 
     @Override
     public boolean isFinished() {
+        targetPose = closestTarget;
         return xTranslationalFeedbackController.atSetpoint() && yTranslationalFeedbackController.atSetpoint() && rotationalFeedbackController.atSetpoint();
     }    
 
@@ -201,6 +211,32 @@ public class AutoAlign extends Command {
         } /*else if (timeToRotationalTarget > timeToTranslationalTarget) {
             targetPose = angleEndpoint;
         } */
+        return targetPose;
+    }
+
+    private static Pose2d moveToCoral(Pose2d currentPose, Pose2d targetPose, XboxController xboxController) {
+        double dislocation = Units.inchesToMeters(7.80);
+        double dislocationAngle = Math.toRadians(90.0);
+        double dislocatedAngle = targetPose.getRotation().getRadians();
+        Pose2d dislocationPose = new Pose2d();
+
+        if (xboxController.getLeftTrigger() > 0) {
+            dislocatedAngle = targetPose.getRotation().getRadians() - dislocationAngle;
+            dislocationPose = new Pose2d(Math.cos(dislocatedAngle) * dislocation, 
+                                        Math.sin(dislocatedAngle) * dislocation, 
+                                        targetPose.getRotation());
+            targetPose = new Pose2d(Math.abs(targetPose.getTranslation().getX() - dislocationPose.getTranslation().getX()), 
+                                    Math.abs(targetPose.getTranslation().getY() - dislocationPose.getTranslation().getY()),
+                                    dislocationPose.getRotation());
+        } else if (xboxController.getRightTrigger() > 0) {
+            dislocatedAngle = targetPose.getRotation().getRadians() + dislocationAngle;
+            dislocationPose = new Pose2d(Math.cos(dislocatedAngle) * dislocation, 
+                                        Math.sin(dislocatedAngle) * dislocation, 
+                                        targetPose.getRotation());
+            targetPose = new Pose2d(Math.abs(targetPose.getTranslation().getX() - dislocationPose.getTranslation().getX()), 
+                                    Math.abs(targetPose.getTranslation().getY() - dislocationPose.getTranslation().getY()),
+                                    dislocationPose.getRotation());
+        }
         return targetPose;
     }
 }

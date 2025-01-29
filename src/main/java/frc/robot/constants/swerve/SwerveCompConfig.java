@@ -168,7 +168,7 @@ public final class SwerveCompConfig extends SwerveConfigBase {
                 new PIDController(4, 0, 1.2),
                 0.03,
 
-                new PIDController(4, 0, 1.2),
+                new PIDController(4.2, 0, 1.1),
                 0.03,
 
                 new PIDController(1.9, 0, 0),

@@ -44,23 +44,6 @@ public final class Constants {
     
   }
 
-  public static class FieldConstants {
-    // mid 1, 2, 3, 4, 5 (top to bottom), ampside, mid, source
-    // THIS IS FROM BLUE ORIGIN
-    public static final Translation3d[] kNOTE_ARR = new Translation3d[] {
-      new Translation3d(8.28, 7.44, 0),
-      new Translation3d(8.28, 5.78, 0),
-      new Translation3d(8.28, 4.11, 0),
-      new Translation3d(8.28, 2.44, 0),
-      new Translation3d(8.28, 0.77, 0),
-      new Translation3d(2.89, 6.98, 0),
-      new Translation3d(2.89, 5.54, 0),
-      new Translation3d(2.89, 4.10, 0),
-    };
-
-    public static final double kNOTE_DIAMETER_METERS = 0.36;
-  }
-
   public static class VisionConstants {
     // public static final Pose3d kNOTE_DETECTOR_CAMERA_POSE = // REAL
     //   new Pose3d(new Translation3d(-0.15, -0.47,  0.7), new Rotation3d(Math.toRadians(0), Math.toRadians(30), Math.toRadians(5)));
