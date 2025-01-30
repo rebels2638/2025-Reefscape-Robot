@@ -3,6 +3,7 @@ package frc.robot.subsystems.drivetrain.swerve.module;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public interface ModuleIO {
@@ -31,5 +32,4 @@ public interface ModuleIO {
     public default void updateInputs(ModuleIOInputs inputs) {}
     public default void setState(SwerveModuleState state) {}
     public default void setDriveVoltage(double baseUnitMagnitude) {}
-    
 }

@@ -31,7 +31,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 14,
                 40.0,
                 4,
-                4,
+                5.4,
                 true,
                 6.12,
                 0.04861,
@@ -50,7 +50,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 10,//0.1
                 0.25,
                 2.6,
-                0,
+                6,
                 true,
                 21.428,
                 21.428,
@@ -111,7 +111,8 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 new Translation2d(0.38, 0.38),
                 new Translation2d(0.38, -0.38),
                 new Translation2d(-0.38, 0.38),
-                new Translation2d(-0.38, -0.38)
+                new Translation2d(-0.38, -0.38),
+                0 //dont compensate for drift
             );
         
         this.kPATHPLANNER_ROBOT_CONFIG = new RobotConfig(
@@ -159,6 +160,7 @@ public final class SwerveCrescendoRobotBaseConfig extends SwerveConfigBase {
                 kDRIVE_FF_POINTS,
                 new PIDController(0, 0, 0),
                 new PIDController(0, 0, 0),
-                new PIDController(0, 0, 0));
+                new PIDController(0, 0, 0),
+                0.5 * this.kSWERVE_DRIVETRAIN_CONFIG.kMAX_DRIVETRAIN_ANGULAR_VELOCITY_RADIANS_PER_SEC);
     }
 }
