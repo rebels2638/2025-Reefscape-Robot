@@ -77,14 +77,23 @@ public class RobotState {
     Logger.recordOutput("RobotState/observation/modulePositions", observation.modulePositions);
     Logger.recordOutput("RobotState/observation/moduleStates", observation.moduleStates);
 
+    Logger.recordOutput("RobotState/lastWheelPositions", lastWheelPositions);
+
     Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.modulePositions());
     lastWheelPositions = observation.modulePositions();
 
+    Logger.recordOutput("RobotState/twist", twist);
+
+
     if (observation.gyroAngle != null) {
         lastGyroAngle = observation.gyroAngle();
+        Logger.recordOutput("RobotState/isUsingTwistAngle", false);
     }
     else {
         lastGyroAngle = lastGyroAngle.plus(new Rotation2d(twist.dtheta));
+        Logger.recordOutput("RobotState/dtheta", twist.dtheta);
+
+        Logger.recordOutput("RobotState/isUsingTwistAngle", true);
     }
     Logger.recordOutput("RobotState/lastGyroAngle", lastGyroAngle);
     

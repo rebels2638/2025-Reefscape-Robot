@@ -188,9 +188,11 @@ public class SwerveDrive extends SubsystemBase {
         RobotState.getInstance()
             .addOdometryObservation(
                 new RobotState.OdometryObservation(
-                    modulePositions,
-                    moduleStates,
-                    new Rotation2d(gyroInputs.orientation.getZ()),
+                    modulePositions.clone(),
+                    moduleStates.clone(),
+                    gyroInputs.isConnected ? 
+                        new Rotation2d(gyroInputs.orientation.getZ()) :
+                        null,
                     odometryTimestamp
                     ));
 
