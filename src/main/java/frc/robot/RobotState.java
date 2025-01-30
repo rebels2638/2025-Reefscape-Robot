@@ -1,14 +1,6 @@
-// Copyright (c) 2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by an MIT-style
-// license that can be found in the LICENSE file at
-// the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.math.*;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.interpolation.*;
@@ -19,7 +11,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.constants.swerve.*;
+import frc.robot.constants.Constants;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -29,7 +25,9 @@ import org.littletonrobotics.junction.Logger;
 public class RobotState {
   private static RobotState instance;
   public static RobotState getInstance() {
-    if (instance == null) instance = new RobotState(new SwerveCrescendoRobotBaseConfig());
+    if (instance == null) {
+        instance = new RobotState();
+    }
     return instance;
   }
   
@@ -58,13 +56,40 @@ public class RobotState {
   private Rotation2d lastGyroAngle = new Rotation2d();
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
 
-  //TODO: FIX THE CONFIGS!!!! THEY SUCK - the writer of the configs
-  private RobotState(SwerveConfigBase config) {
+  private RobotState() {
+    SwerveDrivetrainConfigBase drivetrainConfig;
+    switch (Constants.currentMode) {
+        case COMP:
+            drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+
+            break;
+
+        case PROTO:
+            drivetrainConfig = SwerveDrivetrainConfigProto.getInstance();
+            
+            break;
+        
+        case SIM:
+            drivetrainConfig = SwerveDrivetrainConfigSim.getInstance();
+
+            break;
+
+        case REPLAY:
+            drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+
+            break;
+
+        default:
+            drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+
+            break;
+    }
+
     kinematics = new SwerveDriveKinematics(
-        config.getSwerveDrivetrainConfig().kFRONT_LEFT_POSITION_METERS,
-        config.getSwerveDrivetrainConfig().kFRONT_RIGHT_POSITION_METERS,
-        config.getSwerveDrivetrainConfig().kBACK_LEFT_POSITION_METERS,
-        config.getSwerveDrivetrainConfig().kBACK_RIGHT_POSITION_METERS
+        drivetrainConfig.getFrontLeftPositionMeters(),
+        drivetrainConfig.getFrontRightPositionMeters(),
+        drivetrainConfig.getBackLeftPositionMeters(),
+        drivetrainConfig.getBackRightPositionMeters()
     ); 
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, lastGyroAngle, lastWheelPositions, new Pose2d());

@@ -17,13 +17,13 @@ public class Roller extends SubsystemBase {
     public Roller() {
         // IO
         switch (Constants.currentMode) {
-            case Comp:
+            case COMP:
                 config = RollerConfigProto.getInstance();
                 rollerIO = new RollerIOTalonFX(config);
 
                 break;
 
-            case CrescendoRobotBase:
+            case PROTO:
                 config = RollerConfigProto.getInstance();
                 rollerIO = new RollerIOTalonFX(config);
 

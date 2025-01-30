@@ -19,13 +19,13 @@ public class Claw extends SubsystemBase {
     public Claw() {
         // IO
         switch (Constants.currentMode) {
-            case Comp:
+            case COMP:
                 config = ClawConfigProto.getInstance();
                 clawIO = new ClawIOTalonFX(config);
 
                 break;
 
-            case CrescendoRobotBase:
+            case PROTO:
                 config = ClawConfigProto.getInstance();
                 clawIO = new ClawIOTalonFX(config);
 

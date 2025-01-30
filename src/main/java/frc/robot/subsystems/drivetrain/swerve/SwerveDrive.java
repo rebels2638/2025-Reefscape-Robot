@@ -2,8 +2,6 @@ package frc.robot.subsystems.drivetrain.swerve;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -12,17 +10,38 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
-import frc.robot.subsystems.drivetrain.swerve.controllers.DriveFFController;
+import frc.robot.constants.Constants;
+import frc.robot.constants.swerve.controllerConfigs.SwerveControllerConfigBase;
+import frc.robot.constants.swerve.controllerConfigs.SwerveControllerConfigComp;
+import frc.robot.constants.swerve.controllerConfigs.SwerveControllerConfigProto;
+import frc.robot.constants.swerve.controllerConfigs.SwerveControllerConfigSim;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
+import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
+import frc.robot.constants.swerve.moduleConfigs.SwerveModuleGeneralConfigBase;
+import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleGeneralConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleSpecificBLConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleSpecificBRConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleSpecificFLConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleSpecificFRConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleGeneralConfigProto;
+import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConfigProto;
+import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBRConfigProto;
+import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFLConfigProto;
+import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
+import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
+import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigBase;
+import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigComp;
+import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigProto;
+import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigSim;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIONavX;
@@ -31,11 +50,6 @@ import frc.robot.subsystems.drivetrain.swerve.module.ModuleIO;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOTalonFX;
-import frc.robot.constants.*;
-import frc.robot.constants.swerve.SwerveConfigBase;
-import frc.robot.constants.swerve.SwerveCrescendoRobotBaseConfig;
-import frc.robot.constants.swerve.SwerveCompConfig;
-import frc.robot.constants.swerve.SwerveSimConfig;
 
 public class SwerveDrive extends SubsystemBase {
     private final PIDController rotationalVelocityFeedbackController;
@@ -44,7 +58,6 @@ public class SwerveDrive extends SubsystemBase {
 
     private ModuleIO[] modules;
 
-    private SwerveDriveKinematics kinematics;
     private ModuleIOInputsAutoLogged[] moduleInputs = {
             new ModuleIOInputsAutoLogged(),
             new ModuleIOInputsAutoLogged(),
@@ -55,14 +68,10 @@ public class SwerveDrive extends SubsystemBase {
     private final GyroIO gyroIO;
     private GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
-    private final SwerveConfigBase config;
-
     private boolean isTranslationSlowdownEnabled = false;
     private boolean isRotationSlowdownEnabled = false;
-    private boolean isChassisSpeedsDiscretizeEnabled = true;
     private boolean isRotationLockEnabled = false;
 
-    private double lastTimestamp = Double.NEGATIVE_INFINITY;
     private double translationCoefficient = 0.5;
     private double rotationCoefficient = 0.5;
 
@@ -83,16 +92,25 @@ public class SwerveDrive extends SubsystemBase {
 
     double previousSetpointCallTime = Timer.getFPGATimestamp();
 
+    private final SwerveModuleGeneralConfigBase moduleGeneralConfig;
+    private final SwerveDrivetrainConfigBase drivetrainConfig;
+    private final SwervePathplannerConfigBase pathplannerConfig;
+    private final SwerveControllerConfigBase controllerConfig; 
+
     @SuppressWarnings("static-access")
     public SwerveDrive() {
         switch (Constants.currentMode) {
-            case Comp:
-                config = new SwerveCompConfig();
+            case COMP:
+                drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+                pathplannerConfig = SwervePathplannerConfigComp.getInstance();
+                moduleGeneralConfig = SwerveModuleGeneralConfigComp.getInstance();
+                controllerConfig = SwerveControllerConfigComp.getInstance();
+
                 modules = new ModuleIO[] {
-                    new ModuleIOTalonFX(config, config.getFrontLeftConfig().kSPECIFIC_CONFIG, 0),
-                    new ModuleIOTalonFX(config, config.getFrontRightConfig().kSPECIFIC_CONFIG, 1),
-                    new ModuleIOTalonFX(config, config.getBackLeftConfig().kSPECIFIC_CONFIG, 2),
-                    new ModuleIOTalonFX(config, config.getBackRightConfig().kSPECIFIC_CONFIG, 3)
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFLConfigComp.getInstance(), 0),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFRConfigComp.getInstance(), 1),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBLConfigComp.getInstance(), 2),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBRConfigComp.getInstance(), 3)
                 };
                 
                 gyroIO = new GyroIOPigeon2();
@@ -100,13 +118,17 @@ public class SwerveDrive extends SubsystemBase {
 
                 break;
 
-            case CrescendoRobotBase:
-                config = new SwerveCrescendoRobotBaseConfig();
+            case PROTO:
+                drivetrainConfig = SwerveDrivetrainConfigProto.getInstance();
+                pathplannerConfig = SwervePathplannerConfigProto.getInstance();
+                moduleGeneralConfig = SwerveModuleGeneralConfigProto.getInstance();
+                controllerConfig = SwerveControllerConfigProto.getInstance();
+
                 modules = new ModuleIO[] {
-                    new ModuleIOTalonFX(config, config.getFrontLeftConfig().kSPECIFIC_CONFIG, 0),
-                    new ModuleIOTalonFX(config, config.getFrontRightConfig().kSPECIFIC_CONFIG, 1),
-                    new ModuleIOTalonFX(config, config.getBackLeftConfig().kSPECIFIC_CONFIG, 2),
-                    new ModuleIOTalonFX(config, config.getBackRightConfig().kSPECIFIC_CONFIG, 3)
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFLConfigProto.getInstance(), 0),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFRConfigProto.getInstance(), 1),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBLConfigProto.getInstance(), 2),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBRConfigProto.getInstance(), 3)
                 };
                 
                 gyroIO = new GyroIONavX();
@@ -114,19 +136,27 @@ public class SwerveDrive extends SubsystemBase {
                 break;
 
             case SIM:
-                config = new SwerveSimConfig();
+                drivetrainConfig = SwerveDrivetrainConfigSim.getInstance();
+                pathplannerConfig = SwervePathplannerConfigSim.getInstance();
+                moduleGeneralConfig = SwerveModuleGeneralConfigSim.getInstance();
+                controllerConfig = SwerveControllerConfigSim.getInstance();
+
                 modules = new ModuleIO[] {
-                    new ModuleIOSim(config, 0),
-                    new ModuleIOSim(config, 1),
-                    new ModuleIOSim(config, 2),
-                    new ModuleIOSim(config, 3)
+                    new ModuleIOSim(moduleGeneralConfig, 0),
+                    new ModuleIOSim(moduleGeneralConfig, 1),
+                    new ModuleIOSim(moduleGeneralConfig, 2),
+                    new ModuleIOSim(moduleGeneralConfig, 3)
                 };
 
                 gyroIO = new GyroIO() {};
                 break;
 
-            default:
-                config = new SwerveCompConfig();
+            case REPLAY:
+                drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+                pathplannerConfig = SwervePathplannerConfigComp.getInstance();
+                moduleGeneralConfig = SwerveModuleGeneralConfigComp.getInstance();
+                controllerConfig = SwerveControllerConfigComp.getInstance();
+
                 modules = new ModuleIO[] {
                     new ModuleIO() {},
                     new ModuleIO() {},
@@ -137,25 +167,35 @@ public class SwerveDrive extends SubsystemBase {
                 gyroIO = new GyroIOPigeon2();
 
                 break;
-        }
 
-        kinematics = new SwerveDriveKinematics(
-            config.getSwerveDrivetrainConfig().kFRONT_LEFT_POSITION_METERS,
-            config.getSwerveDrivetrainConfig().kFRONT_RIGHT_POSITION_METERS,
-            config.getSwerveDrivetrainConfig().kBACK_LEFT_POSITION_METERS,
-            config.getSwerveDrivetrainConfig().kBACK_RIGHT_POSITION_METERS
-        ); 
+            default:
+                drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+                pathplannerConfig = SwervePathplannerConfigComp.getInstance();
+                moduleGeneralConfig = SwerveModuleGeneralConfigComp.getInstance();
+                controllerConfig = SwerveControllerConfigComp.getInstance();
+
+                modules = new ModuleIO[] {
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFLConfigComp.getInstance(), 0),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFRConfigComp.getInstance(), 1),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBLConfigComp.getInstance(), 2),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBRConfigComp.getInstance(), 3)
+                };
+                
+                gyroIO = new GyroIOPigeon2();
+                Phoenix6Odometry.getInstance().start();
+
+                break;
+                
+        }
 
         // driveFFController = new DriveFFController(config);
         swerveSetpointGenerator = new SwerveSetpointGenerator(
-            config.getPathplannerRobotConfig(), 
+            pathplannerConfig.getRobotConfig(), 
             Units.rotationsToRadians(
-                config.getSharedGeneralConfig().kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC)
+                moduleGeneralConfig.getSteerMotionMagicCruiseVelocityRotationsPerSec())
         );
                 
-        rotationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_VELOCITY_FEEDBACK_CONTROLLER;
-        // translationalVelocityFeedbackController = config.getSwerveDrivetrainControllerConfig().kTRANSLATION_VELOCITY_FEEDBACK_CONTROLLER;
-        // rotationalPositionFeedbackController = config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_FEEDBACK_CONTROLLER;
+        rotationalVelocityFeedbackController = controllerConfig.getRotationalPositionFeedbackController();
     }
 
     @Override
@@ -202,7 +242,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
-        Rotation2d angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec * config.getSwerveDrivetrainConfig().kROTATION_COMPENSATION_COEFFICIENT);
+        Rotation2d angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec * drivetrainConfig.getRotationCompensationCoefficient());
         if (angularVelocity.getRadians() != 0.0) {
             speeds = ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
                 speeds.vxMetersPerSecond,
@@ -233,8 +273,8 @@ public class SwerveDrive extends SubsystemBase {
                 rotationalVelocityFeedbackController.calculate(
                     RobotState.getInstance().getEstimatedPose().getRotation().getRadians(),
                     this.rotationLock.getRadians()), 
-                -config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC, 
-                config.getSwerveDrivetrainControllerConfig().kROTATIONAL_POSITION_MAX_OUTPUT_RAD_SEC);
+                -controllerConfig.getRotationalPositionMaxOutputRadSec(), 
+                controllerConfig.getRotationalPositionMaxOutputRadSec());
 
             desiredSpeeds.omegaRadiansPerSecond = rotationalVelocity;
         }

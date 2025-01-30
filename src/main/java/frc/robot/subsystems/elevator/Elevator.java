@@ -17,13 +17,13 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         // IO
         switch (Constants.currentMode) {
-            case Comp:
+            case COMP:
                 config = ElevatorConfigProto.getInstance();
                 elevatorIO = new ElevatorIOTalonFX(config);
 
                 break;
 
-            case CrescendoRobotBase:
+            case PROTO:
                 config = ElevatorConfigProto.getInstance();
                 elevatorIO = new ElevatorIOTalonFX(config);
 

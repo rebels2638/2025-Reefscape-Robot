@@ -52,7 +52,7 @@ public class Superstructure extends SubsystemBase {
         this.claw = claw;
 
         switch (Constants.currentMode) {
-            case Comp:
+            case COMP:
                 superstructureIO = new SuperstructureIOProto(
                     // swerveDrive, 
                     // elevator, 
@@ -62,7 +62,7 @@ public class Superstructure extends SubsystemBase {
 
                 break;
 
-            case CrescendoRobotBase:
+            case PROTO:
                 superstructureIO = new SuperstructureIOProto(
                     // swerveDrive, 
                     // elevator, 

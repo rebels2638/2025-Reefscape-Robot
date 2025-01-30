@@ -16,8 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import frc.robot.constants.swerve.SwerveConfigBase;
-import frc.robot.constants.swerve.SwerveModuleConfig.GeneralConfig;
+import frc.robot.constants.swerve.moduleConfigs.SwerveModuleGeneralConfigBase;
 import frc.robot.lib.util.RebelUtil;
 
 public class ModuleIOSim implements ModuleIO {
@@ -46,7 +45,7 @@ public class ModuleIOSim implements ModuleIO {
     private final SlewRateLimiter driveSlewRateLimiter;
     private final TrapezoidProfile steerMotionProfile;
 
-    private final GeneralConfig generalConfig;
+    private final SwerveModuleGeneralConfigBase config;
     private final int moduleID;
 
     private State currentSteerState = new State(0, 0);
@@ -61,17 +60,17 @@ public class ModuleIOSim implements ModuleIO {
     double previousNonZeroDriveSetpoint = 1;
 
     @SuppressWarnings("static-access")
-    public ModuleIOSim(SwerveConfigBase configBase, int moduleID) {
-        this.generalConfig = configBase.getSharedGeneralConfig();
+    public ModuleIOSim(SwerveModuleGeneralConfigBase config, int moduleID) {
+        this.config = config;
         this.moduleID = moduleID;
 
-        kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS = 1 / generalConfig.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
+        kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS = 1 / config.getSteerMotorToOutputShaftRatio();
 
         driveSim = new FlywheelSim(
                 LinearSystemId.createFlywheelSystem(
                         gearBoxDrive,
                         kDRIVE_JKG_METERS_SQUARED,
-                        1 / generalConfig.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO// TODO: CHECK!!!!
+                        1 / config.getDriveMotorToOutputShaftRatio()// TODO: CHECK!!!!
                 ),
                 gearBoxSteer);
 
@@ -84,22 +83,22 @@ public class ModuleIOSim implements ModuleIO {
                 gearBoxSteer);
 
         driveFeedback = new PIDController(
-                generalConfig.kDRIVE_KP,
-                generalConfig.kDRIVE_KI,
-                generalConfig.kDRIVE_KD);
+                config.getDriveKP(),
+                config.getDriveKI(),
+                config.getDriveKD());
         steerFeedback = new PIDController(
-                generalConfig.kSTEER_KP,
-                generalConfig.kSTEER_KI,
-                generalConfig.kSTEER_KD);
+                config.getSteerKP(),
+                config.getSteerKI(),
+                config.getSteerKD());
 
         driveFeedforward = new SimpleMotorFeedforward(
-                generalConfig.kDRIVE_KS,
-                generalConfig.kDRIVE_KV,
-                generalConfig.kDRIVE_KA);
+                config.getDriveKS(),
+                config.getDriveKV(),
+                config.getDriveKA());
         steerFeedforward = new SimpleMotorFeedforward(
-                generalConfig.kSTEER_KS,
-                generalConfig.kSTEER_KV,
-                generalConfig.kSTEER_KA);
+                config.getSteerKS(),
+                config.getSteerKV(),
+                config.getSteerKA());
 
         driveFeedback.setTolerance(0.05);
         steerFeedback.setTolerance(Math.toRadians(1));
@@ -107,13 +106,13 @@ public class ModuleIOSim implements ModuleIO {
         steerFeedback.enableContinuousInput(-Math.PI, Math.PI);
 
         driveSlewRateLimiter = new SlewRateLimiter(
-                generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC,
-                -generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC,
+                config.getDriveMotionMagicVelocityAccelerationMetersPerSecSec(),
+                -config.getDriveMotionMagicVelocityDecelerationMetersPerSecSec(),
                 0);
 
         steerMotionProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
-                Units.rotationsToRadians(generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC),
-                12 / generalConfig.kSTEER_MOTION_MAGIC_EXPO_KA // divide supply voltage to get max acell
+                Units.rotationsToRadians(config.getSteerMotionMagicCruiseVelocityRotationsPerSec()),
+                12 / config.getSteerMotionMagicExpoKA() // divide supply voltage to get max acell
         ));
     }
 
@@ -127,13 +126,19 @@ public class ModuleIOSim implements ModuleIO {
         inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
 
         inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRPM() *
-                2 * Math.PI * generalConfig.kDRIVE_WHEEL_RADIUS_METERS;
+                2 * Math.PI * config.getDriveWheelRadiusMeters();
         inputs.drivePositionMeters += inputs.driveVelocityMetersPerSec * dt;
 
         inputs.driveCurrentDrawAmps = driveSim.getCurrentDrawAmps();
         inputs.driveAppliedVolts = driveSim.getInputVoltage();
         inputs.driveTemperatureFahrenheit = 60; // random number
 
+        inputs.steerPosition = new Rotation2d(
+            MathUtil.angleModulus(
+                inputs.steerPosition.getRadians() +
+                inputs.steerVelocityRadPerSec * dt
+            )
+        );
         inputs.steerVelocityRadPerSec = steerSim.getAngularVelocityRadPerSec();
 
         double angleDelta = inputs.steerPosition.getRadians() - previousWrappedAngleRad;
@@ -164,23 +169,23 @@ public class ModuleIOSim implements ModuleIO {
         // while the goal is the end state
         double driveSetpointMetersPerSec = RebelUtil.constrain(
                 state.speedMetersPerSecond,
-                -generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC,
-                generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC);
+                -config.getDriveMaxVelocityMetersPerSec(),
+                config.getDriveMaxVelocityMetersPerSec());
 
         double driveAccel = (driveSetpointMetersPerSec - previousDriveDesiredVeloMps) / dt;
         Logger.recordOutput("SwerveDrive/module" + moduleID + "/driveAccel", driveAccel);
 
         if (driveAccel >= 0 && previousDriveDesiredVeloMps >= 0) {
-            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC);
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), config.getDriveMotionMagicVelocityAccelerationMetersPerSecSec());
         } 
         else if (driveAccel <= 0 && previousDriveDesiredVeloMps <= 0) {
-            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC);
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), config.getDriveMotionMagicVelocityAccelerationMetersPerSecSec());
         }
         else if (driveAccel >= 0 && previousDriveDesiredVeloMps <= 0) {
-            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC);
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), config.getDriveMotionMagicVelocityDecelerationMetersPerSecSec());
         }
         else if (driveAccel <= 0 && previousDriveDesiredVeloMps >= 0) {
-            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC);
+            driveAccel = Math.signum(driveAccel) * Math.min(Math.abs(driveAccel), config.getDriveMotionMagicVelocityDecelerationMetersPerSecSec());
         }
         else {
             driveAccel = 0;

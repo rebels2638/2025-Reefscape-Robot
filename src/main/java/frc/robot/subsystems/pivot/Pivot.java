@@ -19,13 +19,13 @@ public class Pivot extends SubsystemBase {
     public Pivot() {
         // IO
         switch (Constants.currentMode) {
-            case Comp:
+            case COMP:
                 config = PivotConfigProto.getInstance();
                 pivotIO = new PivotIOTalonFX(config);
 
                 break;
 
-            case CrescendoRobotBase:
+            case PROTO:
                 config = PivotConfigProto.getInstance();
                 pivotIO = new PivotIOTalonFX(config);
 
