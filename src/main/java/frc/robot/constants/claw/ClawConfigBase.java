@@ -2,7 +2,7 @@ package frc.robot.constants.claw;
 
 public abstract class ClawConfigBase {
     // CAN ID
-    public abstract int getCANID();
+    public abstract int getCanID();
 
     // Supply current limits
     public abstract double getSupplyCurrentLimit();

@@ -14,7 +14,7 @@ public class ClawConfigProto extends ClawConfigBase {
     
     // CANID
     @Override
-    public int getCANID() {
+    public int getCanID() {
         return 14;
     }
 

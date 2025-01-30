@@ -14,7 +14,7 @@ public class PivotConfigComp extends PivotConfigBase {
     
     // CANID
     @Override
-    public int getCANID() {
+    public int getCanID() {
         return 21;
     }
 

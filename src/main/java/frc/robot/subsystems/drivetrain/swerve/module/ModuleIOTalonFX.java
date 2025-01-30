@@ -37,10 +37,9 @@ import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
 public class ModuleIOTalonFX implements ModuleIO {
-    private TalonFX driveMotor;
-
-    private TalonFX steerMotor;
-    private CANcoder steerEncoder;
+    private final TalonFX driveMotor;
+    private final TalonFX steerMotor;
+    private final CANcoder steerEncoder;
 
     private final StatusSignal<Angle> drivePositionStatusSignal;
     private final StatusSignal<AngularVelocity> driveVelocityStatusSignal;
@@ -113,6 +112,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = generalConfig.getDrivePeakForwardTorqueCurrent();
         driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = generalConfig.getDrivePeakReverseTorqueCurrent();
 
+        driveConfig.FutureProofConfigs = true;
+        
         driveMotor = new TalonFX(specificConfig.getDriveCanId(), generalConfig.getCanBusName());
         driveMotor.getConfigurator().apply(driveConfig);
 
@@ -121,6 +122,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = generalConfig.getCancoderAbsoluteSensorDiscontinuityPoint();
         encoderConfig.MagnetSensor.SensorDirection = generalConfig.getCancoderSensorDirection();
         encoderConfig.MagnetSensor.withMagnetOffset(specificConfig.getCancoderOffsetRotations());
+
+        encoderConfig.FutureProofConfigs = true;
 
         steerEncoder = new CANcoder(specificConfig.getCancoderCanId(), generalConfig.getCanBusName());
         steerEncoder.getConfigurator().apply(encoderConfig);
@@ -170,20 +173,22 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerConfig.TorqueCurrent.PeakForwardTorqueCurrent = generalConfig.getSteerPeakForwardTorqueCurrent();
         steerConfig.TorqueCurrent.PeakReverseTorqueCurrent = generalConfig.getSteerPeakReverseTorqueCurrent();
 
+        steerConfig.FutureProofConfigs = true;
+
         steerMotor = new TalonFX(specificConfig.getCancoderCanId(), generalConfig.getCanBusName());
         steerMotor.getConfigurator().apply(steerConfig);
 
         // status signals
-        driveAppliedVolts = driveMotor.getMotorVoltage();
-        driveSupplyCurrent = driveMotor.getSupplyCurrent();
+        driveAppliedVolts = driveMotor.getMotorVoltage().clone();
+        driveSupplyCurrent = driveMotor.getSupplyCurrent().clone();
         driveTemperature = driveMotor.getDeviceTemp().clone();
 
-        steerAppliedVolts = steerMotor.getMotorVoltage();
-        steerSupplyCurrent = steerMotor.getSupplyCurrent();
-        steerTemperature = steerMotor.getDeviceTemp();
+        steerAppliedVolts = steerMotor.getMotorVoltage().clone();
+        steerSupplyCurrent = steerMotor.getSupplyCurrent().clone();
+        steerTemperature = steerMotor.getDeviceTemp().clone();
 
-        steerEncoderAbsolutePosition = steerEncoder.getAbsolutePosition();
-        steerEncoderPositionStatusSignal = steerEncoder.getPosition();
+        steerEncoderAbsolutePosition = steerEncoder.getAbsolutePosition().clone();
+        steerEncoderPositionStatusSignal = steerEncoder.getPosition().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             30,
@@ -199,10 +204,10 @@ public class ModuleIOTalonFX implements ModuleIO {
             steerEncoderPositionStatusSignal
         );
 
-        drivePositionStatusSignal = driveMotor.getPosition();
-        driveVelocityStatusSignal = driveMotor.getVelocity();
-        steerPositionStatusSignal = steerMotor.getPosition();
-        steerVelocityStatusSignal = steerMotor.getVelocity();
+        drivePositionStatusSignal = driveMotor.getPosition().clone();
+        driveVelocityStatusSignal = driveMotor.getVelocity().clone();
+        steerPositionStatusSignal = steerMotor.getPosition().clone();
+        steerVelocityStatusSignal = steerMotor.getVelocity().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             100,

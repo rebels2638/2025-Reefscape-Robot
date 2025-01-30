@@ -14,12 +14,12 @@ public class ElevatorConfigProto extends ElevatorConfigBase {
 
     // CANID
     @Override
-    public int getCANID1() {
+    public int getCanID1() {
         return 1;
     }
 
     @Override
-    public int getCANID2() {
+    public int getCanID2() {
         return 1;
     }
 

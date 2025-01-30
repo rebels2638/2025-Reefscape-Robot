@@ -10,6 +10,8 @@ public interface RollerIO {
         public double rollerCurrentDrawAmps = 0;
         public double rollerAppliedVolts = 0;
         public double rollerTemperatureFahrenheit = 0;
+
+        public boolean inRoller = false;
     }
 
     public default void updateInputs(RollerIOInputs inputs) {}

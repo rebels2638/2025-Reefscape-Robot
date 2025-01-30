@@ -2,8 +2,8 @@ package frc.robot.constants.elevator;
 
 public abstract class ElevatorConfigBase {
     // CAN ID
-    public abstract int getCANID1();
-    public abstract int getCANID2();
+    public abstract int getCanID1();
+    public abstract int getCanID2();
 
     // Supply current limits
     public abstract double getSupplyCurrentLimit();

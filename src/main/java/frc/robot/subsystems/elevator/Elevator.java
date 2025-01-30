@@ -53,7 +53,7 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         elevatorIO.updateInputs(elevatorIOInputs);
-        Logger.processInputs("Pivot", elevatorIOInputs);
+        Logger.processInputs("Elevator", elevatorIOInputs);
     }
 
     public void setHeight(double height) {

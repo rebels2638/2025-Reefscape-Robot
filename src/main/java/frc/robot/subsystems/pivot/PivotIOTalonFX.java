@@ -90,7 +90,9 @@ public class PivotIOTalonFX implements PivotIO {
                         NeutralModeValue.Brake : 
                         NeutralModeValue.Coast;
 
-        pivotMotor = new TalonFX(config.getCANID());
+        pivotConfig.FutureProofConfigs = true;
+
+        pivotMotor = new TalonFX(config.getCanID());
         pivotMotor.getConfigurator().apply(pivotConfig);
 
         pivotAppliedVolts = pivotMotor.getMotorVoltage().clone();

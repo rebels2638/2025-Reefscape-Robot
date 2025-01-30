@@ -26,7 +26,7 @@ public class Roller extends SubsystemBase {
 
             case PROTO:
                 config = RollerConfigProto.getInstance();
-                rollerIO = new RollerIOTalonFX(config);
+                rollerIO = new RollerIOSparkMax(config);
 
                 break;
 
@@ -58,5 +58,9 @@ public class Roller extends SubsystemBase {
 
     public void setTorqueCurrentFOC(double current) {
         rollerIO.setTorqueCurrentFOC(current);
+    }
+
+    public void setVoltage(double voltage) {
+        rollerIO.setVoltage(voltage);
     }
 }

@@ -55,7 +55,7 @@ public class ClawIOTalonFX implements ClawIO {
                         NeutralModeValue.Brake : 
                         NeutralModeValue.Coast;
 
-        clawMotor = new TalonFX(config.getCANID());
+        clawMotor = new TalonFX(config.getCanID());
         clawMotor.getConfigurator().apply(clawConfig);
 
         clawAppliedVolts = clawMotor.getMotorVoltage().clone();

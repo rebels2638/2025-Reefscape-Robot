@@ -3,12 +3,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.claw.IntakeAlgay;
-import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.lib.input.XboxController;
-import frc.robot.subsystems.claw.Claw;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
-import frc.robot.superstructure.Superstructure;
+import frc.robot.subsystems.roller.Roller;
   
 public class RobotContainer {
   public static RobotContainer instance = null;
@@ -18,13 +15,16 @@ public class RobotContainer {
   private final XboxController xboxOperator;
   
   private final SwerveDrive swerveDrive;
-  
+  private final Roller roller;
+
   public RobotContainer() {
     this.xboxTester = new XboxController(1);
     this.xboxOperator = new XboxController(2);
     this.xboxDriver = new XboxController(3);
 
+    roller = new Roller();
     swerveDrive = new SwerveDrive();
+    
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(swerveDrive, xboxDriver));
 
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));

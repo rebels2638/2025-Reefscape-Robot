@@ -97,19 +97,21 @@ public class ElevatorIOTalonFX implements ElevatorIO {
                         NeutralModeValue.Brake : 
                         NeutralModeValue.Coast;
 
-        elevatorMotor1 = new TalonFX(config.getCANID1());
+        elevatorConfig.FutureProofConfigs = true;
+
+        elevatorMotor1 = new TalonFX(config.getCanID1());
         elevatorMotor1.getConfigurator().apply(elevatorConfig);
 
-        elevatorMotor2 = new TalonFX(config.getCANID2());
+        elevatorMotor2 = new TalonFX(config.getCanID2());
         elevatorMotor2.getConfigurator().apply(elevatorConfig);
 
-        elevatorAppliedVolts1 = elevatorMotor1.getMotorVoltage();
-        elevatorSupplyCurrent1 = elevatorMotor1.getSupplyCurrent();
-        elevatorTemperature1 = elevatorMotor1.getDeviceTemp();
+        elevatorAppliedVolts1 = elevatorMotor1.getMotorVoltage().clone();
+        elevatorSupplyCurrent1 = elevatorMotor1.getSupplyCurrent().clone();
+        elevatorTemperature1 = elevatorMotor1.getDeviceTemp().clone();
 
-        elevatorAppliedVolts2 = elevatorMotor2.getMotorVoltage();
-        elevatorSupplyCurrent2 = elevatorMotor2.getSupplyCurrent();
-        elevatorTemperature2 = elevatorMotor2.getDeviceTemp();
+        elevatorAppliedVolts2 = elevatorMotor2.getMotorVoltage().clone();
+        elevatorSupplyCurrent2 = elevatorMotor2.getSupplyCurrent().clone();
+        elevatorTemperature2 = elevatorMotor2.getDeviceTemp().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 40,
@@ -122,11 +124,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
                 elevatorTemperature2
         );
 
-        elevatorPositionStatusSignal1 = elevatorMotor1.getPosition();
-        elevatorVelocityStatusSignal1 = elevatorMotor1.getVelocity();
+        elevatorPositionStatusSignal1 = elevatorMotor1.getPosition().clone();
+        elevatorVelocityStatusSignal1 = elevatorMotor1.getVelocity().clone();
 
-        elevatorPositionStatusSignal2 = elevatorMotor2.getPosition();
-        elevatorVelocityStatusSignal2 = elevatorMotor2.getVelocity();
+        elevatorPositionStatusSignal2 = elevatorMotor2.getPosition().clone();
+        elevatorVelocityStatusSignal2 = elevatorMotor2.getVelocity().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 70,

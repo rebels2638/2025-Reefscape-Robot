@@ -13,7 +13,7 @@ public class PivotConfigProto extends PivotConfigBase {
     private PivotConfigProto() {}
     // CANID
     @Override
-    public int getCANID() {
+    public int getCanID() {
         return 21;
     }
 

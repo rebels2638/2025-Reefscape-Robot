@@ -2,7 +2,6 @@ package frc.robot.subsystems.claw;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.claw.ClawConfigBase;

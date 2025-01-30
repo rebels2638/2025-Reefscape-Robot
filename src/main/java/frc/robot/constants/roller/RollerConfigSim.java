@@ -1,20 +1,27 @@
 package frc.robot.constants.roller;
 
+import com.ctre.phoenix6.signals.UpdateModeValue;
+
 public class RollerConfigSim extends RollerConfigBase {
     private static RollerConfigSim instance;
+
     public static RollerConfigSim getInstance() {
         if (instance == null) {
             instance = new RollerConfigSim();
         }
-
         return instance;
     }
 
     private RollerConfigSim() {}
 
-    // CANID
+    // CAN ID
     @Override
-    public int getCANID() {
+    public int getRollerMotorCanID() {
+        return 1;
+    }
+
+    @Override
+    public int getCanRangeCanID() {
         return 1;
     }
 
@@ -55,5 +62,51 @@ public class RollerConfigSim extends RollerConfigBase {
     @Override
     public boolean isNeutralModeBrake() {
         return true;
+    }
+
+    // CANrange configuration fields
+    @Override
+    public double getFOVCenterX() {
+        return 1;
+    }
+
+    @Override
+    public double getFOVCenterY() {
+        return 1;
+    }
+
+    @Override
+    public double getFOVRangeX() {
+        return 1;
+    }
+
+    @Override
+    public double getFOVRangeY() {
+        return 1;
+    }
+
+    @Override
+    public double getMinSignalStrengthForValidMeasurement() {
+        return 1;
+    }
+
+    @Override
+    public double getProximityHysteresis() {
+        return 1;
+    }
+
+    @Override
+    public double getProximityThreshold() {
+        return 1;
+    }
+
+    @Override
+    public double getToFUpdateFrequency() {
+        return 1;
+    }
+
+    @Override
+    public UpdateModeValue getToFUpdateMode() {
+        return UpdateModeValue.ShortRangeUserFreq;
     }
 }

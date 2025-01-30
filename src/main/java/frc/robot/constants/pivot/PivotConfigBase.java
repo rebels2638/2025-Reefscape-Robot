@@ -2,7 +2,7 @@ package frc.robot.constants.pivot;
 
 public abstract class PivotConfigBase {
     // CAN ID
-    public abstract int getCANID();
+    public abstract int getCanID();
 
     // Supply current limits
     public abstract double getSupplyCurrentLimit();
