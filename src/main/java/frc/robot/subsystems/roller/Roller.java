@@ -10,12 +10,21 @@ import frc.robot.constants.roller.RollerConfigProto;
 import frc.robot.constants.roller.RollerConfigSim;
 
 public class Roller extends SubsystemBase {
+    private static Roller instance = null;
+    public static Roller getInstance() {
+        if (instance == null) {
+            instance = new Roller();
+        }
+
+        return instance;
+    }
+
     private RollerIO rollerIO;
     private RollerIOInputsAutoLogged rollerIOInputs = new RollerIOInputsAutoLogged();
 
     private final RollerConfigBase config;
 
-    public Roller() {
+    private Roller() {
         // IO
         switch (Constants.currentMode) {
             case COMP:
@@ -62,5 +71,9 @@ public class Roller extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         rollerIO.setVoltage(voltage);
+    }
+
+    public boolean inRoller() {
+        return rollerIOInputs.inRoller;
     }
 }

@@ -16,14 +16,14 @@ import frc.robot.subsystems.drivetrain.swerve.SwerveDrive; // Swerve drive subsy
 
 public class AbsoluteFieldDrive extends Command {
 
-    private final SwerveDrive swerve;             // Reference to the swerve drive subsystem.
+    private final SwerveDrive swerve = SwerveDrive.getInstance();             // Reference to the swerve drive subsystem.
     private final DoubleSupplier vX, vY, heading; // Supplier functions for velocity inputs and heading.
     private int invert = 1;                        // Variable to invert direction based on alliance color.
     
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
     // Constructor to initialize the AbsoluteFieldDrive command.
-    public AbsoluteFieldDrive(SwerveDrive swerve, XboxController xboxDriver) {
+    public AbsoluteFieldDrive(XboxController xboxDriver) {
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
@@ -51,7 +51,6 @@ public class AbsoluteFieldDrive extends Command {
                 break;
         }
 
-        this.swerve = swerve;
         this.vX = () -> -MathUtil.applyDeadband(xboxDriver.getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND);
         this.vY = () -> -MathUtil.applyDeadband(xboxDriver.getLeftX(), Constants.OperatorConstants.LEFT_X_DEADBAND);
         this.heading = () -> -MathUtil.applyDeadband(xboxDriver.getRightX(), Constants.OperatorConstants.RIGHT_X_DEADBAND);

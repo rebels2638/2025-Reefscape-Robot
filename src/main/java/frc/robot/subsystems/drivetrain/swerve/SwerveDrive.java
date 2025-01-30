@@ -52,6 +52,15 @@ import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOTalonFX;
 
 public class SwerveDrive extends SubsystemBase {
+    private static SwerveDrive instance = null;
+    public static SwerveDrive getInstance() {
+        if (instance == null) {
+            instance = new SwerveDrive();
+        }
+
+        return instance;
+    }
+
     private final PIDController rotationalVelocityFeedbackController;
 
     private Rotation2d rotationLock;
@@ -98,7 +107,7 @@ public class SwerveDrive extends SubsystemBase {
     private final SwerveControllerConfigBase controllerConfig; 
 
     @SuppressWarnings("static-access")
-    public SwerveDrive() {
+    private SwerveDrive() {
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
