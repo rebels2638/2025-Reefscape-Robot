@@ -262,6 +262,8 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void driveFieldRelative(ChassisSpeeds speeds) {
+        Logger.recordOutput("SwerveDrive/driveFieldRelativeSpeeds", speeds);
+
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotState.getInstance().getEstimatedPose().getRotation());
         driveRobotRelative(speeds);
     }
