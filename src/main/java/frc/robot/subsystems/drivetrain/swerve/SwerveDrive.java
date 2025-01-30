@@ -75,7 +75,11 @@ public class SwerveDrive extends SubsystemBase {
     };
 
     private final SwerveSetpointGenerator swerveSetpointGenerator;
-    private SwerveSetpoint previousSetpoint = null;
+    private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
+        RobotState.getInstance().getRobotRelativeSpeeds(), 
+        moduleStates, 
+        DriveFeedforwards.zeros(4)
+    );
 
     double previousSetpointCallTime = Timer.getFPGATimestamp();
 
@@ -195,14 +199,6 @@ public class SwerveDrive extends SubsystemBase {
                         null,
                     odometryTimestamp
                     ));
-
-        if (previousSetpoint == null) {
-            previousSetpoint = new SwerveSetpoint(
-                RobotState.getInstance().getRobotRelativeSpeeds(), 
-                moduleStates, 
-                DriveFeedforwards.zeros(4)
-            );
-        }
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
@@ -219,7 +215,6 @@ public class SwerveDrive extends SubsystemBase {
     }
     
     public void driveRobotRelative(ChassisSpeeds desiredSpeeds) {
-        if (previousSetpoint == null) { return; }
         Logger.recordOutput("SwerveDrive/desiredSpeeds", desiredSpeeds);
 
         if (isTranslationSlowdownEnabled) {
