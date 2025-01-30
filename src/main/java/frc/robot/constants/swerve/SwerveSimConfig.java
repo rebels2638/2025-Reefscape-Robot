@@ -124,7 +124,7 @@ public final class SwerveSimConfig extends SwerveConfigBase {
                 new Translation2d(0.38, -0.38),
                 new Translation2d(-0.38, 0.38),
                 new Translation2d(-0.38, -0.38),
-                1
+                0 //dont compensate for drift
             );
         
         this.kPATHPLANNER_ROBOT_CONFIG = new RobotConfig(
