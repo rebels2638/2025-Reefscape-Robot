@@ -10,6 +10,8 @@ public class PivotConfigSim extends PivotConfigBase {
         return instance;
     }
 
+    private PivotConfigSim() {}
+
     // CANID
     @Override
     public int getCANID() {

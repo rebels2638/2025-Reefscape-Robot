@@ -9,6 +9,8 @@ public class ClawConfigProto extends ClawConfigBase {
 
         return instance;
     }
+
+    private ClawConfigProto() {}
     
     // CANID
     @Override

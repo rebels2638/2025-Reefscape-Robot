@@ -22,7 +22,7 @@ public class SwerveControllerConfigComp extends SwerveControllerConfigBase {
      *
      * @param maxAngularVelocityRadiansPerSec The drivetrain's max angular velocity (rad/s)
      */
-    public SwerveControllerConfigComp(double maxAngularVelocityRadiansPerSec) {
+    private SwerveControllerConfigComp(double maxAngularVelocityRadiansPerSec) {
         // These PIDControllers are zeroed out as specified
         this.rotationalVelocityFeedbackController = new PIDController(0, 0, 0);
         this.translationVelocityFeedbackController = new PIDController(0, 0, 0);

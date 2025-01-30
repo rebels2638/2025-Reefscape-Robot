@@ -12,6 +12,8 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
         return instance;
     }
 
+    private SwerveDrivetrainConfigSim() {}
+    
     private final double maxTranslationalVelocity = 4.0;
     private final double maxTranslationalAcceleration = 3.5;
     private final double maxAngularVelocity = 3.7;

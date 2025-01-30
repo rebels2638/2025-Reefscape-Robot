@@ -1,26 +1,32 @@
-package frc.robot.constants.pivot;
+package frc.robot.constants.elevator;
 
-public class PivotConfigProto extends PivotConfigBase {
-    private static PivotConfigProto instance;
-    public static PivotConfigProto getInstance() {
+public class ElevatorConfigComp extends ElevatorConfigBase {
+    private static ElevatorConfigComp instance;
+    public static ElevatorConfigComp getInstance() {
         if (instance == null) {
-            instance = new PivotConfigProto();
+            instance = new ElevatorConfigComp();
         }
 
         return instance;
     }
     
-    private PivotConfigProto() {}
+    private ElevatorConfigComp() {}
+
     // CANID
     @Override
-    public int getCANID() {
-        return 21;
+    public int getCANID1() {
+        return 1;
+    }
+
+    @Override
+    public int getCANID2() {
+        return 1;
     }
 
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 13.0;
+        return 30.0;
     }
 
     @Override
@@ -30,24 +36,24 @@ public class PivotConfigProto extends PivotConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 10.0;
+        return 20.0;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 10.0;
+        return 35.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 10.0;
+        return 40.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -10.0;
+        return -40.0;
     }
 
     // Characterization / Gains
@@ -115,12 +121,12 @@ public class PivotConfigProto extends PivotConfigBase {
     }
 
     @Override
-    public double getMaxAngleRotations() {
+    public double getMaxHeightMeters() {
         return 1;
     }
 
     @Override 
-    public double getMinAngleRotations() {
+    public double getMinHeightMeters() {
         return -1;
     }
 }

@@ -3,13 +3,15 @@ package frc.robot.constants.elevator;
 public class ElevatorConfigProto extends ElevatorConfigBase {
     private static ElevatorConfigProto instance;
     public static ElevatorConfigProto getInstance() {
-        if (instance != null) {
+        if (instance == null) {
             instance = new ElevatorConfigProto();
         }
 
         return instance;
     }
     
+    private ElevatorConfigProto() {}
+
     // CANID
     @Override
     public int getCANID1() {

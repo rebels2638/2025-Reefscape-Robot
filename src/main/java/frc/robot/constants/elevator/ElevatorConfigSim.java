@@ -3,12 +3,14 @@ package frc.robot.constants.elevator;
 public class ElevatorConfigSim extends ElevatorConfigBase {
     private static ElevatorConfigSim instance;
     public static ElevatorConfigSim getInstance() {
-        if (instance != null) {
+        if (instance == null) {
             instance = new ElevatorConfigSim();
         }
 
         return instance;
     }
+
+    private ElevatorConfigSim() {}
 
     // CANID
     @Override

@@ -1,17 +1,17 @@
-package frc.robot.constants.claw;
+package frc.robot.constants.roller;
 
-public class ClawConfigSim extends ClawConfigBase {
-    private static ClawConfigSim instance;
-    public static ClawConfigSim getInstance() {
+public class RollerConfigComp extends RollerConfigBase {
+    private static RollerConfigComp instance;
+    public static RollerConfigComp getInstance() {
         if (instance == null) {
-            instance = new ClawConfigSim();
+            instance = new RollerConfigComp();
         }
 
         return instance;
     }
 
-    private ClawConfigSim() {}
-
+    private RollerConfigComp() {}
+    
     // CANID
     @Override
     public int getCANID() {
@@ -55,20 +55,5 @@ public class ClawConfigSim extends ClawConfigBase {
     @Override
     public boolean isNeutralModeBrake() {
         return true;
-    }
-
-    @Override
-    public double getHighPassFilterTimeConstant() {
-        return 0.1;
-    }
-
-    @Override
-    public double getHighPassFilterUpperTrip() {
-        return 10;
-    }
-
-    @Override
-    public double getHighPassFilterLowerTrip() {
-        return 10;
     }
 }

@@ -3,10 +3,10 @@ package frc.robot.subsystems.pivot;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Torque;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.pivot.PivotConfigBase;
+import frc.robot.constants.pivot.PivotConfigComp;
 import frc.robot.constants.pivot.PivotConfigProto;
 import frc.robot.constants.pivot.PivotConfigSim;
 
@@ -20,7 +20,7 @@ public class Pivot extends SubsystemBase {
         // IO
         switch (Constants.currentMode) {
             case COMP:
-                config = PivotConfigProto.getInstance();
+                config = PivotConfigComp.getInstance();
                 pivotIO = new PivotIOTalonFX(config);
 
                 break;
@@ -37,9 +37,15 @@ public class Pivot extends SubsystemBase {
 
                 break;
 
-            default:
-                config = PivotConfigProto.getInstance();
+            case REPLAY:
+                config = PivotConfigComp.getInstance();
                 pivotIO = new PivotIO() {};
+
+                break;
+
+            default:
+                config = PivotConfigComp.getInstance();
+                pivotIO = new PivotIOTalonFX(config);
 
                 break;
         }

@@ -3,12 +3,14 @@ package frc.robot.constants.roller;
 public class RollerConfigSim extends RollerConfigBase {
     private static RollerConfigSim instance;
     public static RollerConfigSim getInstance() {
-        if (instance != null) {
+        if (instance == null) {
             instance = new RollerConfigSim();
         }
 
         return instance;
     }
+
+    private RollerConfigSim() {}
 
     // CANID
     @Override

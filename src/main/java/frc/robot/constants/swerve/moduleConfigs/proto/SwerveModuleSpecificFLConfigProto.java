@@ -12,6 +12,8 @@ public class SwerveModuleSpecificFLConfigProto extends SwerveModuleSpecificConfi
         return instance;
     }
 
+    private SwerveModuleSpecificFLConfigProto() {}
+
     @Override
     public int getDriveCanId() {
         return 4;

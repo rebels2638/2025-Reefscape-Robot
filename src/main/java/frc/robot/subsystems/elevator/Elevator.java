@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.elevator.ElevatorConfigBase;
+import frc.robot.constants.elevator.ElevatorConfigComp;
 import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
 
@@ -18,7 +19,7 @@ public class Elevator extends SubsystemBase {
         // IO
         switch (Constants.currentMode) {
             case COMP:
-                config = ElevatorConfigProto.getInstance();
+                config = ElevatorConfigComp.getInstance();
                 elevatorIO = new ElevatorIOTalonFX(config);
 
                 break;
@@ -35,8 +36,14 @@ public class Elevator extends SubsystemBase {
 
                 break;
 
+            case REPLAY:
+                config = ElevatorConfigComp.getInstance();
+                elevatorIO = new ElevatorIO() {};
+
+                break;
+                
             default:
-                config = ElevatorConfigProto.getInstance();
+                config = ElevatorConfigComp.getInstance();
                 elevatorIO = new ElevatorIO() {};
 
                 break;

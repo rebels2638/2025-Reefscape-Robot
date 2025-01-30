@@ -19,7 +19,7 @@ public class SwervePathplannerConfigProto extends SwervePathplannerConfigBase{
 
     private final RobotConfig robotConfig;
 
-    public SwervePathplannerConfigProto() {
+    private SwervePathplannerConfigProto() {
         this.robotConfig = new RobotConfig(
             27.88,
             3.5,

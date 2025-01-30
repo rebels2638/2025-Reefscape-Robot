@@ -1,16 +1,17 @@
 package frc.robot.constants.pivot;
 
-public class PivotConfigProto extends PivotConfigBase {
-    private static PivotConfigProto instance;
-    public static PivotConfigProto getInstance() {
+public class PivotConfigComp extends PivotConfigBase {
+    private static PivotConfigComp instance;
+    public static PivotConfigComp getInstance() {
         if (instance == null) {
-            instance = new PivotConfigProto();
+            instance = new PivotConfigComp();
         }
 
         return instance;
     }
     
-    private PivotConfigProto() {}
+    private PivotConfigComp() {}
+    
     // CANID
     @Override
     public int getCANID() {

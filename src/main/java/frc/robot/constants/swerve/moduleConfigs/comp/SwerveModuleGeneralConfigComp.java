@@ -15,6 +15,8 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
         return instance;
     }
 
+    private SwerveModuleGeneralConfigComp() {}
+
     @Override
     public String getCanBusName() {
         return "drivetrain";

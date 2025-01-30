@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.roller.RollerConfigBase;
+import frc.robot.constants.roller.RollerConfigComp;
 import frc.robot.constants.roller.RollerConfigProto;
 import frc.robot.constants.roller.RollerConfigSim;
 
@@ -18,7 +19,7 @@ public class Roller extends SubsystemBase {
         // IO
         switch (Constants.currentMode) {
             case COMP:
-                config = RollerConfigProto.getInstance();
+                config = RollerConfigComp.getInstance();
                 rollerIO = new RollerIOTalonFX(config);
 
                 break;
@@ -35,9 +36,15 @@ public class Roller extends SubsystemBase {
 
                 break;
 
-            default:
+            case REPLAY:
                 config = RollerConfigProto.getInstance();
                 rollerIO = new RollerIO() {};
+
+                break;
+            
+            default:
+                config = RollerConfigComp.getInstance();
+                rollerIO = new RollerIOTalonFX(config);
 
                 break;
         }
