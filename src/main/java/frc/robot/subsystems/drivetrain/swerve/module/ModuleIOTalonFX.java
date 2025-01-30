@@ -60,12 +60,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final MotionMagicVelocityTorqueCurrentFOC driveMotorRequest = new MotionMagicVelocityTorqueCurrentFOC(0);
     private final MotionMagicExpoTorqueCurrentFOC steerMotorRequest = new MotionMagicExpoTorqueCurrentFOC(0);
 
-    private final double kDRIVE_MOTOR_ROTATIONS_TO_METERS;
-    private final double kDRIVE_METERS_TO_MOTOR_ROTATIONS;
-
-    private final double kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS;
-    private final double kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS;
-
     private final GeneralConfig generalConfig;
     private final int moduleID;
 
@@ -75,16 +69,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     public ModuleIOTalonFX(SwerveConfigBase configBase, SpecificConfig specificConfig, int moduleID) {
         this.generalConfig = configBase.getSharedGeneralConfig();
         this.moduleID = moduleID;
-
-        // TODO: CHECK THIS !!!!!!!!!!!!! :3 
-        kDRIVE_MOTOR_ROTATIONS_TO_METERS = generalConfig.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO *
-                2 * Math.PI * generalConfig.kDRIVE_WHEEL_RADIUS_METERS;
-
-        kDRIVE_METERS_TO_MOTOR_ROTATIONS = 1 / kDRIVE_MOTOR_ROTATIONS_TO_METERS;
-
-        kSTEER_MOTOR_ROTATIONS_TO_MODULE_ROTATIONS = generalConfig.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
-        kSTEER_MODULE_ROTATIONS_TO_MOTOR_ROTATIONS = 1
-                / generalConfig.kSTEER_MOTOR_TO_OUTPUT_SHAFT_RATIO;
 
         // Drive motor
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -101,21 +85,20 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         driveConfig.MotionMagic.MotionMagicAcceleration = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC;
         driveConfig.MotionMagic.MotionMagicJerk = generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_JERK_METERS_PER_SEC_SEC_SEC;
-        // encoder
+
         // Cancoder + encoder
         driveConfig.ClosedLoopGeneral.ContinuousWrap = generalConfig.kDRIVE_CONTINUOUS_WRAP;
         driveConfig.Feedback.SensorToMechanismRatio = 
-                generalConfig.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO /
-                (generalConfig.kDRIVE_WHEEL_RADIUS_METERS * 
-                2 * Math.PI);
+            generalConfig.kDRIVE_MOTOR_TO_OUTPUT_SHAFT_RATIO /
+            (generalConfig.kDRIVE_WHEEL_RADIUS_METERS * 2 * Math.PI);
 
         driveConfig.MotorOutput.NeutralMode = 
-                generalConfig.kDRIVE_IS_NEUTRAL_MODE_BRAKE ? 
-                        NeutralModeValue.Brake : 
-                        NeutralModeValue.Coast;
+            generalConfig.kDRIVE_IS_NEUTRAL_MODE_BRAKE ? 
+                NeutralModeValue.Brake : 
+                NeutralModeValue.Coast;
 
         driveConfig.MotorOutput.Inverted = 
-                specificConfig.kDRIVE_IS_INVERTED ?
+            specificConfig.kDRIVE_IS_INVERTED ?
                 InvertedValue.Clockwise_Positive :
                 InvertedValue.CounterClockwise_Positive;
 
@@ -160,12 +143,12 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerConfig.MotionMagic.MotionMagicCruiseVelocity = generalConfig.kSTEER_MOTION_MAGIC_CRUISE_VELOCITY_ROTATIONS_PER_SEC;
 
         steerConfig.MotorOutput.NeutralMode = 
-                generalConfig.kSTEER_IS_NEUTRAL_MODE_BRAKE ? 
-                        NeutralModeValue.Brake : 
-                        NeutralModeValue.Coast;
+            generalConfig.kSTEER_IS_NEUTRAL_MODE_BRAKE ? 
+                NeutralModeValue.Brake : 
+                NeutralModeValue.Coast;
 
         steerConfig.MotorOutput.Inverted = 
-                specificConfig.kSTEER_IS_INVERTED ?
+            specificConfig.kSTEER_IS_INVERTED ?
                 InvertedValue.Clockwise_Positive :
                 InvertedValue.CounterClockwise_Positive;
                 
@@ -192,54 +175,49 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerMotor.getConfigurator().apply(steerConfig);
 
         // status signals
-        driveAppliedVolts = driveMotor.getMotorVoltage().clone();
-        driveSupplyCurrent = driveMotor.getSupplyCurrent().clone();
+        driveAppliedVolts = driveMotor.getMotorVoltage();
+        driveSupplyCurrent = driveMotor.getSupplyCurrent();
         driveTemperature = driveMotor.getDeviceTemp().clone();
 
-        steerAppliedVolts = steerMotor.getMotorVoltage().clone();
-        steerSupplyCurrent = steerMotor.getSupplyCurrent().clone();
-        steerTemperature = steerMotor.getDeviceTemp().clone();
+        steerAppliedVolts = steerMotor.getMotorVoltage();
+        steerSupplyCurrent = steerMotor.getSupplyCurrent();
+        steerTemperature = steerMotor.getDeviceTemp();
 
         steerEncoderAbsolutePosition = steerEncoder.getAbsolutePosition();
-
-        Phoenix6Odometry.getInstance().registerSignal(driveMotor, driveAppliedVolts);
-        Phoenix6Odometry.getInstance().registerSignal(driveMotor, driveSupplyCurrent);
-        Phoenix6Odometry.getInstance().registerSignal(driveMotor, driveTemperature);
-
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerAppliedVolts);
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerSupplyCurrent);
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerTemperature);
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerEncoderAbsolutePosition);
+        steerEncoderPositionStatusSignal = steerEncoder.getPosition();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                100,
-                driveAppliedVolts,
-                driveSupplyCurrent,
-                steerAppliedVolts,
-                steerSupplyCurrent,
-                driveTemperature,
-                steerTemperature,
-                steerEncoderAbsolutePosition);
+            30,
+            driveAppliedVolts,
+            driveSupplyCurrent,
+            driveTemperature,
 
-        drivePositionStatusSignal = driveMotor.getPosition().clone();
-        driveVelocityStatusSignal = driveMotor.getVelocity().clone();
-        steerPositionStatusSignal = steerMotor.getPosition().clone();
-        steerVelocityStatusSignal = steerMotor.getVelocity().clone();
-        steerEncoderPositionStatusSignal = steerEncoder.getPosition().clone();
+            steerAppliedVolts,
+            steerSupplyCurrent,
+            steerTemperature,
+
+            steerEncoderAbsolutePosition,
+            steerEncoderPositionStatusSignal
+        );
+
+        drivePositionStatusSignal = driveMotor.getPosition();
+        driveVelocityStatusSignal = driveMotor.getVelocity();
+        steerPositionStatusSignal = steerMotor.getPosition();
+        steerVelocityStatusSignal = steerMotor.getVelocity();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                100,
-                drivePositionStatusSignal,
-                driveVelocityStatusSignal,
-                steerPositionStatusSignal,
-                steerVelocityStatusSignal,
-                steerEncoderPositionStatusSignal);
+            100,
+            drivePositionStatusSignal,
+            driveVelocityStatusSignal,
+
+            steerPositionStatusSignal,
+            steerVelocityStatusSignal
+        );
 
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, drivePositionStatusSignal);
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, driveVelocityStatusSignal);
         Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerPositionStatusSignal);
         Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerVelocityStatusSignal);
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerEncoderPositionStatusSignal);
 
         driveMotor.optimizeBusUtilization();
         steerMotor.optimizeBusUtilization();
@@ -249,6 +227,19 @@ public class ModuleIOTalonFX implements ModuleIO {
     @Override
     @SuppressWarnings("static-access")
     public void updateInputs(ModuleIOInputs inputs) {
+        BaseStatusSignal.refreshAll(
+            driveAppliedVolts,
+            driveSupplyCurrent,
+            driveTemperature,
+
+            steerAppliedVolts,
+            steerSupplyCurrent,
+            steerTemperature,
+
+            steerEncoderAbsolutePosition,
+            steerEncoderPositionStatusSignal
+        );
+
         double drivePosition = BaseStatusSignal
                 .getLatencyCompensatedValue(drivePositionStatusSignal, driveVelocityStatusSignal).in(Rotation);
 
@@ -259,15 +250,14 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         inputs.drivePositionMeters = drivePosition;
         inputs.driveVelocityMetersPerSec = driveVelocityStatusSignal.getValue().in(RotationsPerSecond);
-        
-        inputs.driveCurrentDrawAmps = driveSupplyCurrent.getValue().in(Amps);
-        inputs.driveAppliedVolts = driveAppliedVolts.getValue().in(Volts);
-        inputs.driveTemperatureFahrenheit = driveTemperature.getValue().in(Fahrenheit);
 
-        inputs.steerCANCODERAbsolutePosition = new Rotation2d(steerEncoderAbsolutePosition.getValue().in(Radians));
         inputs.steerPosition = new Rotation2d(
                 Units.rotationsToRadians(steerRotations));
         inputs.steerVelocityRadPerSec = steerVelocityStatusSignal.getValue().in(RadiansPerSecond);
+
+        inputs.driveCurrentDrawAmps = driveSupplyCurrent.getValue().in(Amps);
+        inputs.driveAppliedVolts = driveAppliedVolts.getValue().in(Volts);
+        inputs.driveTemperatureFahrenheit = driveTemperature.getValue().in(Fahrenheit);
 
         inputs.steerCurrentDrawAmps = steerSupplyCurrent.getValue().in(Amps);
         inputs.steerAppliedVolts = steerAppliedVolts.getValue().in(Volts);
@@ -279,29 +269,26 @@ public class ModuleIOTalonFX implements ModuleIO {
         currentDriveVelo = inputs.driveVelocityMetersPerSec;
     }
 
-    // TODO: validate this later
-    // reviewed: correct, however, 2910 uses steerMotor.setControl(new
-    // MotionMagicVoltage(0).withPosition(velocityRadSec)); for their stuff
-    // TODO: exponential motionamagic profiles
-
     @Override
     public void setState(SwerveModuleState state) {
         driveMotor.setControl(driveMotorRequest.withVelocity(
-                RebelUtil.constrain(
-                        state.speedMetersPerSecond,
-                        -generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC,
-                        generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC)
-                        ).
-                withAcceleration(
-                        Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
-                        generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC :
-                        generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC
-                ));
+            RebelUtil.constrain(
+                state.speedMetersPerSecond,
+                -generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC,
+                generalConfig.kDRIVE_MAX_VELOCITY_METERS_PER_SEC)
+            ).
+            withAcceleration(
+                Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
+                generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_ACCELERATION_METERS_PER_SEC_SEC :
+                generalConfig.kDRIVE_MOTION_MAGIC_VELOCITY_DECELERATION_METERS_PER_SEC_SEC
+            )
+        );
         
         steerMotor.setControl(
-                steerMotorRequest.withPosition(
-                        state.angle.getRotations())); // TODO: ENSURE THAT THE MODULE HAS PROPER
-                                                                              // CONTINUES WRAP!!!!!!
+            steerMotorRequest.withPosition(
+                state.angle.getRotations()
+            )
+        );
     }
 
     @Override

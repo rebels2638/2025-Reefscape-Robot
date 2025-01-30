@@ -135,11 +135,6 @@ public class ModuleIOSim implements ModuleIO {
         inputs.driveTemperatureFahrenheit = 60; // random number
 
         inputs.steerVelocityRadPerSec = steerSim.getAngularVelocityRadPerSec();
-        inputs.steerCANCODERAbsolutePosition = new Rotation2d(MathUtil.angleModulus(
-                inputs.steerCANCODERAbsolutePosition.getRadians() +
-                        inputs.steerVelocityRadPerSec * dt));
-        
-        inputs.steerPosition = inputs.steerCANCODERAbsolutePosition;
 
         double angleDelta = inputs.steerPosition.getRadians() - previousWrappedAngleRad;
         previousWrappedAngleRad = inputs.steerPosition.getRadians();

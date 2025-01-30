@@ -3,7 +3,6 @@ package frc.robot.subsystems.drivetrain.swerve.module;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public interface ModuleIO {
@@ -11,18 +10,15 @@ public interface ModuleIO {
     class ModuleIOInputs {
         public double timestamp = 0;
 
-        // drive
         public double drivePositionMeters = 0;
         public double driveVelocityMetersPerSec = 0;
+
+        public Rotation2d steerPosition = new Rotation2d();
+        public double steerVelocityRadPerSec = 0;
 
         public double driveCurrentDrawAmps = 0;
         public double driveAppliedVolts = 0;
         public double driveTemperatureFahrenheit = 0;
-
-        // steer
-        public Rotation2d steerCANCODERAbsolutePosition = new Rotation2d();
-        public Rotation2d steerPosition = new Rotation2d();
-        public double steerVelocityRadPerSec = 0;
 
         public double steerCurrentDrawAmps = 0;
         public double steerAppliedVolts = 0;
