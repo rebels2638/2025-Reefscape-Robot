@@ -40,8 +40,6 @@ public class AutoAlign extends Command {
     private double currentUnwrappedRotationRad = 0;
     private double previousWrappedRotationRad = 0;
 
-    private double directionInput = 2;
-
     double previousTimestamp = Timer.getFPGATimestamp();
 
     public AutoAlign(SwerveDrive swerveDrive, SwerveCompConfig config, XboxController xboxController) {
@@ -75,6 +73,7 @@ public class AutoAlign extends Command {
     public void initialize() {
         double distanceToPose;
         currentPose = swerveDrive.getPose();
+        closestTarget = targetPose;
 
         for (int i = 0; i < ElementConstants.Reef.centerFaces.length; i++) {
             distanceToPose = calculateDistance(currentPose, ElementConstants.Reef.centerFaces[i]);
@@ -100,8 +99,6 @@ public class AutoAlign extends Command {
             targetPose.getRotation().getRadians(),
             swerveDrive.getMeasuredFieldRelativeSpeeds().omegaRadiansPerSecond
         );
-
-        Logger.recordOutput("AutoAlign/targetPose", targetPose);
     }
 
     @Override
@@ -135,13 +132,15 @@ public class AutoAlign extends Command {
                             0
                     )
         );
-        // bummy code no work adfdgagddfbkjfbjkewheghj
-        targetPose = getNewTarget(currentPose, moveToCoral(currentPose, targetPose, xboxController), 
+        targetPose = findNewTarget(currentPose, moveToCoral(currentPose, targetPose, xboxController), 
                                 rotationalMotionProfile, translationalMotionProfile);
 
         // calculate the outputs
         double vx, vy, omega;
-        double angle = calculateAngle(swerveDrive.getPose(), targetPose);
+        double angle = Math.atan2(
+            targetPose.getTranslation().getY() - swerveDrive.getPose().getTranslation().getY(),
+            targetPose.getTranslation().getX() - swerveDrive.getPose().getTranslation().getX()
+        );
 
         vx = currentTranslationalSetpoint.velocity * Math.cos(angle) + xTranslationalFeedbackController.calculate(swerveDrive.getPose().getTranslation().getX(),
                                                                                                                   targetPose.getTranslation().getX());
@@ -175,8 +174,8 @@ public class AutoAlign extends Command {
     private static double calculateAngle(Pose2d currentPose, Pose2d targetPose) {
         double calculatedDistanceToPose = calculateDistance(currentPose, targetPose);
 
-        Pose2d angleEndpoint = new Pose2d(targetPose.getX() + calculatedDistanceToPose * -Math.cos(targetPose.getRotation().getRadians()),
-                                          targetPose.getY() + calculatedDistanceToPose * -Math.sin(targetPose.getRotation().getRadians()),
+        Pose2d angleEndpoint = new Pose2d(targetPose.getX() - calculatedDistanceToPose * Math.cos(targetPose.getRotation().getRadians()),
+                                          targetPose.getY() - calculatedDistanceToPose * Math.sin(targetPose.getRotation().getRadians()),
                                           targetPose.getRotation());
         Logger.recordOutput("AutoAlign/angleEndpoint", angleEndpoint);
         Translation2d currentTranslation = new Translation2d(targetPose.getX() - currentPose.getX(),
@@ -196,21 +195,21 @@ public class AutoAlign extends Command {
     }
 
     //bit scuffed but should work after some simple fixing
-    private static Pose2d getNewTarget(Pose2d currentPose, Pose2d targetPose, TrapezoidProfile rotationProfile, TrapezoidProfile translationalProfile) {
+    private static Pose2d findNewTarget(Pose2d currentPose, Pose2d targetPose, TrapezoidProfile rotationProfile, TrapezoidProfile translationalProfile) {
         double distanceToTarget = calculateDistance(currentPose, targetPose);
-        double robotRadius = 0.6;
+        double robotRadius = Units.inchesToMeters(24.0);
         double angleError = targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
-        Pose2d angleEndpoint = new Pose2d(targetPose.getX() + (robotRadius + 0.2) * -Math.cos(targetPose.getRotation().getRadians()),
-                                          targetPose.getY() + (robotRadius + 0.2) * -Math.sin(targetPose.getRotation().getRadians()),
+        Pose2d angleEndpoint = new Pose2d(targetPose.getX() - (robotRadius + 0.2) * Math.cos(targetPose.getRotation().getRadians()),
+                                          targetPose.getY() - (robotRadius + 0.2) * Math.sin(targetPose.getRotation().getRadians()),
                                           targetPose.getRotation());
         double timeToRotationalTarget = rotationProfile.timeLeftUntil(angleError);
         double timeToTranslationalTarget = translationalProfile.timeLeftUntil(distanceToTarget);
 
         if (distanceToTarget < robotRadius && angleError > Math.toRadians(45)) {
             targetPose = angleEndpoint;
-        } /*else if (timeToRotationalTarget > timeToTranslationalTarget) {
+        } else if (timeToRotationalTarget > timeToTranslationalTarget) {
             targetPose = angleEndpoint;
-        } */
+        }
         return targetPose;
     }
 

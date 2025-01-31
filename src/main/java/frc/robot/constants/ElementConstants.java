@@ -72,38 +72,38 @@ public class ElementConstants {
       centerFaces[0] =
         //bottom
           new Pose2d(
-            3.11, 
-            4.04,
-            Rotation2d.fromDegrees(180));
+            Units.inchesToMeters(122.44), 
+            Units.inchesToMeters(159.1),
+            Rotation2d.fromDegrees(0));
         //top right
       centerFaces[1] =
           new Pose2d(
-            5.17, 
-            2.88,
+            Units.inchesToMeters(203.54), 
+            Units.inchesToMeters(113.39),
             Rotation2d.fromDegrees(120));
         //bottom right
       centerFaces[2] =
           new Pose2d(
-            3.83,
-            2.88,
+            Units.inchesToMeters(150.79),
+            Units.inchesToMeters(113.39),
             Rotation2d.fromDegrees(60));
         //top
       centerFaces[3] =
           new Pose2d(
-            5.85, 
-            4.04,
-            Rotation2d.fromDegrees(0));
+            Units.inchesToMeters(230.32), 
+            Units.inchesToMeters(159.1),
+            Rotation2d.fromDegrees(180));
         //bottom left
       centerFaces[4] =
           new Pose2d(
-            3.83, 
-            5.2,
+            Units.inchesToMeters(150.79), 
+            Units.inchesToMeters(204.72),
             Rotation2d.fromDegrees(-60));
         //top left
       centerFaces[5] =
           new Pose2d(
-            5.18, 
-            5.2,
+            Units.inchesToMeters(203.94), 
+            Units.inchesToMeters(208.66),
             Rotation2d.fromDegrees(-120));
 
       // Initialize branch positions
