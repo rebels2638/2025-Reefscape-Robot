@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
 import frc.robot.constants.Constants;
@@ -13,7 +14,6 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
-import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
 public class LinearDriveToPose extends Command {
@@ -24,13 +24,13 @@ public class LinearDriveToPose extends Command {
     private final PIDController xTranslationalFeedbackController;
 
     private State xTranslationalGoal = new State();
-    private State xCurrentTranslationalSetpoint = new State();
+    private State currentXTranslationalSetpoint = new State();
 
     private final TrapezoidProfile yTranslationalMotionProfile;
     private final PIDController yTranslationalFeedbackController;
 
     private State yTranslationalGoal = new State();
-    private State yCurrentTranslationalSetpoint = new State();
+    private State currentYTranslationalSetpoint = new State();
 
     private final TrapezoidProfile rotationalMotionProfile;
     private final PIDController rotationalFeedbackController;
@@ -38,8 +38,7 @@ public class LinearDriveToPose extends Command {
     private State rotationalGoal = new State(0, 0);
     private State currentRotationalSetpoint = new State(0, 0);
 
-    private double currentUnwrappedRotationRad = 0;
-    private double previousWrappedRotationRad = 0;
+    private double previousTimestamp = Timer.getTimestamp();
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
@@ -110,6 +109,7 @@ public class LinearDriveToPose extends Command {
             endVelo.vyMetersPerSecond
         );
 
+        // rotation wrapping
         double desiredRotationRad = MathUtil.angleModulus(targetPose.getRotation().getRadians());
         double rotationError = MathUtil.inputModulus(
             desiredRotationRad - robotState.getEstimatedPose().getRotation().getRadians(),
@@ -126,7 +126,70 @@ public class LinearDriveToPose extends Command {
 
     @Override 
     public void initialize() {
-        xCurrentTranslationalSetpoint = 
+        currentXTranslationalSetpoint = new State(
+            robotState.getEstimatedPose().getX(),
+            robotState.getFieldRelativeSpeeds().vxMetersPerSecond
+        );
+
+        currentYTranslationalSetpoint = new State(
+            robotState.getEstimatedPose().getY(),
+            robotState.getFieldRelativeSpeeds().vyMetersPerSecond
+        );
+
+        xTranslationalFeedbackController.reset();
+        yTranslationalFeedbackController.reset();
+        rotationalFeedbackController.reset();
+
+        previousTimestamp = Timer.getTimestamp();
     }
-    
+
+    @Override
+    public void execute() {
+        double dt = Timer.getTimestamp() - previousTimestamp;
+
+        currentXTranslationalSetpoint = xTranslationalMotionProfile.calculate(
+            dt, 
+            currentXTranslationalSetpoint, 
+            xTranslationalGoal
+        );
+
+        currentYTranslationalSetpoint = yTranslationalMotionProfile.calculate(
+            dt, 
+            currentYTranslationalSetpoint, 
+            yTranslationalGoal
+        );
+
+        currentRotationalSetpoint = rotationalMotionProfile.calculate(
+            dt,
+            currentRotationalSetpoint, 
+            rotationalGoal
+        );
+
+        ChassisSpeeds calculatedSpeeds = new ChassisSpeeds(0, 0, 0);
+
+        calculatedSpeeds.vxMetersPerSecond = 
+            xTranslationalFeedbackController.calculate(
+                robotState.getEstimatedPose().getX(),
+                currentXTranslationalSetpoint.position
+            ) + 
+            currentXTranslationalSetpoint.velocity;
+
+        calculatedSpeeds.vyMetersPerSecond = 
+            xTranslationalFeedbackController.calculate(
+                robotState.getEstimatedPose().getY(),
+                currentYTranslationalSetpoint.position
+            ) + 
+            currentYTranslationalSetpoint.velocity;
+
+        calculatedSpeeds.omegaRadiansPerSecond = 
+            rotationalFeedbackController.calculate(
+                robotState.getEstimatedPose().getRotation().getRadians(),
+                currentRotationalSetpoint.position
+            ) + 
+            currentRotationalSetpoint.velocity;
+
+        swerveDrive.driveFieldRelative(calculatedSpeeds);
+
+        previousTimestamp = Timer.getTimestamp();
+    }
 }

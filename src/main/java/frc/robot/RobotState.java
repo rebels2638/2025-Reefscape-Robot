@@ -229,6 +229,10 @@ public class RobotState {
     return robotRelativeVelocity;
   }
 
+  public ChassisSpeeds getFieldRelativeSpeeds() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, lastGyroOrientation.toRotation2d());
+  }
+
   public Pose2d getPredictedPose(double translationLookaheadS, double rotationLookaheadS) {
     return getEstimatedPose()
         .transformBy(
