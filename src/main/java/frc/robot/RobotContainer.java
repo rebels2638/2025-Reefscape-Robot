@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.autoAligment.AutoAlign;
+import frc.robot.commands.autoAlignment.PathplanToPose;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.input.XboxController;
@@ -45,7 +45,7 @@ public class RobotContainer {
     // xboxOperator.getBButton().onTrue(new EjectCoral());
     
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
-    xboxDriver.getYButton().onTrue(new AutoAlign(alignmentPoseSearch()));
+    xboxDriver.getYButton().onTrue(new PathplanToPose(alignmentPoseSearch()));
   }
 
   public Pose2d alignmentPoseSearch() {
