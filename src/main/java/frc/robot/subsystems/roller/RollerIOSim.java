@@ -57,14 +57,14 @@
 
 //     @Override
 //     public void updateInputs(RollerIOInputs inputs) {
-//         double dt = Timer.getFPGATimestamp() - prevTimeInputs;
+//         double dt = Timer.getTimestamp() - prevTimeInputs;
 //         pivotSim.update(dt);
 
 //         inputs.rollerVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
 
 //         inputs.rollerAppliedVolts = appliedVolts;
 
-//         prevTimeInputs = Timer.getFPGATimestamp();
+//         prevTimeInputs = Timer.getTimestamp();
 //     }
 
 //     @Override

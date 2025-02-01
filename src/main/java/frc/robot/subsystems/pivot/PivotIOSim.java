@@ -60,7 +60,7 @@ public class PivotIOSim implements PivotIO {
 
     @Override
     public void updateInputs(PivotIOInputs inputs) {
-        double dt = Timer.getFPGATimestamp() - prevTimeInputs;
+        double dt = Timer.getTimestamp() - prevTimeInputs;
         pivotSim.update(dt);
 
         inputs.pivotVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
@@ -69,12 +69,12 @@ public class PivotIOSim implements PivotIO {
 
         inputs.pivotAppliedVolts = appliedVolts;
 
-        prevTimeInputs = Timer.getFPGATimestamp();
+        prevTimeInputs = Timer.getTimestamp();
     }
 
     @Override
     public void setAngle(Rotation2d angle) {
-        double dt = Timer.getFPGATimestamp() - prevTimeState;
+        double dt = Timer.getTimestamp() - prevTimeState;
         
         currentProfileSetpoint = trapezoidMotionProfile.calculate(
             dt, 
@@ -92,7 +92,7 @@ public class PivotIOSim implements PivotIO {
 
         pivotSim.setInputVoltage(voltage);
 
-        prevTimeState = Timer.getFPGATimestamp();
+        prevTimeState = Timer.getTimestamp();
     }
 
     @Override

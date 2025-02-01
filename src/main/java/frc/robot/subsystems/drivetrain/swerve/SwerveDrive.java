@@ -99,7 +99,7 @@ public class SwerveDrive extends SubsystemBase {
         DriveFeedforwards.zeros(4)
     );
 
-    double previousSetpointCallTime = Timer.getFPGATimestamp();
+    double previousSetpointCallTime = Timer.getTimestamp();
 
     private final SwerveModuleGeneralConfigBase moduleGeneralConfig;
     private final SwerveDrivetrainConfigBase drivetrainConfig;
@@ -244,7 +244,10 @@ public class SwerveDrive extends SubsystemBase {
                     modulePositions.clone(),
                     moduleStates.clone(),
                     gyroInputs.isConnected ? 
-                        new Rotation2d(gyroInputs.orientation.getZ()) :
+                        gyroInputs.orientation :
+                        null,
+                    gyroInputs.isConnected ? 
+                        gyroInputs.rates :
                         null,
                     odometryTimestamp
                     ));
@@ -295,14 +298,14 @@ public class SwerveDrive extends SubsystemBase {
 
         Logger.recordOutput("SwerveDrive/lockedRotationLock", desiredSpeeds);
         
-        double dt = Timer.getFPGATimestamp() - previousSetpointCallTime; 
+        double dt = Timer.getTimestamp() - previousSetpointCallTime; 
         Logger.recordOutput("SwerveDrive/dt", dt);
         previousSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
             desiredSpeeds,
             dt // between calls of generate setpoint
         );
-        previousSetpointCallTime = Timer.getFPGATimestamp();
+        previousSetpointCallTime = Timer.getTimestamp();
         Logger.recordOutput("SwerveDrive/SetpointDT", previousSetpointCallTime);
         Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
 
@@ -320,10 +323,6 @@ public class SwerveDrive extends SubsystemBase {
 
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotState.getInstance().getEstimatedPose().getRotation());
         driveRobotRelative(speeds);
-    }
-
-    public double gyroAngularVelocity() {
-        return gyroInputs.angularVelocityRadPerSec;
     }
 
     public void setRotationLock() {
