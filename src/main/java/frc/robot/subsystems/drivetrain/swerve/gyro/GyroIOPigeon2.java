@@ -19,12 +19,16 @@ import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
 public class GyroIOPigeon2 implements GyroIO {
     private final Pigeon2 gyro;
+
     private final StatusSignal<Angle> yawSignal;
-    private final StatusSignal<AngularVelocity> angularVelocitySignal;
+    private final StatusSignal<AngularVelocity> yawVelocitySignal;
+
     private final StatusSignal<Angle> rollSignal;
     private final StatusSignal<AngularVelocity> rollVelocitySignal;
+
     private final StatusSignal<Angle> pitchSignal;
     private final StatusSignal<AngularVelocity> pitchVelocitySignal;
+
     private final StatusSignal<LinearAcceleration> accelerationXSignal;
     private final StatusSignal<LinearAcceleration> accelerationYSignal;
 
@@ -40,7 +44,7 @@ public class GyroIOPigeon2 implements GyroIO {
         gyro.getConfigurator().apply(config);
 
         yawSignal = gyro.getYaw().clone();
-        angularVelocitySignal = gyro.getAngularVelocityZDevice().clone();
+        yawVelocitySignal = gyro.getAngularVelocityZDevice().clone();
 
         rollSignal = gyro.getRoll().clone();
         rollVelocitySignal = gyro.getAngularVelocityXWorld().clone();
@@ -54,7 +58,7 @@ public class GyroIOPigeon2 implements GyroIO {
         BaseStatusSignal.setUpdateFrequencyForAll(
                 100,
                 yawSignal,
-                angularVelocitySignal,
+                yawVelocitySignal,
                 rollSignal,
                 rollVelocitySignal,
                 pitchSignal,
@@ -63,7 +67,7 @@ public class GyroIOPigeon2 implements GyroIO {
                 accelerationYSignal);
 
         odom.registerSignal(gyro, yawSignal);
-        odom.registerSignal(gyro, angularVelocitySignal);
+        odom.registerSignal(gyro, yawVelocitySignal);
         odom.registerSignal(gyro, rollSignal);
         odom.registerSignal(gyro, rollVelocitySignal);
         odom.registerSignal(gyro, pitchSignal);
@@ -78,7 +82,7 @@ public class GyroIOPigeon2 implements GyroIO {
     public synchronized void updateInputs(GyroIOInputs inputs) {
         inputs.isConnected = BaseStatusSignal.refreshAll(
                         yawSignal,
-                        angularVelocitySignal,
+                        yawVelocitySignal,
                         rollSignal,
                         rollVelocitySignal,
                         pitchSignal,
@@ -90,9 +94,14 @@ public class GyroIOPigeon2 implements GyroIO {
         inputs.orientation = new Rotation3d(
             BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).in(Radians),
             BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).in(Radians),
-            BaseStatusSignal.getLatencyCompensatedValue(yawSignal, angularVelocitySignal).in(Radians)
+            BaseStatusSignal.getLatencyCompensatedValue(yawSignal, yawVelocitySignal).in(Radians)
         );
-        inputs.angularVelocityRadPerSec = angularVelocitySignal.getValue().in(RadiansPerSecond);
+        inputs.rates = new Rotation3d(
+            rollVelocitySignal.getValue().in(RadiansPerSecond),
+            pitchVelocitySignal.getValue().in(RadiansPerSecond),
+            yawVelocitySignal.getValue().in(RadiansPerSecond)
+        );
+
         inputs.worldAccelerationMetersPerSecSec = new Translation2d(
             accelerationXSignal.getValue().in(MetersPerSecondPerSecond), 
             accelerationYSignal.getValue().in(MetersPerSecondPerSecond)

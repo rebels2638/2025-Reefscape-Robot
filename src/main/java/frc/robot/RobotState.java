@@ -31,8 +31,17 @@ public class RobotState {
     return instance;
   }
   
-  public record OdometryObservation(SwerveModulePosition[] modulePositions, SwerveModuleState[] moduleStates, Rotation2d gyroAngle, double timestamp) {}
-  public record VisionObservation(Pose2d visionPose, double timestamp, Matrix<N3, N1> stdDevs) {}
+  public record OdometryObservation(
+    SwerveModulePosition[] modulePositions, 
+    SwerveModuleState[] moduleStates, 
+    Rotation3d gyroOrientation,
+    Rotation3d gyroRates, 
+    double timestamp) {}
+    
+  public record VisionObservation(
+    Pose2d visionPose, 
+    double timestamp, 
+    Matrix<N3, N1> stdDevs) {}
 
 
   private static final double poseBufferSizeSeconds = 2.0;
@@ -53,7 +62,9 @@ public class RobotState {
         new SwerveModulePosition()
     };
 
-  private Rotation2d lastGyroAngle = new Rotation2d();
+  private Rotation3d lastGyroOrientation = new Rotation3d();
+  private Rotation3d lastGyroRates = new Rotation3d();
+
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
 
   private RobotState() {
@@ -92,17 +103,24 @@ public class RobotState {
         drivetrainConfig.getBackRightPositionMeters()
     ); 
 
-    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(kinematics, lastGyroAngle, lastWheelPositions, new Pose2d());
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
+        kinematics,
+        lastGyroOrientation.toRotation2d(), 
+        lastWheelPositions, 
+        new Pose2d()
+    );
   }
 
   /** Add odometry observation */
   public void addOdometryObservation(OdometryObservation observation) {
-    Logger.recordOutput("RobotState/observation/timestamp", observation.timestamp);
-    Logger.recordOutput("RobotState/observation/gyroAngle", observation.gyroAngle);
-    Logger.recordOutput("RobotState/observation/modulePositions", observation.modulePositions);
-    Logger.recordOutput("RobotState/observation/moduleStates", observation.moduleStates);
-
+    Logger.recordOutput("RobotState/observation/timestamp", observation.timestamp());
+    Logger.recordOutput("RobotState/observation/gyroOrientation", observation.gyroOrientation());
+    Logger.recordOutput("RobotState/observation/gyroRates", observation.gyroRates());
+    Logger.recordOutput("RobotState/observation/modulePositions", observation.modulePositions());
+    Logger.recordOutput("RobotState/observation/moduleStates", observation.moduleStates());
     Logger.recordOutput("RobotState/lastWheelPositions", lastWheelPositions);
+
+    robotRelativeVelocity = kinematics.toChassisSpeeds(observation.moduleStates);
 
     Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.modulePositions());
     lastWheelPositions = observation.modulePositions();
@@ -110,22 +128,26 @@ public class RobotState {
     Logger.recordOutput("RobotState/twist", twist);
 
 
-    if (observation.gyroAngle != null) {
-        lastGyroAngle = observation.gyroAngle();
+    if (observation.gyroOrientation != null) {
+        lastGyroOrientation = observation.gyroOrientation();
+        lastGyroRates = observation.gyroRates();
+
         Logger.recordOutput("RobotState/isUsingTwistAngle", false);
     }
     else {
-        lastGyroAngle = lastGyroAngle.plus(new Rotation2d(twist.dtheta));
-        Logger.recordOutput("RobotState/dtheta", twist.dtheta);
+        lastGyroOrientation = new Rotation3d(0, 0, lastGyroOrientation.getZ() + twist.dtheta);
+        lastGyroRates = new Rotation3d(0, 0, robotRelativeVelocity.omegaRadiansPerSecond);
 
+        Logger.recordOutput("RobotState/dtheta", twist.dtheta);
         Logger.recordOutput("RobotState/isUsingTwistAngle", true);
     }
-    Logger.recordOutput("RobotState/lastGyroAngle", lastGyroAngle);
-    
+
+    Logger.recordOutput("RobotState/lastGyroOrientation", lastGyroOrientation);
+    Logger.recordOutput("RobotState/lastGyroRates", lastGyroRates);
+
     // Add twist to odometry pose
-    swerveDrivePoseEstimator.updateWithTime(observation.timestamp, lastGyroAngle, lastWheelPositions);
-    lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
-    robotRelativeVelocity = kinematics.toChassisSpeeds(observation.moduleStates);
+    swerveDrivePoseEstimator.updateWithTime(observation.timestamp, lastGyroOrientation.toRotation2d(), lastWheelPositions);
+    lastEstimatedPoseUpdateTime = Timer.getTimestamp();
 
     // Add pose to buffer at timestamp
     poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition()); 
@@ -145,15 +167,16 @@ public class RobotState {
       return;
     }
 
-    // Get odometry based pose at timestamp
-    Optional<Pose2d> sample = poseBuffer.getSample(observation.timestamp());
-    if (sample.isEmpty()) {
-      // exit if not there
-      return;
-    }
+    // TODO: IS THIS NECESSAY?
+    // // Get odometry based pose at timestamp
+    // Optional<Pose2d> sample = poseBuffer.getSample(observation.timestamp());
+    // if (sample.isEmpty()) {
+    //   // exit if not there
+    //   return;
+    // }
 
     swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
-    lastEstimatedPoseUpdateTime = Timer.getFPGATimestamp();
+    lastEstimatedPoseUpdateTime = Timer.getTimestamp();
 
     Logger.recordOutput("RobotState/estimatedPosition", swerveDrivePoseEstimator.getEstimatedPosition());  
 
@@ -164,7 +187,7 @@ public class RobotState {
    * Clear pose buffer
    */
   public void resetPose(Pose2d initialPose) {
-    swerveDrivePoseEstimator.resetPosition(lastGyroAngle, lastWheelPositions, initialPose);
+    swerveDrivePoseEstimator.resetPosition(lastGyroOrientation.toRotation2d(), lastWheelPositions, initialPose);
     poseBuffer.clear();
   }
 
@@ -176,9 +199,18 @@ public class RobotState {
     return swerveDrivePoseEstimator.getEstimatedPosition();
   }
 
+  public Rotation3d getGyroOrientation() {
+    return lastGyroOrientation;
+  }
+
+  public Rotation3d getGyroRates() {
+    return lastGyroRates;
+  }
+  
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return robotRelativeVelocity;
   }
+
   public Pose2d getPredictedPose(double translationLookaheadS, double rotationLookaheadS) {
     return getEstimatedPose()
         .transformBy(

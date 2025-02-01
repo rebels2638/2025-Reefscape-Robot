@@ -61,7 +61,7 @@
 
 //     @Override
 //     public void updateInputs(ElevatorIOInputs inputs) {
-//         double dt = Timer.getFPGATimestamp() - prevTimeInputs;
+//         double dt = Timer.getTimestamp() - prevTimeInputs;
 //         pivotSim.update(dt);
 
 //         inputs.elevatorVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
@@ -70,12 +70,12 @@
 
 //         inputs.elevatorAppliedVolts = appliedVolts;
 
-//         prevTimeInputs = Timer.getFPGATimestamp();
+//         prevTimeInputs = Timer.getTimestamp();
 //     }
 
 //     @Override
 //     public void setHeight(double angle) {
-//         double dt = Timer.getFPGATimestamp() - prevTimeState;
+//         double dt = Timer.getTimestamp() - prevTimeState;
         
 //         currentProfileSetpoint = trapezoidMotionProfile.calculate(
 //             dt, 
@@ -93,7 +93,7 @@
 
 //         pivotSim.setInputVoltage(voltage);
 
-//         prevTimeState = Timer.getFPGATimestamp();
+//         prevTimeState = Timer.getTimestamp();
 //     }
 
 //     @Override

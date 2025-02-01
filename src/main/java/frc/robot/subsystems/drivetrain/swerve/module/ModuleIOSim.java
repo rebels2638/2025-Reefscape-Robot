@@ -118,7 +118,7 @@ public class ModuleIOSim implements ModuleIO {
 
     @Override
     public void updateInputs(ModuleIOInputs inputs) {
-        double dt = Timer.getFPGATimestamp() - prevTimeInputs;
+        double dt = Timer.getTimestamp() - prevTimeInputs;
 
         steerSim.update(dt);
         driveSim.update(dt);
@@ -158,12 +158,12 @@ public class ModuleIOSim implements ModuleIO {
         Logger.recordOutput("SwerveDrive/module" + moduleID + "/currentSteerStateRad",
                 inputs.steerPosition.getRadians());
 
-        prevTimeInputs = Timer.getFPGATimestamp();
+        prevTimeInputs = Timer.getTimestamp();
     }
 
     @Override
     public void setState(SwerveModuleState state) {
-        // double dt = Timer.getFPGATimestamp() - prevTimeState;
+        // double dt = Timer.getTimestamp() - prevTimeState;
         double dt = 0.02;
         // a setpoint is the individual setpoint for the motor calculated by the profile
         // while the goal is the end state
@@ -236,7 +236,7 @@ public class ModuleIOSim implements ModuleIO {
         driveSim.setInputVoltage(driveInputVoltage);
         steerSim.setInputVoltage(steerInputVoltage);
 
-        prevTimeState = Timer.getFPGATimestamp();
+        prevTimeState = Timer.getTimestamp();
     }
 
     @Override

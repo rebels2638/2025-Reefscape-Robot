@@ -59,14 +59,14 @@ public class ClawIOSim implements ClawIO {
 
     @Override
     public void updateInputs(ClawIOInputs inputs) {
-        double dt = Timer.getFPGATimestamp() - prevTimeInputs;
+        double dt = Timer.getTimestamp() - prevTimeInputs;
         pivotSim.update(dt);
 
         inputs.clawVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
 
         inputs.clawAppliedVolts = appliedVolts;
 
-        prevTimeInputs = Timer.getFPGATimestamp();
+        prevTimeInputs = Timer.getTimestamp();
     }
 
     @Override

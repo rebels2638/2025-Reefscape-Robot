@@ -11,7 +11,7 @@ public interface GyroIO {
     class GyroIOInputs {
         public boolean isConnected = false;
         public Rotation3d orientation = new Rotation3d();
-        public double angularVelocityRadPerSec = 0;
+        public Rotation3d rates = new Rotation3d();
         public Translation2d worldAccelerationMetersPerSecSec = new Translation2d();
     }
 
