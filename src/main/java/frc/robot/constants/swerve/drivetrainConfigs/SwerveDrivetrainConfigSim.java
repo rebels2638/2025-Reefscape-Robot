@@ -1,5 +1,6 @@
 package frc.robot.constants.swerve.drivetrainConfigs;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
@@ -69,5 +70,15 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     @Override
     public double getRotationCompensationCoefficient() {
         return rotationCompensationCoefficient;
+    }
+
+    @Override
+    public PIDController getAutoAlignProfiledTranslationController() {
+        return new PIDController(0, 0, 0);
+    }
+
+    @Override
+    public PIDController getAutoAlignProfiledRotationController() {
+        return new PIDController(0, 0, 0);
     }
 }

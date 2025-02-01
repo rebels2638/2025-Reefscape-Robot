@@ -5,8 +5,10 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.commands.autoAlignment.LockDriveAxis.Axis;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -46,6 +48,14 @@ public final class Constants {
   }
 
   public static final class AlignmentConstants {
+    // these assume the robots volume is zero. does not take into account frame
+    public static final Axis kBARGE_AXIS = new Axis(
+        8.232,
+        7.973,
+        8.232,
+        4.343
+    ); 
+    public static final Rotation2d kBARGE_ROTATION = new Rotation2d(0);
 
     private AlignmentConstants() {}
   }
