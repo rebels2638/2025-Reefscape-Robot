@@ -81,8 +81,8 @@ public class SwerveDrive extends SubsystemBase {
     private boolean isRotationSlowdownEnabled = false;
     private boolean isRotationLockEnabled = false;
 
-    private double translationCoefficient = 0.5;
-    private double rotationCoefficient = 0.5;
+    private double translationCoefficient = 1;
+    private double rotationCoefficient = 1;
 
     private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
     private SwerveModuleState[] moduleStates = { // has to be set to a value so not null
@@ -251,16 +251,20 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
-        Rotation2d angularVelocity = new Rotation2d(gyroInputs.angularVelocityRadPerSec * drivetrainConfig.getRotationCompensationCoefficient());
+        Rotation2d angularVelocity = new Rotation2d(speeds.omegaRadiansPerSecond * drivetrainConfig.getRotationCompensationCoefficient());
         if (angularVelocity.getRadians() != 0.0) {
-            speeds = ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
-                speeds.vxMetersPerSecond,
-                speeds.vyMetersPerSecond,
-                speeds.omegaRadiansPerSecond,
-                RobotState.getInstance().getEstimatedPose().getRotation().plus(angularVelocity));
+            speeds =  ChassisSpeeds.fromFieldRelativeSpeeds(
+                ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
+                    speeds.vxMetersPerSecond,
+                    speeds.vyMetersPerSecond,
+                    speeds.omegaRadiansPerSecond,
+                    RobotState.getInstance().getEstimatedPose().getRotation().plus(angularVelocity)
+                ),
+                RobotState.getInstance().getEstimatedPose().getRotation()
+            );
         }
 
-        return ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotState.getInstance().getEstimatedPose().getRotation());
+        return speeds;
     }
     
     public void driveRobotRelative(ChassisSpeeds desiredSpeeds) {
@@ -276,6 +280,7 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         desiredSpeeds = compensateRobotRelativeSpeeds(desiredSpeeds);
+        Logger.recordOutput("SwerveDrive/compensatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
 
         if (isRotationLockEnabled) { // get the curr rot from robotstate and the argument from here
             double rotationalVelocity = MathUtil.clamp(

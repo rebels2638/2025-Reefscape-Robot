@@ -17,12 +17,12 @@ public class RollerConfigProto extends RollerConfigBase {
     // CAN ID
     @Override
     public int getRollerMotorCanID() {
-        return 1;
+        return 100;
     }
 
     @Override
     public int getCanRangeCanID() {
-        return 1;
+        return 12;
     }
     
     // Supply current limits

@@ -17,7 +17,7 @@ public class RobotContainer {
   private final XboxController xboxOperator;
   
   private final SwerveDrive swerveDrive;
-  private final Roller roller;
+  // private final Roller roller;
 
   public RobotContainer() {
     this.xboxTester = new XboxController(1);
@@ -25,12 +25,12 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
 
     swerveDrive = SwerveDrive.getInstance();
-    roller = Roller.getInstance();
+    // roller = Roller.getInstance();
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
 
-    xboxOperator.getAButton().onTrue(new IntakeCoral());
-    xboxOperator.getBButton().onTrue(new EjectCoral());
+    // xboxOperator.getAButton().onTrue(new IntakeCoral());
+    // xboxOperator.getBButton().onTrue(new EjectCoral());
     
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
   }

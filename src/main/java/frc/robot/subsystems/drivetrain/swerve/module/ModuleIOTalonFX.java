@@ -175,7 +175,7 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         steerConfig.FutureProofConfigs = true;
 
-        steerMotor = new TalonFX(specificConfig.getCancoderCanId(), generalConfig.getCanBusName());
+        steerMotor = new TalonFX(specificConfig.getSteerCanId(), generalConfig.getCanBusName());
         steerMotor.getConfigurator().apply(steerConfig);
 
         // status signals
@@ -191,17 +191,14 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerEncoderPositionStatusSignal = steerEncoder.getPosition().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-            30,
+            100,
             driveAppliedVolts,
             driveSupplyCurrent,
             driveTemperature,
 
             steerAppliedVolts,
             steerSupplyCurrent,
-            steerTemperature,
-
-            steerEncoderAbsolutePosition,
-            steerEncoderPositionStatusSignal
+            steerTemperature
         );
 
         drivePositionStatusSignal = driveMotor.getPosition().clone();
@@ -215,7 +212,10 @@ public class ModuleIOTalonFX implements ModuleIO {
             driveVelocityStatusSignal,
 
             steerPositionStatusSignal,
-            steerVelocityStatusSignal
+            steerVelocityStatusSignal,
+
+            steerEncoderAbsolutePosition,
+            steerEncoderPositionStatusSignal
         );
 
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, drivePositionStatusSignal);
