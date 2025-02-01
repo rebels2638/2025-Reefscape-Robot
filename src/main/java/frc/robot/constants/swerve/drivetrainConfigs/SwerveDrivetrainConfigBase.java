@@ -26,4 +26,12 @@ public abstract class SwerveDrivetrainConfigBase {
     public abstract PIDController getAutoAlignProfiledTranslationController();
     public abstract PIDController getAutoAlignProfiledRotationController();
 
+    public abstract double getAutoAlignTranslationTolerance();
+    public abstract double getAutoAlignTranslationVeloTolerance();
+
+    public abstract double getAutoAlignRotationTolerance();
+    public abstract double getAutoAlignRotationVeloTolerance();
+
+
+
 }

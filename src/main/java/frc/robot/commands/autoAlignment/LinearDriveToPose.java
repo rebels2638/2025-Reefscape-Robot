@@ -1,5 +1,7 @@
 package frc.robot.commands.autoAlignment;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,6 +42,9 @@ public class LinearDriveToPose extends Command {
 
     private double previousTimestamp = Timer.getTimestamp();
 
+    private final Pose2d targetPose;
+    private final ChassisSpeeds endVelo;
+
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
     // This is the blue alliance pose! 
@@ -71,6 +76,9 @@ public class LinearDriveToPose extends Command {
 
                 break;
         }
+        
+        this.targetPose = targetPose;
+        this.endVelo = endVelo;
 
         this.xTranslationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
@@ -97,7 +105,6 @@ public class LinearDriveToPose extends Command {
         );
 
         this.rotationalFeedbackController = drivetrainConfig.getAutoAlignProfiledRotationController();
-        this.rotationalFeedbackController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.xTranslationalGoal = new State(
             targetPose.getX(),
@@ -141,6 +148,8 @@ public class LinearDriveToPose extends Command {
         rotationalFeedbackController.reset();
 
         previousTimestamp = Timer.getTimestamp();
+
+        Logger.recordOutput("LinearDriveToPose/targetPose", targetPose);
     }
 
     @Override
@@ -191,5 +200,25 @@ public class LinearDriveToPose extends Command {
         swerveDrive.driveFieldRelative(calculatedSpeeds);
 
         previousTimestamp = Timer.getTimestamp();
+    }
+
+    @Override
+    public boolean isFinished() {
+        boolean poseAligned = 
+            robotState.getEstimatedPose().getTranslation().getDistance(targetPose.getTranslation()) <= 
+                drivetrainConfig.getAutoAlignTranslationTolerance() &&
+            Math.abs(robotState.getEstimatedPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) <= 
+                drivetrainConfig.getAutoAlignRotationTolerance();
+        
+        boolean speedsAligned = 
+            endVelo.vxMetersPerSecond == 0 && endVelo.vyMetersPerSecond == 0 && endVelo.omegaRadiansPerSecond == 0 ?
+                Math.abs(Math.hypot(
+                    robotState.getFieldRelativeSpeeds().vxMetersPerSecond,
+                    robotState.getFieldRelativeSpeeds().vyMetersPerSecond
+                )) <= drivetrainConfig.getAutoAlignTranslationVeloTolerance() &&
+                Math.abs(robotState.getFieldRelativeSpeeds().omegaRadiansPerSecond) <= drivetrainConfig.getAutoAlignRotationVeloTolerance() :
+            true;
+
+        return poseAligned && speedsAligned;
     }
 }

@@ -74,12 +74,38 @@ public class SwerveDrivetrainConfigProto extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        return new PIDController(0, 0, 0);
+        PIDController p = new PIDController(0, 0, 0);
+        p.setTolerance(Math.sqrt(getAutoAlignTranslationTolerance()));
+
+        return p;
     }
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        return new PIDController(0, 0, 0);
+        PIDController p = new PIDController(0, 0, 0);
+        p.setTolerance(getAutoAlignRotationTolerance());
+        p.enableContinuousInput(-Math.PI, Math.PI);
+
+        return p;
     }
 
+    @Override
+    public double getAutoAlignTranslationTolerance() {
+        return 0.05;
+    }
+
+    @Override
+    public double getAutoAlignTranslationVeloTolerance() {
+        return 0.03;
+    }
+
+    @Override
+    public double getAutoAlignRotationTolerance() {
+        return Math.toRadians(5);
+    }
+
+    @Override
+    public double getAutoAlignRotationVeloTolerance() {
+        return Math.toRadians(3);
+    }
 }
