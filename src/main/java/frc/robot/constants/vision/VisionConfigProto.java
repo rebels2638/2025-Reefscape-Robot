@@ -20,7 +20,7 @@ public class VisionConfigProto extends VisionConfigBase {
     }
 
     @Override
-    public double getTrainslationDevBase() {
+    public double getTranslationDevBase() {
         return 0.05;
     }
 

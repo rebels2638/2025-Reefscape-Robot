@@ -4,6 +4,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleGeneralConfigComp;
@@ -99,6 +100,16 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     @Override
     public double getRotationCompensationCoefficient() {
         return rotationCompensationCoefficient;
+    }
+
+    @Override
+    public PIDController getAutoAlignProfiledTranslationController() {
+        return new PIDController(0, 0, 0);
+    }
+
+    @Override
+    public PIDController getAutoAlignProfiledRotationController() {
+        return new PIDController(0, 0, 0);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package frc.robot.commands.autoAligment;
+package frc.robot.commands.autoAlignment;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Translation2d;
