@@ -133,7 +133,7 @@ public class Vision extends SubsystemBase {
                 visionIOInputs[i].hasValidTargets) {
                 
                 double translationDev = 
-                    config.getTrainslationDevBase() +
+                    config.getTranslationDevBase() +
                     Math.pow(rotationalRate.get().getDegrees() ,2)
                     / config.getTranslationDevRotationExpoDenominator() 
                     + visionIOInputs[i].ta * config.getTranslationDevTaScaler();
