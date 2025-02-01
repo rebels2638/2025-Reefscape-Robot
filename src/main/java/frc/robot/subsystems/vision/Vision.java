@@ -1,6 +1,5 @@
 package frc.robot.subsystems.vision;
 
-import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.Optional;
@@ -8,31 +7,29 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionObservation;
 import frc.robot.constants.*;
-import frc.robot.constants.pivot.PivotConfigBase;
-import frc.robot.constants.pivot.PivotConfigComp;
-import frc.robot.constants.pivot.PivotConfigProto;
-import frc.robot.constants.pivot.PivotConfigSim;
 import frc.robot.constants.vision.VisionConfigBase;
 import frc.robot.constants.vision.VisionConfigComp;
 import frc.robot.constants.vision.VisionConfigProto;
 import frc.robot.constants.vision.VisionConfigSim;
 import frc.robot.lib.util.LimelightHelpers;
-import frc.robot.subsystems.pivot.PivotIO;
-import frc.robot.subsystems.pivot.PivotIOInputsAutoLogged;
-import frc.robot.subsystems.pivot.PivotIOSim;
-import frc.robot.subsystems.pivot.PivotIOTalonFX;
-import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 
 public class Vision extends SubsystemBase {
+    private static Vision instance = null;
+    public static Vision getInstance() {
+        if (instance == null) {
+            return new Vision();
+        }
+
+        return instance;
+    }
+
     private final VisionIO visionIO[];
     private final VisionIOInputsAutoLogged visionIOInputs[];
 
@@ -41,7 +38,7 @@ public class Vision extends SubsystemBase {
     private final TimeInterpolatableBuffer<Rotation2d> rotationalRateBuffer;
 
     private final VisionConfigBase config;
-    public Vision() {
+    private Vision() {
         // IO
         switch (Constants.currentMode) {
             case COMP:
@@ -132,11 +129,14 @@ public class Vision extends SubsystemBase {
 
             Optional<Rotation2d> rotationalRate = rotationalRateBuffer.getSample(visionIOInputs[i].timestampSeconds);
             if (Timer.getTimestamp() - visionIOInputs[i].timestampSeconds <= config.getObservationBufferSizeSeconds() && 
-                rotationalRate.isPresent()) {
+                rotationalRate.isPresent() && 
+                visionIOInputs[i].hasValidTargets) {
                 
                 double translationDev = 
+                    config.getTrainslationDevBase() +
                     Math.pow(rotationalRate.get().getDegrees() ,2)
-                    / config.getTranslationDevDenominator();
+                    / config.getTranslationDevRotationExpoDenominator() 
+                    + visionIOInputs[i].ta * config.getTranslationDevTaScaler();
         
                 robotState.addVisionObservation(
                     new VisionObservation(

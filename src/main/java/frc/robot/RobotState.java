@@ -12,13 +12,16 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.Constants;
+import frc.robot.constants.robotState.RobotStateConfigBase;
+import frc.robot.constants.robotState.RobotStateConfigProto;
+import frc.robot.constants.robotState.RobotStateConfigSim;
+import frc.robot.constants.robotState.RobotStatenConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -50,9 +53,6 @@ public class RobotState {
   private final SwerveDrivePoseEstimator swerveDrivePoseEstimator;
   private double lastEstimatedPoseUpdateTime = 0;
 
-  //TODO: DO THIS
-  private final Matrix<N3, N1> qStdDevs = new Matrix<>(Nat.N3(), Nat.N1());
-
   // Odometry
   private final SwerveDriveKinematics kinematics;
   private SwerveModulePosition[] lastWheelPositions = {
@@ -67,31 +67,39 @@ public class RobotState {
 
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
 
+  private final SwerveDrivetrainConfigBase drivetrainConfig;
+  private final RobotStateConfigBase robotStateConfigBase;
+
   private RobotState() {
-    SwerveDrivetrainConfigBase drivetrainConfig;
     switch (Constants.currentMode) {
         case COMP:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+            robotStateConfigBase = RobotStatenConfigComp.getInstance();
 
             break;
 
         case PROTO:
             drivetrainConfig = SwerveDrivetrainConfigProto.getInstance();
-            
+            robotStateConfigBase = RobotStateConfigProto.getInstance();
+
             break;
         
         case SIM:
             drivetrainConfig = SwerveDrivetrainConfigSim.getInstance();
+            robotStateConfigBase = RobotStateConfigSim.getInstance();
 
             break;
 
         case REPLAY:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+            robotStateConfigBase = RobotStatenConfigComp.getInstance();
 
             break;
 
         default:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+            robotStateConfigBase = RobotStatenConfigComp.getInstance();
+
 
             break;
     }
@@ -107,8 +115,18 @@ public class RobotState {
         kinematics,
         lastGyroOrientation.toRotation2d(), 
         lastWheelPositions, 
-        new Pose2d()
-    );
+        new Pose2d(),
+        VecBuilder.fill(
+          robotStateConfigBase.getOdomTrainslationDevBase(),
+          robotStateConfigBase.getOdomTrainslationDevBase(),
+          0
+        ),
+        VecBuilder.fill(
+          robotStateConfigBase.getVisionTrainslationDevBase(),
+          robotStateConfigBase.getVisionTrainslationDevBase(),
+          9999999
+        )
+      );
   }
 
   /** Add odometry observation */

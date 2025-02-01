@@ -18,8 +18,18 @@ public class VisionConfigSim extends VisionConfigBase {
     }
 
     @Override
-    public double getTranslationDevDenominator() {
+    public double getTrainslationDevBase() {
+        return 0.5;
+    }
+    
+    @Override
+    public double getTranslationDevRotationExpoDenominator() {
         return 60;
+    }
+
+    @Override
+    public double getTranslationDevTaScaler() {
+        return 0;
     }
 
     @Override

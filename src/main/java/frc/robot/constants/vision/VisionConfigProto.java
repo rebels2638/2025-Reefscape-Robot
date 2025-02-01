@@ -15,13 +15,23 @@ public class VisionConfigProto extends VisionConfigBase {
     @Override
     public String[] getNames() {
         return new String[] {
-            "limelight"
+            "limelight-back"
         };
     }
 
     @Override
-    public double getTranslationDevDenominator() {
-        return 60;
+    public double getTrainslationDevBase() {
+        return 0.05;
+    }
+
+    @Override
+    public double getTranslationDevRotationExpoDenominator() {
+        return 16;
+    }
+
+    @Override
+    public double getTranslationDevTaScaler() {
+        return 15;
     }
 
     @Override

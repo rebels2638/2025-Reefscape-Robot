@@ -13,6 +13,8 @@ public interface VisionIO {
         public int primaryTagId = 0;
         public double tx = 0;
         public double ty = 0;
+        public double ta = 0;
+
     }
 
     public default void updateInputs(VisionIOInputs inputs) {}

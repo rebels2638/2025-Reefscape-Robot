@@ -8,6 +8,7 @@ import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.roller.Roller;
+import frc.robot.subsystems.vision.Vision;
   
 public class RobotContainer {
   public static RobotContainer instance = null;
@@ -17,6 +18,7 @@ public class RobotContainer {
   private final XboxController xboxOperator;
   
   private final SwerveDrive swerveDrive;
+  private final Vision vision;
   // private final Roller roller;
 
   public RobotContainer() {
@@ -25,6 +27,7 @@ public class RobotContainer {
     this.xboxDriver = new XboxController(3);
 
     swerveDrive = SwerveDrive.getInstance();
+    vision = Vision.getInstance();
     // roller = Roller.getInstance();
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
