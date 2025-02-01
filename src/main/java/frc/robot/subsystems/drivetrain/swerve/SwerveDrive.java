@@ -38,10 +38,6 @@ import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBRConf
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFLConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
-import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigBase;
-import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigComp;
-import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigProto;
-import frc.robot.constants.swerve.pathplannerConfigs.SwervePathplannerConfigSim;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIONavX;
@@ -103,7 +99,6 @@ public class SwerveDrive extends SubsystemBase {
 
     private final SwerveModuleGeneralConfigBase moduleGeneralConfig;
     private final SwerveDrivetrainConfigBase drivetrainConfig;
-    private final SwervePathplannerConfigBase pathplannerConfig;
     private final SwerveControllerConfigBase controllerConfig; 
 
     @SuppressWarnings("static-access")
@@ -111,7 +106,6 @@ public class SwerveDrive extends SubsystemBase {
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-                pathplannerConfig = SwervePathplannerConfigComp.getInstance();
                 moduleGeneralConfig = SwerveModuleGeneralConfigComp.getInstance();
                 controllerConfig = SwerveControllerConfigComp.getInstance();
 
@@ -129,7 +123,6 @@ public class SwerveDrive extends SubsystemBase {
 
             case PROTO:
                 drivetrainConfig = SwerveDrivetrainConfigProto.getInstance();
-                pathplannerConfig = SwervePathplannerConfigProto.getInstance();
                 moduleGeneralConfig = SwerveModuleGeneralConfigProto.getInstance();
                 controllerConfig = SwerveControllerConfigProto.getInstance();
 
@@ -146,7 +139,6 @@ public class SwerveDrive extends SubsystemBase {
 
             case SIM:
                 drivetrainConfig = SwerveDrivetrainConfigSim.getInstance();
-                pathplannerConfig = SwervePathplannerConfigSim.getInstance();
                 moduleGeneralConfig = SwerveModuleGeneralConfigSim.getInstance();
                 controllerConfig = SwerveControllerConfigSim.getInstance();
 
@@ -162,7 +154,6 @@ public class SwerveDrive extends SubsystemBase {
 
             case REPLAY:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-                pathplannerConfig = SwervePathplannerConfigComp.getInstance();
                 moduleGeneralConfig = SwerveModuleGeneralConfigComp.getInstance();
                 controllerConfig = SwerveControllerConfigComp.getInstance();
 
@@ -179,7 +170,6 @@ public class SwerveDrive extends SubsystemBase {
 
             default:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-                pathplannerConfig = SwervePathplannerConfigComp.getInstance();
                 moduleGeneralConfig = SwerveModuleGeneralConfigComp.getInstance();
                 controllerConfig = SwerveControllerConfigComp.getInstance();
 
@@ -199,7 +189,7 @@ public class SwerveDrive extends SubsystemBase {
 
         // driveFFController = new DriveFFController(config);
         swerveSetpointGenerator = new SwerveSetpointGenerator(
-            pathplannerConfig.getRobotConfig(), 
+            drivetrainConfig.getRobotConfig(), 
             Units.rotationsToRadians(
                 moduleGeneralConfig.getSteerMotionMagicCruiseVelocityRotationsPerSec())
         );
