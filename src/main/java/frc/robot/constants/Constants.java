@@ -4,10 +4,7 @@
 
 package frc.robot.constants;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.commands.autoAlignment.LockDriveAxis.Axis;
 
 /**
@@ -23,15 +20,45 @@ public final class Constants {
   // public static final boolean isSYSID = true; // TODO: change this if sysid
   public static enum Mode {
     /** Running on a real robot. */
-    PROTO,
-    
     COMP,
+
+    PROTO,
 
     /** Running a physics simulator. */
     SIM,
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static final double kLOOP_CYCLE_MS;
+  static {
+    switch (currentMode) {
+        case COMP:
+            kLOOP_CYCLE_MS = 0.02;
+
+            break;
+    
+        case PROTO:
+            kLOOP_CYCLE_MS = 0.02;
+
+            break;
+
+        case SIM:
+            kLOOP_CYCLE_MS = 0.02;
+
+            break;
+
+        case REPLAY:
+            kLOOP_CYCLE_MS = 0.02;
+
+            break;
+
+        default:
+            kLOOP_CYCLE_MS = 0.02;
+
+            break;
+    }
   }
 
   public static final class OperatorConstants {
