@@ -84,9 +84,7 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
-    m_robotContainer = new RobotContainer();
-
-      
+    m_robotContainer = RobotContainer.getInstance();
   }
 
   /**

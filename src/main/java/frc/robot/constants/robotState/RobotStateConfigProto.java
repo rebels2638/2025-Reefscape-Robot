@@ -13,12 +13,12 @@ public class RobotStateConfigProto extends RobotStateConfigBase {
     private RobotStateConfigProto() {}
 
     @Override
-    public double getVisionTrainslationDevBase() {
+    public double getVisionTranslationDevBase() {
         return 0.15;
     }
 
     @Override
-    public double getOdomTrainslationDevBase() {
+    public double getOdomTranslationDevBase() {
         return 0.05;
     }
 }

@@ -13,12 +13,12 @@ public class RobotStateConfigSim extends RobotStateConfigBase {
     private RobotStateConfigSim() {}
 
     @Override
-    public double getVisionTrainslationDevBase() {
+    public double getVisionTranslationDevBase() {
         return 0;
     }
 
     @Override
-    public double getOdomTrainslationDevBase() {
+    public double getOdomTranslationDevBase() {
         return 0;
     }
 }

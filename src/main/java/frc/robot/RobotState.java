@@ -127,13 +127,13 @@ public class RobotState {
         lastWheelPositions, 
         new Pose2d(),
         VecBuilder.fill(
-          robotStateConfigBase.getOdomTrainslationDevBase(),
-          robotStateConfigBase.getOdomTrainslationDevBase(),
+          robotStateConfigBase.getOdomTranslationDevBase(),
+          robotStateConfigBase.getOdomTranslationDevBase(),
           0
         ),
         VecBuilder.fill(
-          robotStateConfigBase.getVisionTrainslationDevBase(),
-          robotStateConfigBase.getVisionTrainslationDevBase(),
+          robotStateConfigBase.getVisionTranslationDevBase(),
+          robotStateConfigBase.getVisionTranslationDevBase(),
           9999999
         )
       );

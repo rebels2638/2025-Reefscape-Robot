@@ -48,10 +48,10 @@ public class SwerveDrivetrainConfigProto extends SwerveDrivetrainConfigBase {
                 SwerveModuleGeneralConfigComp.getInstance().getDriveStatorCurrentLimit(), 
                 1
             ),
-            SwerveDrivetrainConfigComp.getInstance().getFrontLeftPositionMeters(), 
-            SwerveDrivetrainConfigComp.getInstance().getFrontRightPositionMeters(), 
-            SwerveDrivetrainConfigComp.getInstance().getBackLeftPositionMeters(), 
-            SwerveDrivetrainConfigComp.getInstance().getBackRightPositionMeters()
+            frontLeftPosition, 
+            frontRightPosition, 
+            backLeftPosition, 
+            backRightPosition
         );
 
     private final PIDConstants steerPIDConstants = new PIDConstants(0,0,0,0);
