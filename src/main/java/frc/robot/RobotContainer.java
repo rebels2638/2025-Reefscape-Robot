@@ -27,7 +27,7 @@ public class RobotContainer {
 
     private final SwerveDrive swerveDrive;
     private final AutoRunner autoRunner;
-    private final Vision vision;
+    // private final Vision vision;
 
     private final XboxController xboxTester;
     private final XboxController xboxDriver;
@@ -39,7 +39,7 @@ public class RobotContainer {
       this.xboxDriver = new XboxController(3);
 
       swerveDrive = SwerveDrive.getInstance();
-      vision = Vision.getInstance();
+      // vision = Vision.getInstance();
       autoRunner = AutoRunner.getInstance();
 
       swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
