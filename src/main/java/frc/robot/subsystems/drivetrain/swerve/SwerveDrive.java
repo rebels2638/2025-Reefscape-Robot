@@ -127,10 +127,10 @@ public class SwerveDrive extends SubsystemBase {
                 controllerConfig = SwerveControllerConfigProto.getInstance();
 
                 modules = new ModuleIO[] {
-                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFLConfigProto.getInstance(), 0),
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFLConfigComp.getInstance(), 0),
                     new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificFRConfigProto.getInstance(), 1),
                     new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBLConfigProto.getInstance(), 2),
-                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBRConfigProto.getInstance(), 3)
+                    new ModuleIOTalonFX(moduleGeneralConfig, SwerveModuleSpecificBRConfigComp.getInstance(), 3)
                 };
                 
                 gyroIO = new GyroIONavX();

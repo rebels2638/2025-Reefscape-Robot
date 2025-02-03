@@ -149,7 +149,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKS() {
-        return 1.5;
+        return 3;
     }
 
     @Override
@@ -164,7 +164,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKP() {
-        return 350;
+        return 380;
     }
 
     @Override
@@ -179,7 +179,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerMotionMagicExpoKA() {
-        return 0.25;
+        return 0.3;
     }
 
     @Override
