@@ -21,11 +21,11 @@ import frc.robot.RobotState;
 import frc.robot.constants.MechAElementConstants;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 
-public class PathPlanToPose extends Command {
+public class PathplanToPose extends Command {
     private Command followPathHolonomic;
     private final Pose2d target;
 
-    public PathPlanToPose(Pose2d target) {
+    public PathplanToPose(Pose2d target) {
         this.target = target;
     }
 
@@ -50,35 +50,4 @@ public class PathPlanToPose extends Command {
         // System.out.println(followPathHolonomic.isFinished());
         return followPathHolonomic.isFinished();
     }
-
-    public static Pose2d alignmentPoseSearch() {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        Pose2d current = RobotState.getInstance().getEstimatedPose();
-        List<Pose2d> candidates = new ArrayList<>(
-            Arrays.asList(
-                MechAElementConstants.Processor.centerFace,
-                new Pose2d(MechAElementConstants.Barge.farCage, new Rotation2d(0)),
-                new Pose2d(MechAElementConstants.Barge.middleCage, new Rotation2d(0)),
-                new Pose2d(MechAElementConstants.Barge.closeCage, new Rotation2d(0)),
-                MechAElementConstants.CoralStation.leftCenterFace,
-                MechAElementConstants.CoralStation.rightCenterFace,
-                MechAElementConstants.StagingPositions.leftIceCream,
-                MechAElementConstants.StagingPositions.middleIceCream,
-                MechAElementConstants.StagingPositions.rightIceCream
-            )
-          );
-    
-        for (Pose2d element : MechAElementConstants.Reef.centerFaces) {candidates.add(element);}
-    
-        return alliance.isPresent() ? 
-          alliance.get() == DriverStation.Alliance.Blue ?
-            current.nearest(candidates) : current
-              .nearest(
-                candidates.stream()
-                .map(
-                  FlippingUtil::flipFieldPose)
-                    .collect(Collectors.toList())
-              )
-         : current;
-      }
 }
