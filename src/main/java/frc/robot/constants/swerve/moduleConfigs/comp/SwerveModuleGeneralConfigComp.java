@@ -54,12 +54,12 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveKS() {
-        return 2.5;
+        return 3.8; // 3.7-3.8 <4
     }
 
     @Override
     public double getDriveKV() {
-        return 0.2;
+        return 0.035;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveKP() {
-        return 15;
+        return 30;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveKD() {
-        return 3;
+        return 5;
     }
 
     @Override
@@ -149,22 +149,22 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKS() {
-        return 3;
+        return 4.5;
     }
 
     @Override
     public double getSteerKV() {
-        return 1.17;
+        return 0;//1.56;
     }
 
     @Override
     public double getSteerKA() {
-        return 0.50;
+        return 0;//3;
     }
 
     @Override
     public double getSteerKP() {
-        return 380;
+        return 1000;
     }
 
     @Override
@@ -174,12 +174,12 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKD() {
-        return 10;
+        return 60;
     }
 
     @Override
     public double getSteerMotionMagicExpoKA() {
-        return 0.3;
+        return 0.36;
     }
 
     @Override
@@ -218,7 +218,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
     }
 
     @Override
-    public int getCancoderAbsoluteSensorDiscontinuityPoint() {
-        return 1;
+    public double getCancoderAbsoluteSensorDiscontinuityPoint() {
+        return 0.5;
     }
 }

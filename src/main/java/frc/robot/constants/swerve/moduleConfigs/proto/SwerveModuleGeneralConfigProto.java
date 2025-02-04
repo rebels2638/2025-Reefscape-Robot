@@ -218,7 +218,7 @@ public class SwerveModuleGeneralConfigProto extends SwerveModuleGeneralConfigBas
     }
 
     @Override
-    public int getCancoderAbsoluteSensorDiscontinuityPoint() {
-        return 1;
+    public double getCancoderAbsoluteSensorDiscontinuityPoint() {
+        return 0.5;
     }
 }

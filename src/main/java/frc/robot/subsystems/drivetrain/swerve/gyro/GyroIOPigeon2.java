@@ -36,10 +36,11 @@ public class GyroIOPigeon2 implements GyroIO {
 
     public GyroIOPigeon2() {
         odom = Phoenix6Odometry.getInstance();
-        gyro = new Pigeon2(13, "canivore");
+        gyro = new Pigeon2(13, "drivetrain");
         Pigeon2Configuration config = new Pigeon2Configuration();
-        config.MountPose.MountPoseYaw = 0;
-        config.MountPose.MountPosePitch = 0;
+        config.MountPose.MountPoseYaw = 179.86917114257812;
+        config.MountPose.MountPosePitch = -2.2904083728790283;
+        config.MountPose.MountPoseRoll = 0.06304000318050385;
         config.GyroTrim.GyroScalarZ = 0;
         gyro.getConfigurator().apply(config);
 

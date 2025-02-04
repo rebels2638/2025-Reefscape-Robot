@@ -83,7 +83,7 @@ public class AbsoluteFieldDrive extends Command {
         ChassisSpeeds speeds = new ChassisSpeeds(
             vX.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec() * invert,
             vY.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec() * invert,
-            heading.getAsDouble() * drivetrainConfig.getMaxDrivetrainAngularVelocityRadiansPerSec()
+            -heading.getAsDouble() * drivetrainConfig.getMaxDrivetrainAngularVelocityRadiansPerSec()
         );
 
         swerve.driveFieldRelative(speeds); // Drive the robot using the calculated speeds.

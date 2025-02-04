@@ -61,5 +61,5 @@ public abstract class SwerveModuleGeneralConfigBase {
     public abstract FeedbackSensorSourceValue getSteerCancoderFeedbackSensorSource();
 
     public abstract SensorDirectionValue getCancoderSensorDirection();
-    public abstract int getCancoderAbsoluteSensorDiscontinuityPoint();
+    public abstract double getCancoderAbsoluteSensorDiscontinuityPoint();
 }

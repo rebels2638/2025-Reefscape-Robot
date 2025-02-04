@@ -35,8 +35,8 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     private final double rotationCompensationCoefficient = 0.0;
 
     private final RobotConfig autoConfig = new RobotConfig(
-            27.88,
-            3.5,
+            37.88,
+            13.5,
             new ModuleConfig(
                 SwerveModuleGeneralConfigComp.getInstance().getDriveWheelRadiusMeters(), 
                 5.4, 

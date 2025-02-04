@@ -26,7 +26,7 @@ public class SwerveModuleSpecificBRConfigComp extends SwerveModuleSpecificConfig
 
     @Override
     public boolean getIsDriveInverted() {
-        return true;
+        return false;
     }
 
     @Override
@@ -51,6 +51,6 @@ public class SwerveModuleSpecificBRConfigComp extends SwerveModuleSpecificConfig
 
     @Override
     public double getCancoderOffsetRotations() {
-        return 0.0263671875;
+        return 0.029297;
     }
 }
