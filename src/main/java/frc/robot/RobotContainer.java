@@ -54,7 +54,7 @@ public class RobotContainer {
         xboxDriver.getAButton().whileTrue(new LockDriveAxis(xboxDriver));
         // xboxDriver.getYButton().onTrue(new PathPlanToPose(PathPlanToPose.alignmentPoseSearch()));
 
-        xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
+        // xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
     }
 
     public Command getAutonomousCommand() {

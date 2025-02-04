@@ -2,6 +2,8 @@ package frc.robot.commands.autoAlignment;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.sim.ChassisReference;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -42,8 +44,8 @@ public class LinearDriveToPose extends Command {
 
     private double previousTimestamp = Timer.getTimestamp();
 
-    private final Pose2d targetPose;
-    private final ChassisSpeeds endVelo;
+    private Pose2d targetPose;
+    private ChassisSpeeds endVelo;
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
@@ -143,10 +145,6 @@ public class LinearDriveToPose extends Command {
             robotState.getFieldRelativeSpeeds().vyMetersPerSecond
         );
 
-        xTranslationalFeedbackController.reset();
-        yTranslationalFeedbackController.reset();
-        rotationalFeedbackController.reset();
-
         previousTimestamp = Timer.getTimestamp();
 
         Logger.recordOutput("LinearDriveToPose/targetPose", targetPose);
@@ -161,12 +159,15 @@ public class LinearDriveToPose extends Command {
             currentXTranslationalSetpoint, 
             xTranslationalGoal
         );
+        Logger.recordOutput("LinearDriveToPose/currentXTranslationalSetpointVelo", currentXTranslationalSetpoint.velocity);
 
         currentYTranslationalSetpoint = yTranslationalMotionProfile.calculate(
             dt, 
             currentYTranslationalSetpoint, 
             yTranslationalGoal
         );
+        Logger.recordOutput("LinearDriveToPose/currentYTranslationalSetpointVelo", currentYTranslationalSetpoint.velocity);
+        Logger.recordOutput("LinearDriveToPose/currentYTranslationalSetpointPose", currentYTranslationalSetpoint.position);
 
         currentRotationalSetpoint = rotationalMotionProfile.calculate(
             dt,
@@ -181,21 +182,21 @@ public class LinearDriveToPose extends Command {
                 robotState.getEstimatedPose().getX(),
                 currentXTranslationalSetpoint.position
             ) + 
-            currentXTranslationalSetpoint.velocity;
+            endVelo.vxMetersPerSecond;
 
         calculatedSpeeds.vyMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getY(),
                 currentYTranslationalSetpoint.position
             ) + 
-            currentYTranslationalSetpoint.velocity;
+            endVelo.vyMetersPerSecond;
 
         calculatedSpeeds.omegaRadiansPerSecond = 
             rotationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getRotation().getRadians(),
                 currentRotationalSetpoint.position
             ) + 
-            currentRotationalSetpoint.velocity;
+            currentRotationalSetpoint.velocity ;
 
         swerveDrive.driveFieldRelative(calculatedSpeeds);
 
@@ -220,5 +221,32 @@ public class LinearDriveToPose extends Command {
             true;
 
         return poseAligned && speedsAligned;
+    }
+
+    protected void setNewTarget(Pose2d targetPose, ChassisSpeeds endVelo) {
+        this.targetPose = targetPose;
+        this.endVelo = endVelo;
+
+        this.xTranslationalGoal = new State(
+            targetPose.getX(),
+            0
+        );
+
+        this.yTranslationalGoal = new State(
+            targetPose.getY(),
+            0
+        );
+
+        // rotation wrapping
+        double desiredRotationRad = MathUtil.angleModulus(targetPose.getRotation().getRadians());
+        double rotationError = MathUtil.inputModulus(
+            desiredRotationRad - robotState.getEstimatedPose().getRotation().getRadians(),
+            -Math.PI, Math.PI
+        );
+
+        this.rotationalGoal = new State(
+            robotState.getEstimatedPose().getRotation().getRadians() + rotationError,
+            endVelo.omegaRadiansPerSecond
+        );
     }
 }

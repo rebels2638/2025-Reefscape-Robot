@@ -64,6 +64,8 @@
     "DEADBAND",
     "dtheta",
     "feedforward",
+    "feedforwards",
+    "Holonomic",
     "Interpolatable",
     "pathplanner"
 ]
