@@ -3,19 +3,17 @@ package frc.robot.commands.autoAlignment;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotState;
+import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.constants.Constants;
@@ -25,7 +23,14 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
 
-public class LockDriveAxis extends Command {
+public class LockDriveAxis extends LinearDriveToPose {
+    public static void main(String[] args) {
+        Axis a = AlignmentConstants.kBARGE_AXIS;
+
+        Translation2d b = a.getPointOnAxis(new Translation2d(5,6));
+        System.out.println(b.getX() + " " + b.getY()); 
+
+    }
     public static class Axis {
         public final Double x1, y1, x2, y2;
         public final Double m, b;
@@ -35,9 +40,9 @@ public class LockDriveAxis extends Command {
             this.x2 = x2;
             this.y2 = y2;
 
-            if (x2 == x1) {
+            if (x2.equals(x1)) {
                 this.m = Double.POSITIVE_INFINITY;
-                this.b = 0.0;
+                this.b = x1;
             }
             else {
                 this.m = (y2 - y1) / (x2 - x1);
@@ -59,7 +64,6 @@ public class LockDriveAxis extends Command {
         public Double getOutput(double input) {
             if (!Double.isNaN(x1) && !Double.isNaN(x2)) {
                 input = RebelUtil.constrain(input, x1, x2);
-
             }
             if (m.isInfinite()) {
                 return Double.POSITIVE_INFINITY;
@@ -86,12 +90,24 @@ public class LockDriveAxis extends Command {
         }
 
         public Translation2d getIntersection(Axis other) {
-            if (this.m == other.m) {
+            if (this.m.equals(other.m) || this.m.isInfinite() && other.m.isInfinite()) {
                 return null;
             }
 
-            Double x = (this.b - other.b) / (this.m - other.m);
-            Double y = getOutput(x);
+            Double x;
+            Double y;
+            if (this.m.isInfinite()) {
+               x = this.b;
+               y = other.getOutput(x);
+            }
+            else if (other.m.isInfinite()) {
+                x = other.b;
+                y = this.getOutput(x);
+            }
+            else {
+                x = (this.b - other.b) / (other.m - this.m);
+                y = getOutput(x);    
+            }
 
             return new Translation2d(x, y);
         }
@@ -123,13 +139,14 @@ public class LockDriveAxis extends Command {
     private final RobotState robotState = RobotState.getInstance();
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
-    private final SwerveDrive swerve = SwerveDrive.getInstance();             // Reference to the swerve drive subsystem.
     private final DoubleSupplier vX, vY, heading; // Supplier functions for velocity inputs and heading.
     private int invert = 1;                       // Variable to invert direction based on alliance color.
     
     private double previousTimestamp = Timer.getTimestamp();
 
     public LockDriveAxis(XboxController xboxDriver) {
+        super(new Pose2d(), new ChassisSpeeds());
+
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
@@ -161,11 +178,13 @@ public class LockDriveAxis extends Command {
         this.vY = () -> -MathUtil.applyDeadband(xboxDriver.getLeftX(), Constants.OperatorConstants.LEFT_X_DEADBAND);
         this.heading = () -> -MathUtil.applyDeadband(xboxDriver.getRightX(), Constants.OperatorConstants.RIGHT_X_DEADBAND);
 
-        addRequirements(swerveDrive); // Specify that this command requires the swerve subsystem.
+        addRequirements(swerveDrive);
     }
 
     @Override
     public void initialize() {
+        super.initialize();
+
         boolean isRed = false;
         Optional<Alliance> alliance = DriverStation.getAlliance(); // Get the current alliance.
 
@@ -182,7 +201,13 @@ public class LockDriveAxis extends Command {
 
     @Override
     public void execute() {
-        double dt = previousTimestamp - Timer.getTimestamp();
+        double dt = Timer.getTimestamp() - previousTimestamp;
+
+        ChassisSpeeds driverSpeeds = new ChassisSpeeds(
+            vX.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec() * invert,
+            vY.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec() * invert,
+            heading.getAsDouble() * drivetrainConfig.getMaxDrivetrainAngularVelocityRadiansPerSec()
+        );
 
         Pose2d closestPose = new Pose2d(
             AlignmentConstants.kBARGE_AXIS.getPointOnAxis(
@@ -190,22 +215,35 @@ public class LockDriveAxis extends Command {
             ),
             AlignmentConstants.kBARGE_ROTATION
         );
-        
-        ChassisSpeeds driverSpeeds = new ChassisSpeeds(
-            vX.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec(),
-            vY.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec(),
-            heading.getAsDouble() * drivetrainConfig.getMaxDrivetrainAngularVelocityRadiansPerSec()
-        );
+        Logger.recordOutput("LockDriveAxis/closestPose", closestPose);
 
-        Pose2d driverTranslatedPose = new Pose2d(
-            new Translation2d(
-                closestPose.getX() + driverSpeeds.vxMetersPerSecond * dt,
-                closestPose.getY() + driverSpeeds.vyMetersPerSecond * dt
+        Pose2d nextPoint = new Pose2d(
+            AlignmentConstants.kBARGE_AXIS.getPointOnAxis(
+                new Translation2d(
+                    robotState.getEstimatedPose().getTranslation().getX() + driverSpeeds.vxMetersPerSecond * dt,
+                    robotState.getEstimatedPose().getTranslation().getY() + driverSpeeds.vyMetersPerSecond * dt
+                )
             ),
             AlignmentConstants.kBARGE_ROTATION
         );
+        Logger.recordOutput("LockDriveAxis/nextPoint", nextPoint);
 
+        ChassisSpeeds goalSpeeds = new ChassisSpeeds(
+            (nextPoint.getX() - closestPose.getX()) / dt,
+            (nextPoint.getY() - closestPose.getY()) / dt,
+            0
+        );
+
+        Logger.recordOutput("LockDriveAxis/goalSpeeds", goalSpeeds);
+
+        super.setNewTarget(nextPoint, goalSpeeds);
+        super.execute();
 
         previousTimestamp = Timer.getTimestamp();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

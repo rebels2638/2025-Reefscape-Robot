@@ -78,9 +78,9 @@ public final class Constants {
     // these assume the robots volume is zero. does not take into account frame
     public static final Axis kBARGE_AXIS = new Axis(
         8.232,
-        7.973,
+        4.343,
         8.232,
-        4.343
+        7.973
     ); 
     public static final Rotation2d kBARGE_ROTATION = new Rotation2d(0);
 
