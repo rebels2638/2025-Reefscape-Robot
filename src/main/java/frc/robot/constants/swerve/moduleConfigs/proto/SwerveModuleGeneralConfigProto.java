@@ -19,7 +19,7 @@ public class SwerveModuleGeneralConfigProto extends SwerveModuleGeneralConfigBas
 
     @Override
     public String getCanBusName() {
-        return "drivetrain";
+        return "rio";
     }
 
     @Override
@@ -219,6 +219,6 @@ public class SwerveModuleGeneralConfigProto extends SwerveModuleGeneralConfigBas
 
     @Override
     public double getCancoderAbsoluteSensorDiscontinuityPoint() {
-        return 0.5;
+        return 1;
     }
 }
