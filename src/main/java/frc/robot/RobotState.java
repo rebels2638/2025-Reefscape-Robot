@@ -277,6 +277,21 @@ public class RobotState {
       );
   }
 
+  private boolean checkFace(Pose2d robot, int i) {
+    double angleToCenter = Math.atan2(
+      MechAElementConstants.Reef.center.getY() - robot.getY(),
+      MechAElementConstants.Reef.center.getX() - robot.getX()
+    );
+
+    Logger.recordOutput("RobotState/checkFace", angleToCenter);
+
+    return 
+      Math.toRadians(60) < Math.abs(
+        AlignmentConstants.kCENTER_FACES[i].getRotation().minus(new Rotation2d(angleToCenter)).getRadians()
+      ) &&
+      2 <= robot.getTranslation().getDistance(AlignmentConstants.kCENTER_FACES[i].getTranslation());
+  }
+
   public Pose2d getClosestAlgayPose() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     Pose2d current = RobotState.getInstance().getEstimatedPose();
@@ -296,16 +311,18 @@ public class RobotState {
       );
     }
 
-    Pose2d nearest = alliance.isPresent() ? 
+    Pose2d nearest = AlignmentConstants.kCENTER_FACES[0];
+    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
+      if (checkFace(current, i)) {
+        nearest = AlignmentConstants.kCENTER_FACES[i];
+      }
+    }
+    
+    nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
-        current.nearest(candidates) : 
-        current.nearest(
-            candidates.stream()
-            .map(
-              FlippingUtil::flipFieldPose)
-                .collect(Collectors.toList())
-          )
-    : current.nearest(candidates);
+        nearest : 
+        FlippingUtil.flipFieldPose(nearest)
+    : nearest;
 
     Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
     return nearest;
@@ -323,16 +340,18 @@ public class RobotState {
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], true));
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], false));
 
-    Pose2d nearest = alliance.isPresent() ? 
+    Pose2d nearest = candidates.get(0);
+    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
+      if (checkFace(current, i)) {
+        nearest = AlignmentConstants.kCENTER_FACES[i];
+      }
+    }
+    
+    nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
-        current.nearest(candidates) : 
-        current.nearest(
-            candidates.stream()
-            .map(
-              FlippingUtil::flipFieldPose)
-                .collect(Collectors.toList())
-          )
-    : current.nearest(candidates);
+        nearest : 
+        FlippingUtil.flipFieldPose(nearest)
+    : nearest;
 
     Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
     return nearest;
@@ -350,16 +369,18 @@ public class RobotState {
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], false));
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], true));
 
-    Pose2d nearest = alliance.isPresent() ? 
+    Pose2d nearest = candidates.get(0);
+    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
+      if (checkFace(current, i)) {
+        nearest = AlignmentConstants.kCENTER_FACES[i];
+      }
+    }
+    
+    nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
-        current.nearest(candidates) : 
-        current.nearest(
-            candidates.stream()
-            .map(
-              FlippingUtil::flipFieldPose)
-                .collect(Collectors.toList())
-          )
-    : current.nearest(candidates);
+        nearest : 
+        FlippingUtil.flipFieldPose(nearest)
+    : nearest;
 
     Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
     return nearest;
