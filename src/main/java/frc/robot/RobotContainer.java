@@ -6,16 +6,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.AutoRunner;
-import frc.robot.commands.autoAlignment.LinearDriveToPose;
-import frc.robot.commands.autoAlignment.LockDriveAxis;
-import frc.robot.commands.autoAlignment.PathplanToPose;
-import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.vision.Vision;
-
+import frc.robot.commands.autoAlignment.*;
 public class RobotContainer {
     public static RobotContainer instance = null;
 
@@ -30,7 +24,7 @@ public class RobotContainer {
     private final SwerveDrive swerveDrive;
     // private final AutoRunner autoRunner;
     private final Vision vision;
-
+    private final RobotState robotState;
     // private final Elevator elevator;
 
     private final XboxController xboxTester;
@@ -44,6 +38,7 @@ public class RobotContainer {
 
       swerveDrive = SwerveDrive.getInstance();
       vision = Vision.getInstance();
+      robotState = RobotState.getInstance();
       // autoRunner = AutoRunner.getInstance();
 
       // elevator = Elevator.getInstance();
@@ -52,8 +47,14 @@ public class RobotContainer {
 
       swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
 
-      // xboxDriver.getAButton().whileTrue(new LinearDriveToPose(new Pose2d(5, 5, new Rotation2d(3)), new ChassisSpeeds(0, 0, 0)));
-      // // xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
+      // 3,4,0
+
+      xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
+
+      xboxDriver.getLeftBumper().whileTrue(new LinearDriveToPose(() -> robotState.getClosestLeftBranchPose(), () -> new ChassisSpeeds()));
+      xboxDriver.getRightBumper().whileTrue(new LinearDriveToPose(() -> robotState.getClosestRightBranchPose(), () -> new ChassisSpeeds()));
+      xboxDriver.getYButton().whileTrue(new LinearDriveToPose(() -> robotState.getClosestAlgayPose(), () -> new ChassisSpeeds()));
+
       // xboxDriver.getYButton().onTrue(new PathplanToPose(RobotState.getInstance().alignmentPoseSearch()));
   }
   

@@ -14,9 +14,17 @@ public class VisionIOLimelight implements VisionIO {
 
     public void updateInputs(VisionIOInputs inputs) {
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        inputs.hasValidTargets = inputs.estimatedPose != null && mt2.tagCount > 0;
-        inputs.estimatedPose = inputs.hasValidTargets ? mt2.pose : new Pose2d();
-        inputs.timestampSeconds = mt2 != null ? mt2.timestampSeconds : inputs.timestampSeconds;
+        
+        // try {
+        //     inputs.hasValidTargets =  mt2.tagCount > 0;
+        //     inputs.estimatedPose = inputs.hasValidTargets ? mt2.pose : inputs.estimatedPose;
+        //     inputs.timestampSeconds = inputs.hasValidTargets ? mt2.timestampSeconds : inputs.timestampSeconds; 
+        // } catch (Exception e) {
+            
+        // }
+        inputs.hasValidTargets = !mt2.equals(null) && mt2.tagCount > 0;
+        inputs.estimatedPose = inputs.hasValidTargets ? mt2.pose : inputs.estimatedPose;
+        inputs.timestampSeconds = inputs.hasValidTargets ? mt2.timestampSeconds : inputs.timestampSeconds;
         
         inputs.primaryTagId = (int) NetworkTableInstance.getDefault().getTable(name).getEntry("tid").getDouble(0);
         inputs.tx = NetworkTableInstance.getDefault().getTable(name).getEntry("tx").getDouble(0);

@@ -15,25 +15,24 @@ public class VisionConfigComp extends VisionConfigBase {
     @Override
     public String[] getNames() {
         return new String[] {
-            "limelight"
+            "limelight-back"
         };
     }
 
     @Override
     public double getTranslationDevBase() {
-        return 0.5;
+        return 0.05;
     }
 
     @Override
     public double getTranslationDevRotationExpoDenominator() {
-        return 60;
+        return 16;
     }
 
     @Override
     public double getTranslationDevTaScaler() {
-        return 0;
+        return 0.0002;
     }
-
 
     @Override
     public double getObservationBufferSizeSeconds() {

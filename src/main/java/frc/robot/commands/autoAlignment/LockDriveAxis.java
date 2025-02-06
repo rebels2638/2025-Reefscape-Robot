@@ -2,6 +2,7 @@ package frc.robot.commands.autoAlignment;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -144,9 +145,12 @@ public class LockDriveAxis extends LinearDriveToPose {
     
     private double previousTimestamp = Timer.getTimestamp();
 
+    private Supplier<Pose2d> targetPose;
+    private Supplier<ChassisSpeeds> endVelo;
+    
     public LockDriveAxis(XboxController xboxDriver) {
-        super(new Pose2d(), new ChassisSpeeds());
-
+        super(() -> RobotState.getInstance().getEstimatedPose(), () -> new ChassisSpeeds());
+        
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
@@ -236,7 +240,9 @@ public class LockDriveAxis extends LinearDriveToPose {
 
         Logger.recordOutput("LockDriveAxis/goalSpeeds", goalSpeeds);
 
-        super.setNewTarget(nextPoint, goalSpeeds);
+        super.targetPose = () -> nextPoint;
+        super.endVelo = () -> goalSpeeds;
+        
         super.execute();
 
         previousTimestamp = Timer.getTimestamp();
