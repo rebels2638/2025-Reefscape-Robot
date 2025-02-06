@@ -145,12 +145,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     }
 
     @Override
-    public PIDConstants getSteerPIDConfig() {
+    public PIDConstants getPathplannerSteerPIDConfig() {
         return steerPIDConstants;
     }
 
     @Override
-    public PIDConstants getDrivePIDConfig() {
+    public PIDConstants getPathplannerDrivePIDConfig() {
         return drivePIDConstants;
     }
 

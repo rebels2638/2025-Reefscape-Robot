@@ -75,13 +75,12 @@ public class AutoRunner {
         
 
         driveController = new PPHolonomicDriveController(
-            drivetrainConfig.getDrivePIDConfig(),
-            drivetrainConfig.getSteerPIDConfig(),
+            drivetrainConfig.getPathplannerDrivePIDConfig(),
+            drivetrainConfig.getPathplannerSteerPIDConfig(),
             Constants.kLOOP_CYCLE_MS
         );
 
         AutoBuilder.configure(
-                // visionSubsystem::getBotPose2d,
                 RobotState.getInstance()::getEstimatedPose, // Robot pose supplier
                 RobotState.getInstance()::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                 RobotState.getInstance()::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
