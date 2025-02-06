@@ -148,6 +148,10 @@ public class LinearDriveToPose extends Command {
         previousTimestamp = Timer.getTimestamp();
 
         Logger.recordOutput("LinearDriveToPose/targetPose", targetPose);
+
+        xTranslationalFeedbackController.reset();
+        yTranslationalFeedbackController.reset();
+        rotationalFeedbackController.reset();
     }
 
     @Override
@@ -182,21 +186,30 @@ public class LinearDriveToPose extends Command {
                 robotState.getEstimatedPose().getX(),
                 currentXTranslationalSetpoint.position
             ) + 
-            endVelo.vxMetersPerSecond;
+            Math.max(
+                endVelo.vxMetersPerSecond,
+                currentXTranslationalSetpoint.velocity
+            );
 
         calculatedSpeeds.vyMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getY(),
                 currentYTranslationalSetpoint.position
             ) + 
-            endVelo.vyMetersPerSecond;
+            Math.max(
+                endVelo.vyMetersPerSecond,
+                currentYTranslationalSetpoint.velocity
+            );
 
         calculatedSpeeds.omegaRadiansPerSecond = 
             rotationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getRotation().getRadians(),
                 currentRotationalSetpoint.position
             ) + 
-            currentRotationalSetpoint.velocity ;
+            Math.max(
+                endVelo.omegaRadiansPerSecond,
+                currentRotationalSetpoint.velocity
+            );
 
         swerveDrive.driveFieldRelative(calculatedSpeeds);
 

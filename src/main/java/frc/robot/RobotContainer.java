@@ -10,8 +10,10 @@ import frc.robot.commands.AutoRunner;
 import frc.robot.commands.autoAlignment.LinearDriveToPose;
 import frc.robot.commands.autoAlignment.LockDriveAxis;
 import frc.robot.commands.autoAlignment.PathplanToPose;
+import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.vision.Vision;
 
 public class RobotContainer {
@@ -26,8 +28,10 @@ public class RobotContainer {
     }
 
     private final SwerveDrive swerveDrive;
-    private final AutoRunner autoRunner;
-    // private final Vision vision;
+    // private final AutoRunner autoRunner;
+    private final Vision vision;
+
+    // private final Elevator elevator;
 
     private final XboxController xboxTester;
     private final XboxController xboxDriver;
@@ -39,18 +43,23 @@ public class RobotContainer {
       this.xboxDriver = new XboxController(3);
 
       swerveDrive = SwerveDrive.getInstance();
-      // vision = Vision.getInstance();
-      autoRunner = AutoRunner.getInstance();
+      vision = Vision.getInstance();
+      // autoRunner = AutoRunner.getInstance();
+
+      // elevator = Elevator.getInstance();
+
+      // elevator.setDefaultCommand(new RunElevatorRaw(xboxDriver));
 
       swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
 
-      xboxDriver.getAButton().whileTrue(new LinearDriveToPose(new Pose2d(5, 5, new Rotation2d(3)), new ChassisSpeeds(0, 0, 0)));
-      // xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
-      xboxDriver.getYButton().onTrue(new PathplanToPose(RobotState.getInstance().alignmentPoseSearch()));
+      // xboxDriver.getAButton().whileTrue(new LinearDriveToPose(new Pose2d(5, 5, new Rotation2d(3)), new ChassisSpeeds(0, 0, 0)));
+      // // xboxDriver.getXButton().onTrue(new InstantCommand(() -> RobotState.getInstance().zeroGyro()));
+      // xboxDriver.getYButton().onTrue(new PathplanToPose(RobotState.getInstance().alignmentPoseSearch()));
   }
   
   public Command getAutonomousCommand() {
-    return autoRunner.getAutonomousCommand();
+    // return autoRunner.getAutonomousCommand();
+    return null;
   }
 
 }

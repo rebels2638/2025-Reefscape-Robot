@@ -104,7 +104,7 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     }
 
     @Override
-    public double getMotionMagicCruiseVelocityRotationsPerSec() {
+    public double getMotionMagicCruiseVelocityMetersPerSec() {
         return 3.0;
     }
 
@@ -112,6 +112,16 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     @Override
     public boolean isNeutralModeBrake() {
         return true;
+    }
+
+    @Override
+    public boolean isM1Inverted() {
+        return true;
+    }
+
+    @Override
+    public boolean isM2Inverted() {
+        return false;
     }
 
     // Gear ratio
@@ -128,5 +138,10 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     @Override 
     public double getMinHeightMeters() {
         return -1;
+    }
+
+    @Override
+    public double getToleranceMeters() {
+        return 0.02;
     }
 }
