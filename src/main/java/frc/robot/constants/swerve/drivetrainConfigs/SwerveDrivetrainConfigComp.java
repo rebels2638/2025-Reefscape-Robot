@@ -27,16 +27,16 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     private final double maxAngularAcceleration = 12.0;
     private final double maxAutoModuleVelocity = 5.0;
 
-    private final Translation2d frontLeftPosition = new Translation2d(0.38, 0.38);
-    private final Translation2d frontRightPosition = new Translation2d(0.38, -0.38);
-    private final Translation2d backLeftPosition = new Translation2d(-0.38, 0.38);
-    private final Translation2d backRightPosition = new Translation2d(-0.38, -0.38);
+    private final Translation2d frontLeftPosition = new Translation2d(0.24, 0.24);
+    private final Translation2d frontRightPosition = new Translation2d(0.24, -0.24);
+    private final Translation2d backLeftPosition = new Translation2d(-0.24, 0.24);
+    private final Translation2d backRightPosition = new Translation2d(-0.24, -0.24);
 
     private final double rotationCompensationCoefficient = 0.0;
 
     private final RobotConfig autoConfig = new RobotConfig(
-            27.88,
-            3.5,
+            37.88,
+            13.5,
             new ModuleConfig(
                 SwerveModuleGeneralConfigComp.getInstance().getDriveWheelRadiusMeters(), 
                 5.4, 
@@ -104,7 +104,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(0, 0, 0);
+        PIDController p = new PIDController(2, 0, 0);
         p.setTolerance(Math.sqrt(getAutoAlignTranslationTolerance()));
 
         return p;
@@ -112,7 +112,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(0, 0, 0);
+        PIDController p = new PIDController(1, 0, 0);
         p.setTolerance(getAutoAlignRotationTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -157,5 +157,10 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     @Override
     public double getMaxAutoModuleVelocity() {
         return maxAutoModuleVelocity;
+    }
+
+    @Override
+    public double getBumperLengthMeters() {
+        return 0.79;
     }
 }

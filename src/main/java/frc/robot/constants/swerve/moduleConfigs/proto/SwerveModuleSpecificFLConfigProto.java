@@ -16,12 +16,12 @@ public class SwerveModuleSpecificFLConfigProto extends SwerveModuleSpecificConfi
 
     @Override
     public int getDriveCanId() {
-        return 2;
+        return 4;
     }
 
     @Override
     public int getSteerCanId() {
-        return 1;
+        return 5;
     }
 
     @Override
@@ -46,11 +46,11 @@ public class SwerveModuleSpecificFLConfigProto extends SwerveModuleSpecificConfi
 
     @Override
     public int getCancoderCanId() {
-        return 9;
+        return 10;
     }
 
     @Override
     public double getCancoderOffsetRotations() {
-        return -0.247314453125;
+        return -0.86;
     }
 }

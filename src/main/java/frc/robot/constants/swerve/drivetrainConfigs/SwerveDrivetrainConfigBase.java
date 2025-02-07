@@ -43,6 +43,5 @@ public abstract class SwerveDrivetrainConfigBase {
     public abstract double getAutoAlignRotationTolerance();
     public abstract double getAutoAlignRotationVeloTolerance();
 
-
-
+    public abstract double getBumperLengthMeters();
 }

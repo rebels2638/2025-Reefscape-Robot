@@ -29,15 +29,20 @@ public abstract class ElevatorConfigBase {
     // Motion magic parameters
     public abstract double getMotionMagicExpoKA();
     public abstract double getMotionMagicExpoKV();
-    public abstract double getMotionMagicCruiseVelocityRotationsPerSec();
+    public abstract double getMotionMagicCruiseVelocityMetersPerSec();
 
     // Neutral mode
     public abstract boolean isNeutralModeBrake();
+
+    public abstract boolean isM1Inverted();
+    public abstract boolean isM2Inverted();
 
     // Gear ratio
     public abstract double getMotorToOutputShaftRatio();
 
     public abstract double getMaxHeightMeters();
     public abstract double getMinHeightMeters();
+
+    public abstract double getToleranceMeters();
 
 }

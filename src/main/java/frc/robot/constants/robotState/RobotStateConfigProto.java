@@ -1,5 +1,9 @@
 package frc.robot.constants.robotState;
 
+import java.util.concurrent.TransferQueue;
+
+import edu.wpi.first.math.geometry.Translation2d;
+
 public class RobotStateConfigProto extends RobotStateConfigBase {
     private static RobotStateConfigProto instance;
     public static RobotStateConfigProto getInstance() {
@@ -20,5 +24,15 @@ public class RobotStateConfigProto extends RobotStateConfigBase {
     @Override
     public double getOdomTranslationDevBase() {
         return 0.05;
+    }
+
+    @Override
+    public Translation2d getCoralOffsetFromRobotCenter() {
+        return new Translation2d(0,0);
+    }
+
+    @Override
+    public Translation2d getAlgayOffsetFromRobotCenter() {
+        return new Translation2d(0, 0);
     }
 }

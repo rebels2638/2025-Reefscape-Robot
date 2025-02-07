@@ -1,5 +1,7 @@
 package frc.robot.commands.autoAlignment;
 
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -44,14 +46,14 @@ public class LinearDriveToPose extends Command {
 
     private double previousTimestamp = Timer.getTimestamp();
 
-    private Pose2d targetPose;
-    private ChassisSpeeds endVelo;
+    protected Supplier<Pose2d> targetPose;
+    protected Supplier<ChassisSpeeds> endVelo;
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
     // This is the blue alliance pose! 
     // field relative velo and pose and velocity
-    public LinearDriveToPose(Pose2d targetPose, ChassisSpeeds endVelo) {
+    public LinearDriveToPose(Supplier<Pose2d> targetPose, Supplier<ChassisSpeeds> endVelo) {
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
@@ -108,18 +110,26 @@ public class LinearDriveToPose extends Command {
 
         this.rotationalFeedbackController = drivetrainConfig.getAutoAlignProfiledRotationController();
 
+        System.out.println("NEW COMMAND");
+        addRequirements(swerveDrive);
+    }
+
+    @Override 
+    public void initialize() {
+        System.out.println("init");
+
         this.xTranslationalGoal = new State(
-            targetPose.getX(),
-            endVelo.vxMetersPerSecond
+            targetPose.get().getX(),
+            endVelo.get().vxMetersPerSecond
         );
 
         this.yTranslationalGoal = new State(
-            targetPose.getY(),
-            endVelo.vyMetersPerSecond
+            targetPose.get().getY(),
+            endVelo.get().vyMetersPerSecond
         );
 
         // rotation wrapping
-        double desiredRotationRad = MathUtil.angleModulus(targetPose.getRotation().getRadians());
+        double desiredRotationRad = MathUtil.angleModulus(targetPose.get().getRotation().getRadians());
         double rotationError = MathUtil.inputModulus(
             desiredRotationRad - robotState.getEstimatedPose().getRotation().getRadians(),
             -Math.PI, Math.PI
@@ -127,14 +137,10 @@ public class LinearDriveToPose extends Command {
 
         this.rotationalGoal = new State(
             robotState.getEstimatedPose().getRotation().getRadians() + rotationError,
-            endVelo.omegaRadiansPerSecond
+            endVelo.get().omegaRadiansPerSecond
         );
+        
 
-        addRequirements(swerveDrive);
-    }
-
-    @Override 
-    public void initialize() {
         currentXTranslationalSetpoint = new State(
             robotState.getEstimatedPose().getX(),
             robotState.getFieldRelativeSpeeds().vxMetersPerSecond
@@ -145,9 +151,18 @@ public class LinearDriveToPose extends Command {
             robotState.getFieldRelativeSpeeds().vyMetersPerSecond
         );
 
+        currentRotationalSetpoint = new State(
+            robotState.getEstimatedPose().getRotation().getRadians(),
+            robotState.getFieldRelativeSpeeds().omegaRadiansPerSecond
+        );
+
         previousTimestamp = Timer.getTimestamp();
 
-        Logger.recordOutput("LinearDriveToPose/targetPose", targetPose);
+        Logger.recordOutput("LinearDriveToPose/targetPose.get()", targetPose.get());
+
+        xTranslationalFeedbackController.reset();
+        yTranslationalFeedbackController.reset();
+        rotationalFeedbackController.reset();
     }
 
     @Override
@@ -182,21 +197,30 @@ public class LinearDriveToPose extends Command {
                 robotState.getEstimatedPose().getX(),
                 currentXTranslationalSetpoint.position
             ) + 
-            endVelo.vxMetersPerSecond;
+            Math.max(
+                endVelo.get().vxMetersPerSecond,
+                currentXTranslationalSetpoint.velocity
+            );
 
         calculatedSpeeds.vyMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getY(),
                 currentYTranslationalSetpoint.position
             ) + 
-            endVelo.vyMetersPerSecond;
+            Math.max(
+                endVelo.get().vyMetersPerSecond,
+                currentYTranslationalSetpoint.velocity
+            );
 
         calculatedSpeeds.omegaRadiansPerSecond = 
             rotationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getRotation().getRadians(),
                 currentRotationalSetpoint.position
             ) + 
-            currentRotationalSetpoint.velocity ;
+            Math.max(
+                endVelo.get().omegaRadiansPerSecond,
+                currentRotationalSetpoint.velocity
+            );
 
         swerveDrive.driveFieldRelative(calculatedSpeeds);
 
@@ -206,13 +230,13 @@ public class LinearDriveToPose extends Command {
     @Override
     public boolean isFinished() {
         boolean poseAligned = 
-            robotState.getEstimatedPose().getTranslation().getDistance(targetPose.getTranslation()) <= 
+            robotState.getEstimatedPose().getTranslation().getDistance(targetPose.get().getTranslation()) <= 
                 drivetrainConfig.getAutoAlignTranslationTolerance() &&
-            Math.abs(robotState.getEstimatedPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) <= 
+            Math.abs(robotState.getEstimatedPose().getRotation().getRadians() - targetPose.get().getRotation().getRadians()) <= 
                 drivetrainConfig.getAutoAlignRotationTolerance();
         
         boolean speedsAligned = 
-            endVelo.vxMetersPerSecond == 0 && endVelo.vyMetersPerSecond == 0 && endVelo.omegaRadiansPerSecond == 0 ?
+            endVelo.get().vxMetersPerSecond == 0 && endVelo.get().vyMetersPerSecond == 0 && endVelo.get().omegaRadiansPerSecond == 0 ?
                 Math.abs(Math.hypot(
                     robotState.getFieldRelativeSpeeds().vxMetersPerSecond,
                     robotState.getFieldRelativeSpeeds().vyMetersPerSecond
@@ -221,32 +245,5 @@ public class LinearDriveToPose extends Command {
             true;
 
         return poseAligned && speedsAligned;
-    }
-
-    protected void setNewTarget(Pose2d targetPose, ChassisSpeeds endVelo) {
-        this.targetPose = targetPose;
-        this.endVelo = endVelo;
-
-        this.xTranslationalGoal = new State(
-            targetPose.getX(),
-            0
-        );
-
-        this.yTranslationalGoal = new State(
-            targetPose.getY(),
-            0
-        );
-
-        // rotation wrapping
-        double desiredRotationRad = MathUtil.angleModulus(targetPose.getRotation().getRadians());
-        double rotationError = MathUtil.inputModulus(
-            desiredRotationRad - robotState.getEstimatedPose().getRotation().getRadians(),
-            -Math.PI, Math.PI
-        );
-
-        this.rotationalGoal = new State(
-            robotState.getEstimatedPose().getRotation().getRadians() + rotationError,
-            endVelo.omegaRadiansPerSecond
-        );
     }
 }

@@ -159,4 +159,9 @@ public class SwerveDrivetrainConfigProto extends SwerveDrivetrainConfigBase {
         return maxAutoModuleVelocity;
     }
 
+    @Override
+    public double getBumperLengthMeters() {
+        return 0.79;
+    }
+
 }

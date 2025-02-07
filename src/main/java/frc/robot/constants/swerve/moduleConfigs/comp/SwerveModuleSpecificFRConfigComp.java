@@ -16,7 +16,7 @@ public class SwerveModuleSpecificFRConfigComp extends SwerveModuleSpecificConfig
     
     @Override
     public int getDriveCanId() {
-        return 2;
+        return 4;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class SwerveModuleSpecificFRConfigComp extends SwerveModuleSpecificConfig
 
     @Override
     public boolean getIsDriveInverted() {
-        return true;
+        return false;
     }
 
     @Override
@@ -46,11 +46,11 @@ public class SwerveModuleSpecificFRConfigComp extends SwerveModuleSpecificConfig
 
     @Override
     public int getCancoderCanId() {
-        return 9;
+        return 10;
     }
 
     @Override
     public double getCancoderOffsetRotations() {
-        return -0.68;
+        return -0.750977;
     }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.Logger;
+import org.opencv.highgui.HighGui;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
@@ -10,12 +11,22 @@ import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
 
 public class Elevator extends SubsystemBase {
+    private static Elevator instance = null;
+    public static Elevator getInstance() {
+        if (instance == null) {
+            instance = new Elevator();
+        }
+        return instance;
+    }
+
     private ElevatorIO elevatorIO;
     private ElevatorIOInputsAutoLogged elevatorIOInputs = new ElevatorIOInputsAutoLogged();
 
     private final ElevatorConfigBase config;
 
-    public Elevator() {
+    private double setpoint = 0;
+
+    private Elevator() {
         // IO
         switch (Constants.currentMode) {
             case COMP:
@@ -57,6 +68,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setHeight(double height) {
+        setpoint = height;
         elevatorIO.setHeight(height);
     }
 
@@ -66,5 +78,9 @@ public class Elevator extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         elevatorIO.setVoltage(voltage);
+    }
+
+    public boolean reachedSetpoint() {
+        return Math.abs(setpoint - elevatorIOInputs.elevatorHeightMeters) <= config.getToleranceMeters();
     }
 }

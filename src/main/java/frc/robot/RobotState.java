@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.Constants;
 import frc.robot.constants.MechAElementConstants;
+import frc.robot.constants.Constants.AlignmentConstants;
 import frc.robot.constants.robotState.RobotStateConfigBase;
 import frc.robot.constants.robotState.RobotStateConfigProto;
 import frc.robot.constants.robotState.RobotStateConfigSim;
@@ -78,37 +79,37 @@ public class RobotState {
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
 
   private final SwerveDrivetrainConfigBase drivetrainConfig;
-  private final RobotStateConfigBase robotStateConfigBase;
+  private final RobotStateConfigBase robotStateConfig;
 
   private RobotState() {
     switch (Constants.currentMode) {
         case COMP:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-            robotStateConfigBase = RobotStatenConfigComp.getInstance();
+            robotStateConfig = RobotStatenConfigComp.getInstance();
 
             break;
 
         case PROTO:
             drivetrainConfig = SwerveDrivetrainConfigProto.getInstance();
-            robotStateConfigBase = RobotStateConfigProto.getInstance();
+            robotStateConfig = RobotStateConfigProto.getInstance();
 
             break;
         
         case SIM:
             drivetrainConfig = SwerveDrivetrainConfigSim.getInstance();
-            robotStateConfigBase = RobotStateConfigSim.getInstance();
+            robotStateConfig = RobotStateConfigSim.getInstance();
 
             break;
 
         case REPLAY:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-            robotStateConfigBase = RobotStatenConfigComp.getInstance();
+            robotStateConfig = RobotStatenConfigComp.getInstance();
 
             break;
 
         default:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-            robotStateConfigBase = RobotStatenConfigComp.getInstance();
+            robotStateConfig = RobotStatenConfigComp.getInstance();
 
 
             break;
@@ -127,13 +128,13 @@ public class RobotState {
         lastWheelPositions, 
         new Pose2d(),
         VecBuilder.fill(
-          robotStateConfigBase.getOdomTranslationDevBase(),
-          robotStateConfigBase.getOdomTranslationDevBase(),
+          robotStateConfig.getOdomTranslationDevBase(),
+          robotStateConfig.getOdomTranslationDevBase(),
           0
         ),
         VecBuilder.fill(
-          robotStateConfigBase.getVisionTranslationDevBase(),
-          robotStateConfigBase.getVisionTranslationDevBase(),
+          robotStateConfig.getVisionTranslationDevBase(),
+          robotStateConfig.getVisionTranslationDevBase(),
           9999999
         )
       );
@@ -203,6 +204,10 @@ public class RobotState {
     //   return;
     // }
 
+    Logger.recordOutput("RobotState/vision/stdDevTranslation" ,observation.stdDevs.get(0,0));
+    Logger.recordOutput("RobotState/vision/visionPose", observation.visionPose);
+
+
     swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
     lastEstimatedPoseUpdateTime = Timer.getTimestamp();
 
@@ -256,34 +261,111 @@ public class RobotState {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
   }
 
-public Pose2d alignmentPoseSearch() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    Pose2d current = RobotState.getInstance().getEstimatedPose();
-    List<Pose2d> candidates = new ArrayList<>(
-        Arrays.asList(
-          MechAElementConstants.Processor.centerFace,
-            new Pose2d(MechAElementConstants.Barge.farCage, new Rotation2d(current.getRotation().getRadians())),
-            new Pose2d(MechAElementConstants.Barge.middleCage, new Rotation2d(current.getRotation().getRadians())),
-            new Pose2d(MechAElementConstants.Barge.closeCage, new Rotation2d(current.getRotation().getRadians())),
-            MechAElementConstants.CoralStation.leftCenterFace,
-            MechAElementConstants.CoralStation.rightCenterFace,
-            MechAElementConstants.StagingPositions.leftIceCream,
-            MechAElementConstants.StagingPositions.middleIceCream,
-            MechAElementConstants.StagingPositions.rightIceCream
+  public Pose2d offsetBranchPose(Pose2d pose, boolean isLeftBranch) {
+      double bumperOffset = drivetrainConfig.getBumperLengthMeters() / 2;
+      double branchOffset = 
+        isLeftBranch ? 
+          AlignmentConstants.kINTER_BRANCH_DIST_METER / 2 : 
+          -AlignmentConstants.kINTER_BRANCH_DIST_METER / 2;
+
+      return pose.transformBy(
+        new Transform2d(
+          -bumperOffset + robotStateConfig.getCoralOffsetFromRobotCenter().getX(),
+          branchOffset + robotStateConfig.getCoralOffsetFromRobotCenter().getY() + branchOffset,
+          new Rotation2d(0)
         )
       );
+  }
 
-    for (Pose2d element : MechAElementConstants.Reef.centerFaces) {candidates.add(element);}
+  public int getClosestFace(Pose2d curr) {
+    int nearest = 0;
+    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
+      if (AlignmentConstants.kCENTER_FACES[i].getTranslation().getDistance(curr.getTranslation()) < 
+          AlignmentConstants.kCENTER_FACES[nearest].getTranslation().getDistance(curr.getTranslation())
+      ) {
+        nearest = i;
+      }
+    }
 
-    return alliance.isPresent() ? 
-      alliance.get() == DriverStation.Alliance.Blue ?
-        current.nearest(candidates) : current
-          .nearest(
-            candidates.stream()
-            .map(
-              FlippingUtil::flipFieldPose)
-                .collect(Collectors.toList())
+    return nearest;
+  }
+
+  public Pose2d getClosestAlgayPose() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Pose2d current = RobotState.getInstance().getEstimatedPose();
+    List<Pose2d> candidates = new ArrayList<>();
+
+    double bumperOffset = drivetrainConfig.getBumperLengthMeters() / 2;
+
+    for (Pose2d element : AlignmentConstants.kCENTER_FACES) {
+      candidates.add(
+        element.transformBy(
+          new Transform2d(
+            robotStateConfig.getAlgayOffsetFromRobotCenter().getX() - bumperOffset,
+            robotStateConfig.getAlgayOffsetFromRobotCenter().getY(),
+            new Rotation2d(0)
           )
-     : null;
+        )
+      );
+    }
+
+    Pose2d nearest = candidates.get(getClosestFace(current));
+    
+    nearest = alliance.isPresent() ? 
+      alliance.get() == DriverStation.Alliance.Blue ?
+        nearest : 
+        FlippingUtil.flipFieldPose(nearest)
+    : nearest;
+
+    Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
+    return nearest;
+  }
+
+  public Pose2d getClosestLeftBranchPose() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Pose2d current = RobotState.getInstance().getEstimatedPose();
+    List<Pose2d> candidates = new ArrayList<>();
+  
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[0], true));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[1], false));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[2], true));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[3], false));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], true));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], false));
+
+    Pose2d nearest = candidates.get(getClosestFace(current));
+    
+    nearest = alliance.isPresent() ? 
+      alliance.get() == DriverStation.Alliance.Blue ?
+        nearest : 
+        FlippingUtil.flipFieldPose(nearest)
+    : nearest;
+
+    Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
+    return nearest;
+  }
+
+  public Pose2d getClosestRightBranchPose() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Pose2d current = RobotState.getInstance().getEstimatedPose();
+    List<Pose2d> candidates = new ArrayList<>();
+
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[0], false));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[1], true));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[2], false));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[3], true));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], false));
+    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], true));
+
+    Pose2d nearest = candidates.get(getClosestFace(current));
+
+    nearest = alliance.isPresent() ? 
+      alliance.get() == DriverStation.Alliance.Blue ?
+        nearest : 
+        FlippingUtil.flipFieldPose(nearest)
+    : nearest;
+
+    Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
+    return nearest;
   }
 }

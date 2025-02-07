@@ -132,11 +132,16 @@ public class Vision extends SubsystemBase {
                 rotationalRate.isPresent() && 
                 visionIOInputs[i].hasValidTargets) {
                 
+                Logger.recordOutput("vision/addingSample", true);
+                Logger.recordOutput("vision/rotationalDevContribution", 
+                Math.pow(rotationalRate.get().getDegrees() ,2) / config.getTranslationDevRotationExpoDenominator());
+                Logger.recordOutput("vision/taDevContribution", visionIOInputs[i].ta * config.getTranslationDevTaScaler());
+                
                 double translationDev = 
                     config.getTranslationDevBase() +
                     Math.pow(rotationalRate.get().getDegrees() ,2)
                     / config.getTranslationDevRotationExpoDenominator() 
-                    + visionIOInputs[i].ta * config.getTranslationDevTaScaler();
+                    + (100 - visionIOInputs[i].ta) * config.getTranslationDevTaScaler();
         
                 robotState.addVisionObservation(
                     new VisionObservation(
@@ -149,6 +154,9 @@ public class Vision extends SubsystemBase {
                         )
                     )
                 );
+            }
+            else {
+                Logger.recordOutput("vision/addingSample", false);
             }
         }
     }

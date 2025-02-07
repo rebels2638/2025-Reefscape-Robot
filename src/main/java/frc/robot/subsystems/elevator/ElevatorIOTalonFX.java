@@ -7,14 +7,18 @@ import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
@@ -45,6 +49,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     private final StatusSignal<Current> elevatorSupplyCurrent2;
     private final StatusSignal<Temperature> elevatorTemperature2;
 
+    private final StatusSignal<Double> elevatorClosedLoopRefrence1;
+    private final StatusSignal<Double> elevatorClosedLoopOutput1;
+
+    private final StatusSignal<Double> elevatorClosedLoopRefrence2;
+    private final StatusSignal<Double> elevatorClosedLoopOutput2;
+
+
     private final MotionMagicExpoTorqueCurrentFOC elevatorPositionRequest = new MotionMagicExpoTorqueCurrentFOC(0);
     private final TorqueCurrentFOC elevatorTorqueRequest = new TorqueCurrentFOC(0);
     private final VoltageOut elevatorVoltageRequest = new VoltageOut(0).withEnableFOC(false);
@@ -74,7 +85,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
         elevatorConfig.MotionMagic.MotionMagicExpo_kA = config.getMotionMagicExpoKA();
         elevatorConfig.MotionMagic.MotionMagicExpo_kV = config.getMotionMagicExpoKV();
-        elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = config.getMotionMagicCruiseVelocityRotationsPerSec();
+        elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = config.getMotionMagicCruiseVelocityMetersPerSec();
 
         // encoder
         elevatorConfig.ClosedLoopGeneral.ContinuousWrap = false;
@@ -99,12 +110,29 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
         elevatorConfig.FutureProofConfigs = true;
 
+
         elevatorMotor1 = new TalonFX(config.getCanID1());
-        elevatorMotor1.getConfigurator().apply(elevatorConfig);
+        elevatorMotor1.getConfigurator().apply(
+            elevatorConfig.withMotorOutput(
+                elevatorConfig.MotorOutput.withInverted(
+                    config.isM1Inverted() ?
+                        InvertedValue.Clockwise_Positive :
+                        InvertedValue.CounterClockwise_Positive
+                )
+            )
+        );
 
         elevatorMotor2 = new TalonFX(config.getCanID2());
-        elevatorMotor2.getConfigurator().apply(elevatorConfig);
-
+        elevatorMotor2.getConfigurator().apply(
+            elevatorConfig.withMotorOutput(
+                elevatorConfig.MotorOutput.withInverted(
+                    config.isM2Inverted() ?
+                        InvertedValue.Clockwise_Positive :
+                        InvertedValue.CounterClockwise_Positive
+                )
+            )
+        );
+        
         elevatorAppliedVolts1 = elevatorMotor1.getMotorVoltage().clone();
         elevatorSupplyCurrent1 = elevatorMotor1.getSupplyCurrent().clone();
         elevatorTemperature1 = elevatorMotor1.getDeviceTemp().clone();
@@ -112,6 +140,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorAppliedVolts2 = elevatorMotor2.getMotorVoltage().clone();
         elevatorSupplyCurrent2 = elevatorMotor2.getSupplyCurrent().clone();
         elevatorTemperature2 = elevatorMotor2.getDeviceTemp().clone();
+
+
+        elevatorClosedLoopRefrence1 = elevatorMotor1.getClosedLoopReference().clone();
+        elevatorClosedLoopOutput1 = elevatorMotor1.getClosedLoopOutput().clone();
+
+        elevatorClosedLoopRefrence2 = elevatorMotor2.getClosedLoopReference().clone();
+        elevatorClosedLoopOutput2 = elevatorMotor2.getClosedLoopOutput().clone();
+
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 40,
@@ -121,7 +157,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
                 elevatorAppliedVolts2,
                 elevatorSupplyCurrent2,
-                elevatorTemperature2
+                elevatorTemperature2,
+
+                elevatorClosedLoopRefrence1,
+                elevatorClosedLoopOutput1,
+
+                elevatorClosedLoopRefrence2,
+                elevatorClosedLoopOutput2
         );
 
         elevatorPositionStatusSignal1 = elevatorMotor1.getPosition().clone();
@@ -157,7 +199,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
             elevatorVelocityStatusSignal2,
             elevatorAppliedVolts2,
             elevatorSupplyCurrent2,
-            elevatorTemperature2
+            elevatorTemperature2,
+
+            
+            elevatorClosedLoopRefrence1,
+            elevatorClosedLoopOutput1,
+
+            elevatorClosedLoopRefrence2,
+            elevatorClosedLoopOutput2
         );
         
         inputs.elevatorHeightMeters = 
@@ -175,6 +224,13 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         inputs.elevatorCurrentDrawAmps2 = elevatorSupplyCurrent2.getValue().in(Amps);
         inputs.elevatorAppliedVolts2 = elevatorAppliedVolts2.getValue().in(Volts);
         inputs.elevatorTemperatureFahrenheit2 = elevatorTemperature2.getValue().in(Fahrenheit);
+
+        Logger.recordOutput("Elevator/elevatorClosedLoopRefrence1", elevatorClosedLoopRefrence1.getValueAsDouble());
+        Logger.recordOutput("Elevator/elevatorClosedLoopOutput1", elevatorClosedLoopOutput1.getValueAsDouble());
+
+        Logger.recordOutput("Elevator/elevatorClosedLoopRefrence2", elevatorClosedLoopRefrence2.getValueAsDouble());
+        Logger.recordOutput("Elevator/elevatorClosedLoopOutput2", elevatorClosedLoopOutput2.getValueAsDouble());
+
     }
 
     @Override
