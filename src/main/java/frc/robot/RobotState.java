@@ -277,19 +277,17 @@ public class RobotState {
       );
   }
 
-  private boolean checkFace(Pose2d robot, int i) {
-    double angleToCenter = Math.atan2(
-      MechAElementConstants.Reef.center.getY() - robot.getY(),
-      MechAElementConstants.Reef.center.getX() - robot.getX()
-    );
+  public int getClosestFace(Pose2d curr) {
+    int nearest = 0;
+    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
+      if (AlignmentConstants.kCENTER_FACES[i].getTranslation().getDistance(curr.getTranslation()) < 
+          AlignmentConstants.kCENTER_FACES[nearest].getTranslation().getDistance(curr.getTranslation())
+      ) {
+        nearest = i;
+      }
+    }
 
-    Logger.recordOutput("RobotState/checkFace", angleToCenter);
-
-    return 
-      Math.toRadians(60) < Math.abs(
-        AlignmentConstants.kCENTER_FACES[i].getRotation().minus(new Rotation2d(angleToCenter)).getRadians()
-      ) &&
-      2 <= robot.getTranslation().getDistance(AlignmentConstants.kCENTER_FACES[i].getTranslation());
+    return nearest;
   }
 
   public Pose2d getClosestAlgayPose() {
@@ -311,12 +309,7 @@ public class RobotState {
       );
     }
 
-    Pose2d nearest = AlignmentConstants.kCENTER_FACES[0];
-    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
-      if (checkFace(current, i)) {
-        nearest = AlignmentConstants.kCENTER_FACES[i];
-      }
-    }
+    Pose2d nearest = candidates.get(getClosestFace(current));
     
     nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
@@ -340,12 +333,7 @@ public class RobotState {
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], true));
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], false));
 
-    Pose2d nearest = candidates.get(0);
-    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
-      if (checkFace(current, i)) {
-        nearest = AlignmentConstants.kCENTER_FACES[i];
-      }
-    }
+    Pose2d nearest = candidates.get(getClosestFace(current));
     
     nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
@@ -369,13 +357,8 @@ public class RobotState {
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], false));
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], true));
 
-    Pose2d nearest = candidates.get(0);
-    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
-      if (checkFace(current, i)) {
-        nearest = AlignmentConstants.kCENTER_FACES[i];
-      }
-    }
-    
+    Pose2d nearest = candidates.get(getClosestFace(current));
+
     nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
         nearest : 
