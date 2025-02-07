@@ -26,17 +26,15 @@ public class LinearDriveToPose extends Command {
     private final SwerveDrive swerveDrive = SwerveDrive.getInstance();
     private final RobotState robotState = RobotState.getInstance();
 
-    private final TrapezoidProfile xTranslationalMotionProfile;
+    private final TrapezoidProfile translationalMotionProfile;
     private final PIDController xTranslationalFeedbackController;
-
-    private State xTranslationalGoal = new State();
-    private State currentXTranslationalSetpoint = new State();
-
-    private final TrapezoidProfile yTranslationalMotionProfile;
     private final PIDController yTranslationalFeedbackController;
 
-    private State yTranslationalGoal = new State();
-    private State currentYTranslationalSetpoint = new State();
+    private double translationalMotionProfileRotationRad = 0;
+    private Pose2d initialPose = new Pose2d();
+
+    private State translationalGoal = new State();
+    private State currentTranslationalSetpoint = new State();
 
     private final TrapezoidProfile rotationalMotionProfile;
     private final PIDController rotationalFeedbackController;
@@ -84,14 +82,7 @@ public class LinearDriveToPose extends Command {
         this.targetPose = targetPose;
         this.endVelo = endVelo;
 
-        this.xTranslationalMotionProfile = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(
-                drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec(),
-                drivetrainConfig.getMaxDrivetrainTranslationalAccelerationMetersPerSecSec()
-            )
-        );
-
-        this.yTranslationalMotionProfile = new TrapezoidProfile(
+        this.translationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
                 drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec(),
                 drivetrainConfig.getMaxDrivetrainTranslationalAccelerationMetersPerSecSec()
@@ -116,17 +107,22 @@ public class LinearDriveToPose extends Command {
 
     @Override 
     public void initialize() {
-        System.out.println("init");
+        double xDist = targetPose.get().getX() - robotState.getEstimatedPose().getX();
+        double yDist = targetPose.get().getY() - robotState.getEstimatedPose().getY();
 
-        this.xTranslationalGoal = new State(
-            targetPose.get().getX(),
-            endVelo.get().vxMetersPerSecond
+        initialPose = robotState.getEstimatedPose();
+
+        translationalGoal = new State(
+            Math.hypot(xDist, yDist),
+            0
         );
 
-        this.yTranslationalGoal = new State(
-            targetPose.get().getY(),
-            endVelo.get().vyMetersPerSecond
+        translationalMotionProfileRotationRad = Math.atan2(
+            yDist,
+            xDist
         );
+
+        Logger.recordOutput("LinearDriveToPose/translationalMotionProfileRotationRad", translationalMotionProfileRotationRad);
 
         // rotation wrapping
         double desiredRotationRad = MathUtil.angleModulus(targetPose.get().getRotation().getRadians());
@@ -135,20 +131,14 @@ public class LinearDriveToPose extends Command {
             -Math.PI, Math.PI
         );
 
-        this.rotationalGoal = new State(
+        rotationalGoal = new State(
             robotState.getEstimatedPose().getRotation().getRadians() + rotationError,
             endVelo.get().omegaRadiansPerSecond
         );
-        
 
-        currentXTranslationalSetpoint = new State(
-            robotState.getEstimatedPose().getX(),
-            robotState.getFieldRelativeSpeeds().vxMetersPerSecond
-        );
-
-        currentYTranslationalSetpoint = new State(
-            robotState.getEstimatedPose().getY(),
-            robotState.getFieldRelativeSpeeds().vyMetersPerSecond
+        currentTranslationalSetpoint = new State(
+            0,
+            0
         );
 
         currentRotationalSetpoint = new State(
@@ -169,20 +159,14 @@ public class LinearDriveToPose extends Command {
     public void execute() {
         double dt = Timer.getTimestamp() - previousTimestamp;
 
-        currentXTranslationalSetpoint = xTranslationalMotionProfile.calculate(
+        currentTranslationalSetpoint = translationalMotionProfile.calculate(
             dt, 
-            currentXTranslationalSetpoint, 
-            xTranslationalGoal
+            currentTranslationalSetpoint, 
+            translationalGoal
         );
-        Logger.recordOutput("LinearDriveToPose/currentXTranslationalSetpointVelo", currentXTranslationalSetpoint.velocity);
 
-        currentYTranslationalSetpoint = yTranslationalMotionProfile.calculate(
-            dt, 
-            currentYTranslationalSetpoint, 
-            yTranslationalGoal
-        );
-        Logger.recordOutput("LinearDriveToPose/currentYTranslationalSetpointVelo", currentYTranslationalSetpoint.velocity);
-        Logger.recordOutput("LinearDriveToPose/currentYTranslationalSetpointPose", currentYTranslationalSetpoint.position);
+        Logger.recordOutput("LinearDriveToPose/currentYTranslationalSetpointVelo", currentTranslationalSetpoint.velocity);
+        Logger.recordOutput("LinearDriveToPose/currentYTranslationalSetpointPose", currentTranslationalSetpoint.position);
 
         currentRotationalSetpoint = rotationalMotionProfile.calculate(
             dt,
@@ -195,21 +179,21 @@ public class LinearDriveToPose extends Command {
         calculatedSpeeds.vxMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getX(),
-                currentXTranslationalSetpoint.position
+                currentTranslationalSetpoint.position * Math.cos(translationalMotionProfileRotationRad) + initialPose.getX()
             ) + 
             Math.max(
                 endVelo.get().vxMetersPerSecond,
-                currentXTranslationalSetpoint.velocity
+                currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
             );
 
         calculatedSpeeds.vyMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getY(),
-                currentYTranslationalSetpoint.position
+                currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY()
             ) + 
             Math.max(
                 endVelo.get().vyMetersPerSecond,
-                currentYTranslationalSetpoint.velocity
+                currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad)
             );
 
         calculatedSpeeds.omegaRadiansPerSecond = 
