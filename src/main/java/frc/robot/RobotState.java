@@ -317,7 +317,7 @@ public class RobotState {
         FlippingUtil.flipFieldPose(nearest)
     : nearest;
 
-    Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
+    Logger.recordOutput("RobotState/alignmentPoseSearch/nearest", nearest);
     return nearest;
   }
 
@@ -341,7 +341,7 @@ public class RobotState {
         FlippingUtil.flipFieldPose(nearest)
     : nearest;
 
-    Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
+    Logger.recordOutput("RobotState/alignmentPoseSearch/nearest", nearest);
     return nearest;
   }
 
@@ -365,7 +365,7 @@ public class RobotState {
         FlippingUtil.flipFieldPose(nearest)
     : nearest;
 
-    Logger.recordOutput("RobotState/aligmentPoseSearch/nearest", nearest);
+    Logger.recordOutput("RobotState/alignmentPoseSearch/nearest", nearest);
     return nearest;
   }
 }
