@@ -49,10 +49,6 @@ public class RobotContainer {
       vision = Vision.getInstance();
       robotState = RobotState.getInstance();
       roller = Roller.getInstance();
-      // autoRunner = AutoRunner.getInstance();
-        swerveDrive = SwerveDrive.getInstance();
-        vision = Vision.getInstance();
-        robotState = RobotState.getInstance();
         // autoRunner = AutoRunner.getInstance();
 
         // elevator = Elevator.getInstance();
