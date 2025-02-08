@@ -84,6 +84,7 @@ public final class Constants {
   }
 
   public static final class AlignmentConstants {
+    public static final double kMAX_ALIGNMENT_DIST_METERS = 1;
     // these assume the robots volume is zero. does not take into account frame
     public static final Axis kBARGE_AXIS = new Axis(
         8.232,

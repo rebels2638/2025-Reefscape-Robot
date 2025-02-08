@@ -34,9 +34,9 @@ public abstract class SwerveDrivetrainConfigBase {
 
     public abstract RobotConfig getRobotConfig();
 
-    public abstract PIDConstants getSteerPIDConfig();
+    public abstract PIDConstants getPathplannerSteerPIDConfig();
 
-    public abstract PIDConstants getDrivePIDConfig();
+    public abstract PIDConstants getPathplannerDrivePIDConfig();
     public abstract double getAutoAlignTranslationTolerance();
     public abstract double getAutoAlignTranslationVeloTolerance();
 
