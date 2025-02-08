@@ -15,12 +15,12 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // CANID
     @Override
     public int getCanID1() {
-        return 15;
+        return 14;
     }
 
     @Override
     public int getCanID2() {
-        return 14;
+        return 15;
     }
 
     // Supply current limits

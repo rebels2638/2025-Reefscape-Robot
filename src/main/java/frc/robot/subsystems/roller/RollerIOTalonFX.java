@@ -55,7 +55,7 @@ public class RollerIOTalonFX implements RollerIO {
 
         canRangeConfiguration.FutureProofConfigs = true;
 
-        canRange = new CANrange(config.getCanRangeCanID());
+        canRange = new CANrange(config.getCanRangeCanID(), "drivetrain");
         canRange.getConfigurator().apply(canRangeConfiguration);
 
         // pivot motor
@@ -87,7 +87,7 @@ public class RollerIOTalonFX implements RollerIO {
         rollerSupplyCurrent = rollerMotor.getSupplyCurrent().clone();
         rollerTemperature = rollerMotor.getDeviceTemp().clone();
 
-        canRangeIsDetected = canRange.getIsDetected().clone();
+        canRangeIsDetected = canRange.getIsDetected(true).clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 40,
@@ -121,7 +121,7 @@ public class RollerIOTalonFX implements RollerIO {
         );
 
         inputs.rollerVelocityRadPerSec = rollerVelocityStatusSignal.getValue().in(RadiansPerSecond);
-        inputs.inRoller = canRangeIsDetected.getValue().booleanValue();
+        inputs.inRoller = canRangeIsDetected.getValue().equals(Boolean.valueOf(true));
 
         inputs.rollerCurrentDrawAmps = rollerSupplyCurrent.getValue().in(Amps);
         inputs.rollerAppliedVolts = rollerAppliedVolts.getValue().in(Volts);

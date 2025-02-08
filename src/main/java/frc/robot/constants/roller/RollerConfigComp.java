@@ -17,14 +17,14 @@ public class RollerConfigComp extends RollerConfigBase {
     // CAN ID
     @Override
     public int getRollerMotorCanID() {
-        return 1;
+        return 16;
     }
 
     @Override
     public int getCanRangeCanID() {
-        return 1;
+        return 17;
     }
-
+    
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
@@ -67,46 +67,46 @@ public class RollerConfigComp extends RollerConfigBase {
     // CANrange configuration fields
     @Override
     public double getFOVCenterX() {
-        return 1;
+        return 0;
     }
 
     @Override
     public double getFOVCenterY() {
-        return 1;
+        return 0;
     }
 
     @Override
     public double getFOVRangeX() {
-        return 1;
+        return 6.75;
     }
 
     @Override
     public double getFOVRangeY() {
-        return 1;
+        return 6.75;
     }
 
     @Override
     public double getMinSignalStrengthForValidMeasurement() {
-        return 1;
+        return 2000;
     }
 
     @Override
     public double getProximityHysteresis() {
-        return 1;
+        return 0.01;
     }
 
     @Override
     public double getProximityThreshold() {
-        return 1;
+        return 0.10;
     }
 
     @Override
     public double getToFUpdateFrequency() {
-        return 1;
+        return 50;
     }
 
     @Override
     public UpdateModeValue getToFUpdateMode() {
-        return UpdateModeValue.ShortRangeUserFreq;
+        return UpdateModeValue.ShortRange100Hz;
     }
 }
