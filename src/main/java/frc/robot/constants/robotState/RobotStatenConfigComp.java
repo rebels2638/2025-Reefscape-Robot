@@ -26,7 +26,7 @@ public class RobotStatenConfigComp extends RobotStateConfigBase {
 
     @Override
     public Translation2d getCoralOffsetFromRobotCenter() {
-        return new Translation2d(0,0);
+        return new Translation2d(0.0,0); // -0.019
     }
 
     @Override
