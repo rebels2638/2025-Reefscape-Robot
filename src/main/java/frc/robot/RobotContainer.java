@@ -46,7 +46,7 @@ public class RobotContainer {
   // private final Elevator elevator;
   // private final Roller roller;
 
-  // private final AutoRunner autoRunner;
+  private final AutoRunner autoRunner;
 
   private final XboxController xboxTester;
   private final XboxController xboxDriver;
@@ -64,7 +64,7 @@ public class RobotContainer {
     // roller = Roller.getInstance();
     // elevator = Elevator.getInstance();
 
-    // autoRunner = AutoRunner.getInstance();
+    autoRunner = AutoRunner.getInstance();
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
