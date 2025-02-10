@@ -25,7 +25,7 @@ import frc.robot.commands.autoAlignment.LockDriveAxis.Axis;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
+  public static final Mode currentMode = Mode.COMP; // TODO: change this if sim
   // public static final boolean isSYSID = true; // TODO: change this if sysid
   public static enum Mode {
     /** Running on a real robot. */
@@ -84,7 +84,7 @@ public final class Constants {
   }
 
   public static final class AlignmentConstants {
-    public static final double kMAX_ALIGNMENT_DIST_METERS = 1;
+    public static final double kMAX_ALIGNMENT_DIST_METERS = 1.5;
     // these assume the robots volume is zero. does not take into account frame
     public static final Axis kBARGE_AXIS = new Axis(
         8.232,
@@ -94,7 +94,7 @@ public final class Constants {
     ); 
     public static final Rotation2d kBARGE_ROTATION = new Rotation2d(0);
 
-    public static final double kINTER_BRANCH_DIST_METER = 0.34;
+    public static final double kINTER_BRANCH_DIST_METER = 0.30;
 
     public static final Pose2d[] kCENTER_FACES =
         new Pose2d[6]; // Starting facing the driver station in clockwise order

@@ -81,7 +81,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorConfig.Slot0.kG = config.getKG();
 
         elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        elevatorConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        elevatorConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         elevatorConfig.MotionMagic.MotionMagicExpo_kA = config.getMotionMagicExpoKA();
         elevatorConfig.MotionMagic.MotionMagicExpo_kV = config.getMotionMagicExpoKV();
@@ -148,9 +148,20 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorClosedLoopRefrence2 = elevatorMotor2.getClosedLoopReference().clone();
         elevatorClosedLoopOutput2 = elevatorMotor2.getClosedLoopOutput().clone();
 
+        elevatorPositionStatusSignal1 = elevatorMotor1.getPosition().clone();
+        elevatorVelocityStatusSignal1 = elevatorMotor1.getVelocity().clone();
+
+        elevatorPositionStatusSignal2 = elevatorMotor2.getPosition().clone();
+        elevatorVelocityStatusSignal2 = elevatorMotor2.getVelocity().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                40,
+                70,
+                elevatorPositionStatusSignal1,
+                elevatorVelocityStatusSignal1,
+
+                elevatorPositionStatusSignal2,
+                elevatorVelocityStatusSignal2,
+
                 elevatorAppliedVolts1,
                 elevatorSupplyCurrent1,
                 elevatorTemperature1,
@@ -164,21 +175,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
                 elevatorClosedLoopRefrence2,
                 elevatorClosedLoopOutput2
-        );
-
-        elevatorPositionStatusSignal1 = elevatorMotor1.getPosition().clone();
-        elevatorVelocityStatusSignal1 = elevatorMotor1.getVelocity().clone();
-
-        elevatorPositionStatusSignal2 = elevatorMotor2.getPosition().clone();
-        elevatorVelocityStatusSignal2 = elevatorMotor2.getVelocity().clone();
-
-        BaseStatusSignal.setUpdateFrequencyForAll(
-                70,
-                elevatorPositionStatusSignal1,
-                elevatorVelocityStatusSignal1,
-
-                elevatorPositionStatusSignal2,
-                elevatorVelocityStatusSignal2
         );
 
         elevatorMotor1.optimizeBusUtilization();

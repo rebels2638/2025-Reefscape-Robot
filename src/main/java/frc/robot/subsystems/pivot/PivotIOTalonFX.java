@@ -63,7 +63,7 @@ public class PivotIOTalonFX implements PivotIO {
         pivotConfig.Slot0.kG = config.getKG();
 
         pivotConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        pivotConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        pivotConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         pivotConfig.MotionMagic.MotionMagicExpo_kA = config.getMotionMagicExpoKA();
         pivotConfig.MotionMagic.MotionMagicExpo_kV = config.getMotionMagicExpoKV();

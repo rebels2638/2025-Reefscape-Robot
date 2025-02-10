@@ -22,7 +22,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     private SwerveDrivetrainConfigComp() {}
 
     private final double maxTranslationalVelocity = 4.0;
-    private final double maxTranslationalAcceleration = 3.5;
+    private final double maxTranslationalAcceleration = 1.5;
     private final double maxAngularVelocity = 3.7;
     private final double maxAngularAcceleration = 12.0;
     private final double maxAutoModuleVelocity = 5.0;
@@ -104,7 +104,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(2, 0, 0);
+        PIDController p = new PIDController(1.5, 0, 0.000);
         p.setTolerance(Math.sqrt(getAutoAlignTranslationTolerance()));
 
         return p;
@@ -112,7 +112,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(1, 0, 0);
+        PIDController p = new PIDController(.5, 0, 0);
         p.setTolerance(getAutoAlignRotationTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -121,7 +121,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.05;
+        return 0.02;
     }
 
     @Override
@@ -161,6 +161,6 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getBumperLengthMeters() {
-        return 0.79;
+        return 1;
     }
 }

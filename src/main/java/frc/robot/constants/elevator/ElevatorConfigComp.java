@@ -15,12 +15,12 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // CANID
     @Override
     public int getCanID1() {
-        return 15;
+        return 14;
     }
 
     @Override
     public int getCanID2() {
-        return 14;
+        return 15;
     }
 
     // Supply current limits
@@ -59,27 +59,23 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // Characterization / Gains
     @Override
     public double getKS() {
-        // return 0.5;
-        return 0;
+        return 4.3;
     }
 
     @Override
     public double getKV() {
-        // return 1.25;
         return 0;
     }
 
     @Override
     public double getKA() {
-        // return 0.06;
         return 0.0;
 
     }
 
     @Override
     public double getKP() {
-        // return 0.1;
-        return 0;
+        return 400;
     }
 
     @Override
@@ -89,13 +85,12 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getKD() {
-        return 0.0;
+        return 35;
     }
 
     @Override
     public double getKG() {
-        // return 7; 
-        return 0; 
+        return 12.2; 
 
     }
 
@@ -112,13 +107,13 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 1.0;
+        return 0.45;
     }
 
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
-        return true;
+        return false;
     }
 
     @Override
@@ -135,7 +130,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     @Override
     public double getMotorToOutputShaftRatio() {
         // rotations / meters  
-        return 40 / 1.46;
+        return 22 / 0.66;
     }
 
     @Override
