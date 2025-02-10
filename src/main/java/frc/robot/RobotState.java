@@ -265,22 +265,20 @@ public class RobotState {
 
   public Pose2d offsetBranchPose(Pose2d pose, boolean isLeftBranch) {
       double bumperOffset = drivetrainConfig.getBumperLengthMeters() / 2;
-      double branchOffset = 
-        isLeftBranch ? 
-          AlignmentConstants.kINTER_BRANCH_DIST_METER / 2 : 
-          -AlignmentConstants.kINTER_BRANCH_DIST_METER / 2;
+      double invert = isLeftBranch ? 1 : -1;
 
       return pose.transformBy(
         new Transform2d(
           -bumperOffset + robotStateConfig.getCoralOffsetFromRobotCenter().getX(),
-          branchOffset + robotStateConfig.getCoralOffsetFromRobotCenter().getY() + branchOffset,
+          invert * ((AlignmentConstants.kINTER_BRANCH_DIST_METER / 2) + robotStateConfig.getCoralOffsetFromRobotCenter().getY()),
           new Rotation2d(0)
         )
       );
   }
 
-  public int getClosestFace(Pose2d curr) {
+  public int getClosestFace(Pose2d curr, List<Pose2d> candidates) {
     int nearest = 0;
+    int penultimateNearest = 0;
     for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
       if (AlignmentConstants.kCENTER_FACES[i].getTranslation().getDistance(curr.getTranslation()) < 
           AlignmentConstants.kCENTER_FACES[nearest].getTranslation().getDistance(curr.getTranslation())
@@ -289,7 +287,18 @@ public class RobotState {
       }
     }
 
-    return nearest;
+    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
+      if (i == nearest) {continue;}
+      if (AlignmentConstants.kCENTER_FACES[i].getTranslation().getDistance(curr.getTranslation()) < 
+          AlignmentConstants.kCENTER_FACES[nearest].getTranslation().getDistance(curr.getTranslation())
+      ) {
+        penultimateNearest = i;
+      }
+    }
+
+    return candidates.get(nearest).getTranslation().getDistance(curr.getTranslation()) < 
+      candidates.get(penultimateNearest).getTranslation().getDistance(curr.getTranslation()) ?
+        nearest : penultimateNearest;
   }
 
   public Pose2d getClosestAlgayPose() {
@@ -311,7 +320,7 @@ public class RobotState {
       );
     }
 
-    Pose2d nearest = candidates.get(getClosestFace(current));
+    Pose2d nearest = candidates.get(getClosestFace(current, candidates));
     
     nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
@@ -335,7 +344,7 @@ public class RobotState {
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], true));
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], false));
 
-    Pose2d nearest = candidates.get(getClosestFace(current));
+    Pose2d nearest = candidates.get(getClosestFace(current, candidates));
     
     nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?
@@ -359,7 +368,7 @@ public class RobotState {
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], false));
     candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], true));
 
-    Pose2d nearest = candidates.get(getClosestFace(current));
+    Pose2d nearest = candidates.get(getClosestFace(current, candidates));
 
     nearest = alliance.isPresent() ? 
       alliance.get() == DriverStation.Alliance.Blue ?

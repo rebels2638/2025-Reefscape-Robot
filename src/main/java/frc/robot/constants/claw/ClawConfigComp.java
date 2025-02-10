@@ -15,7 +15,7 @@ public class ClawConfigComp extends ClawConfigBase {
     // CANID
     @Override
     public int getCanID() {
-        return 14;
+        return 18;
     }
 
     // Supply current limits
@@ -31,7 +31,7 @@ public class ClawConfigComp extends ClawConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 5;
+        return 2;
     }
 
     // Stator current limit
@@ -70,5 +70,10 @@ public class ClawConfigComp extends ClawConfigBase {
     @Override
     public double getHighPassFilterLowerTrip() {
         return 10;
+    }
+
+    @Override
+    public boolean getIsMotorInverted() {
+        return true;
     }
 }

@@ -99,18 +99,14 @@ public class PivotIOTalonFX implements PivotIO {
         pivotSupplyCurrent = pivotMotor.getSupplyCurrent().clone();
         pivotTemperature = pivotMotor.getDeviceTemp().clone();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-                40,
-                pivotAppliedVolts,
-                pivotSupplyCurrent,
-                pivotTemperature
-        );
-
         pivotPositionStatusSignal = pivotMotor.getPosition().clone();
         pivotVelocityStatusSignal = pivotMotor.getVelocity().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 70,
+                pivotAppliedVolts,
+                pivotSupplyCurrent,
+                pivotTemperature,
                 pivotPositionStatusSignal,
                 pivotVelocityStatusSignal
         );

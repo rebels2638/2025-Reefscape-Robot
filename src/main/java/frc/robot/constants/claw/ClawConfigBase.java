@@ -24,5 +24,7 @@ public abstract class ClawConfigBase {
     public abstract double getHighPassFilterUpperTrip();
     public abstract double getHighPassFilterLowerTrip();
 
+    public abstract boolean getIsMotorInverted();
+
 
 }

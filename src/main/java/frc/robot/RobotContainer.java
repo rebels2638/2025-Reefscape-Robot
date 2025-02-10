@@ -8,16 +8,21 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.lib.input.XboxController;
+import frc.robot.subsystems.claw.Claw;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.*;
+import frc.robot.commands.claw.simple.RunClawIntake;
+import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.commands.elevator.simple.MoveElevatorL1;
 import frc.robot.commands.elevator.simple.MoveElevatorL2;
 import frc.robot.commands.elevator.simple.MoveElevatorL3;
 import frc.robot.commands.elevator.simple.MoveElevatorStow;
+import frc.robot.commands.pivot.RunPivotRaw;
 import frc.robot.commands.roller.*;
 import frc.robot.commands.roller.simple.*;
 
@@ -38,7 +43,10 @@ public class RobotContainer {
   private final Vision vision;
   private final RobotState robotState;
 
-  // private final Elevator elevator;
+  private final Pivot pivot;
+  private final Claw claw;
+
+  private final Elevator elevator;
   // private final Roller roller;
 
   // private final AutoRunner autoRunner;
@@ -55,13 +63,16 @@ public class RobotContainer {
     swerveDrive = SwerveDrive.getInstance();
     vision = Vision.getInstance();
     robotState = RobotState.getInstance();
+    pivot = Pivot.getInstance();
+    claw = Claw.getInstance();
 
     // roller = Roller.getInstance();
-    // elevator = Elevator.getInstance();
+    elevator = Elevator.getInstance();
 
     // autoRunner = AutoRunner.getInstance();
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
+    pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
     xboxDriver.getLeftBumper().whileTrue(
@@ -85,14 +96,17 @@ public class RobotContainer {
             () -> robotState.getClosestAlgayPose().getTranslation().getDistance(
                 robotState.getEstimatedPose().getTranslation()) <= AlignmentConstants.kMAX_ALIGNMENT_DIST_METERS));
         
-    // xboxOperator.getLeftBumper().onTrue(new IntakeCoral());
-    // xboxOperator.getRightBumper().onTrue(new EjectCoral());
+    xboxOperator.getLeftBumper().onTrue(new IntakeCoral());
+    xboxOperator.getRightBumper().onTrue(new EjectCoral());
+
+    // xboxOperator.getLeftBumper().onTrue(new RunClawIntake(claw));
+    // xboxOperator.getRightBumper().onTrue(new StopClaw(claw));
 
     // // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
-    // xboxOperator.getAButton().onTrue(new MoveElevatorStow());
-    // xboxOperator.getBButton().onTrue(new MoveElevatorL1());
-    // xboxOperator.getYButton().onTrue(new MoveElevatorL2());
-    // xboxOperator.getXButton().onTrue(new MoveElevatorL3());
+    xboxOperator.getAButton().onTrue(new MoveElevatorStow());
+    xboxOperator.getBButton().onTrue(new MoveElevatorL1());
+    xboxOperator.getYButton().onTrue(new MoveElevatorL2());
+    xboxOperator.getXButton().onTrue(new MoveElevatorL3());
 
     // xboxDriver.getLeftBumper().whileTrue(new LinearDriveToPose(() ->
     // robotState.getClosestLeftBranchPose(), () -> new ChassisSpeeds()));

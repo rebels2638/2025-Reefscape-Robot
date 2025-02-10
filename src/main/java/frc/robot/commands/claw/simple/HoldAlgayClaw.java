@@ -12,7 +12,7 @@ public class HoldAlgayClaw extends Command{
 
     @Override
     public void initialize() {
-        claw.setTorqueCurrentFOC(15);
+        claw.setVoltage(6);
     }
 
     @Override

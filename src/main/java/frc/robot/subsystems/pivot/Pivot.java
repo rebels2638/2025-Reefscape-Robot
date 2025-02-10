@@ -15,6 +15,14 @@ public class Pivot extends SubsystemBase {
     private PivotIOInputsAutoLogged pivotIOInputs = new PivotIOInputsAutoLogged();
 
     private final PivotConfigBase config;
+    private static Pivot instance = null;
+    public static Pivot getInstance() {
+        if (instance == null) {
+            instance = new Pivot();
+        }
+
+        return instance;
+    }
 
     public Pivot() {
         // IO

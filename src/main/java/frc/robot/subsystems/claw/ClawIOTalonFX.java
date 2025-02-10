@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -50,6 +51,11 @@ public class ClawIOTalonFX implements ClawIO {
         clawConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.getPeakForwardTorqueCurrent();
         clawConfig.TorqueCurrent.PeakReverseTorqueCurrent = config.getPeakReverseTorqueCurrent();
 
+        clawConfig.MotorOutput.Inverted = 
+            config.getIsMotorInverted() ?
+                InvertedValue.Clockwise_Positive :
+                InvertedValue.CounterClockwise_Positive;
+                
         clawConfig.MotorOutput.NeutralMode = 
             config.isNeutralModeBrake() ? 
                         NeutralModeValue.Brake : 
@@ -62,18 +68,14 @@ public class ClawIOTalonFX implements ClawIO {
         clawSupplyCurrent = clawMotor.getSupplyCurrent().clone();
         clawTemperature = clawMotor.getDeviceTemp().clone();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-                40,
-                clawAppliedVolts,
-                clawSupplyCurrent,
-                clawTemperature
-        );
-
         clawVelocityStatusSignal = clawMotor.getVelocity().clone();
         clawAccelerationStatusSignal = clawMotor.getAcceleration().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                70,
+                40,
+                clawAppliedVolts,
+                clawSupplyCurrent,
+                clawTemperature,
                 clawVelocityStatusSignal,
                 clawAccelerationStatusSignal
         );

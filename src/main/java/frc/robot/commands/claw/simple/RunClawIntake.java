@@ -12,7 +12,7 @@ public class RunClawIntake extends Command{
 
     @Override
     public void initialize() {
-        claw.setVoltage(20);
+        claw.setTorqueCurrentFOC(7);
     }
 
     @Override

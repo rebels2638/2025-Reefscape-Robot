@@ -71,4 +71,10 @@ public class ClawConfigSim extends ClawConfigBase {
     public double getHighPassFilterLowerTrip() {
         return 10;
     }
+
+    @Override
+    public boolean getIsMotorInverted() {
+        return true;
+    }
+    
 }

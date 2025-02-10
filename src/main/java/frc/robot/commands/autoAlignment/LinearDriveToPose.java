@@ -114,7 +114,7 @@ public class LinearDriveToPose extends Command {
 
         translationalGoal = new State(
             Math.hypot(xDist, yDist),
-            Math.hypot(robotState.getFieldRelativeSpeeds().vxMetersPerSecond, robotState.getFieldRelativeSpeeds().vyMetersPerSecond)
+            0
         );
 
         translationalMotionProfileRotationRad = Math.atan2(
@@ -176,25 +176,35 @@ public class LinearDriveToPose extends Command {
 
         ChassisSpeeds calculatedSpeeds = new ChassisSpeeds(0, 0, 0);
 
+        double xTranslationalSetpoint = currentTranslationalSetpoint.position * Math.cos(translationalMotionProfileRotationRad) + initialPose.getX();
+        double xVelocitySetpoint = Math.max(
+            endVelo.get().vxMetersPerSecond,
+            currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
+        );
+
         calculatedSpeeds.vxMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getX(),
-                currentTranslationalSetpoint.position * Math.cos(translationalMotionProfileRotationRad) + initialPose.getX()
-            ) + 
-            Math.max(
-                endVelo.get().vxMetersPerSecond,
-                currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
-            );
+                xTranslationalSetpoint
+            ) + xVelocitySetpoint;
+
+        double yTranslationalSetpoint = currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY();
+        double yVelocitySetpoint = Math.max( // motion profile trips out when nonzero end vel
+            endVelo.get().vyMetersPerSecond,
+            currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad)
+        );
 
         calculatedSpeeds.vyMetersPerSecond = 
             xTranslationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getY(),
-                currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY()
-            ) + 
-            Math.max( // motion profile trips out when nonzero end vel
-                endVelo.get().vyMetersPerSecond,
-                currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad)
-            );
+                yTranslationalSetpoint
+            ) + yVelocitySetpoint;
+
+        Logger.recordOutput("LinearDriveToPose/xTranslationalSetpoint", xTranslationalSetpoint);
+        Logger.recordOutput("LinearDriveToPose/xVelocitySetpoint", xVelocitySetpoint);
+
+        Logger.recordOutput("LinearDriveToPose/yTranslationalSetpoint", yTranslationalSetpoint);
+        Logger.recordOutput("LinearDriveToPose/yVelocitySetpoint", yVelocitySetpoint);
 
         calculatedSpeeds.omegaRadiansPerSecond = 
             rotationalFeedbackController.calculate(
