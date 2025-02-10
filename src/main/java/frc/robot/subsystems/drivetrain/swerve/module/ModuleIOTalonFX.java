@@ -79,7 +79,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveConfig.Slot0.kS = generalConfig.getDriveKS();
         driveConfig.Slot0.kV = generalConfig.getDriveKV();
         driveConfig.Slot0.kA = generalConfig.getDriveKA();
-        driveConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        driveConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         driveConfig.MotionMagic.MotionMagicAcceleration = generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec();
         driveConfig.MotionMagic.MotionMagicJerk = generalConfig.getDriveMotionMagicVelocityJerkMetersPerSecSecSec();
@@ -138,7 +138,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerConfig.Slot0.kS = generalConfig.getSteerKS();
         steerConfig.Slot0.kV = generalConfig.getSteerKV();
         steerConfig.Slot0.kA = generalConfig.getSteerKA();
-        steerConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        steerConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         steerConfig.MotionMagic.MotionMagicExpo_kA = generalConfig.getSteerMotionMagicExpoKA();
         steerConfig.MotionMagic.MotionMagicExpo_kV = generalConfig.getSteerMotionMagicExpoKV();

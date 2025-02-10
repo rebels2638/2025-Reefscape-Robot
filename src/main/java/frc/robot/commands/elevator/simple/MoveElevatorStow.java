@@ -1,11 +1,11 @@
-package frc.robot.commands.elevator;
+package frc.robot.commands.elevator.simple;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
 
-public class MoveElevatorL2 extends Command {
+public class MoveElevatorStow extends Command {
     private final Elevator elevator;
-    public MoveElevatorL2() {
+    public MoveElevatorStow() {
         this.elevator = Elevator.getInstance();
         
         addRequirements(elevator);
@@ -13,7 +13,7 @@ public class MoveElevatorL2 extends Command {
 
     @Override
     public void initialize() {
-        elevator.setHeight(.5);
+        elevator.setHeight(0);
     }
 
     @Override

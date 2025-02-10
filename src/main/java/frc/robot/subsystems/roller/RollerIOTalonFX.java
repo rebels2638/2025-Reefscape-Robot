@@ -87,20 +87,17 @@ public class RollerIOTalonFX implements RollerIO {
         rollerSupplyCurrent = rollerMotor.getSupplyCurrent().clone();
         rollerTemperature = rollerMotor.getDeviceTemp().clone();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-                40,
-                rollerAppliedVolts,
-                rollerSupplyCurrent,
-                rollerTemperature
-        );
-
         rollerVelocityStatusSignal = rollerMotor.getVelocity().clone();
         canRangeIsDetected = canRange.getIsDetected().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
                 70,
                 rollerVelocityStatusSignal,
-                canRangeIsDetected
+                canRangeIsDetected,
+
+                rollerAppliedVolts,
+                rollerSupplyCurrent,
+                rollerTemperature
         );
 
         rollerMotor.optimizeBusUtilization();
