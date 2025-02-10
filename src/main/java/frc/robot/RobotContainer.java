@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -7,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
+import frc.robot.commands.AutoRunner;
+import frc.robot.commands.DoSomething;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.Vision;
@@ -24,7 +29,7 @@ public class RobotContainer {
     }
 
     private final SwerveDrive swerveDrive;
-    // private final AutoRunner autoRunner;
+    private final AutoRunner autoRunner;
     private final Vision vision;
     private final RobotState robotState;
     // private final Elevator elevator;
@@ -41,11 +46,15 @@ public class RobotContainer {
         swerveDrive = SwerveDrive.getInstance();
         vision = Vision.getInstance();
         robotState = RobotState.getInstance();
-        // autoRunner = AutoRunner.getInstance();
+        autoRunner = AutoRunner.getInstance();
 
         // elevator = Elevator.getInstance();
 
         // elevator.setDefaultCommand(new RunElevatorRaw(xboxDriver));
+
+        // auto commands before others
+        NamedCommands.registerCommand("DoSomething", new DoSomething());
+
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
 
@@ -81,8 +90,7 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    // return autoRunner.getAutonomousCommand();
-    return null;
+    return autoRunner.getAutonomousCommand();
   }
 
 }

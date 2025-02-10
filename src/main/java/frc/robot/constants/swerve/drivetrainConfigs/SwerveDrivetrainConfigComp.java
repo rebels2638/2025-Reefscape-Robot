@@ -41,7 +41,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
                 SwerveModuleGeneralConfigComp.getInstance().getDriveWheelRadiusMeters(), 
                 5.4, 
                 1.2, 
-                DCMotor.getFalcon500(1).
+                DCMotor.getKrakenX60Foc(1).
                     withReduction(
                         SwerveModuleGeneralConfigComp.getInstance().getDriveMotorToOutputShaftRatio()
                     ),
@@ -54,8 +54,8 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
             backRightPosition
         );
 
-    private final PIDConstants steerPIDConstants = new PIDConstants(0,0,0,0);
-    private final PIDConstants drivePIDConstants = new PIDConstants(0,0,0,0);
+    private final PIDConstants steerPIDConstants = new PIDConstants(1,0,0,0);
+    private final PIDConstants drivePIDConstants = new PIDConstants(4,0,0,0);
 
     @Override
     public double getMaxDrivetrainTranslationalVelocityMetersPerSec() {
