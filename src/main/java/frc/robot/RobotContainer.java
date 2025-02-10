@@ -13,6 +13,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.*;
+import frc.robot.commands.elevator.MoveElevatorL2;
 import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.commands.roller.*;
 import frc.robot.commands.roller.simple.*;
@@ -91,6 +92,7 @@ public class RobotContainer {
       xboxDriver.getAButton().onTrue(new RunRoller());
       xboxDriver.getBButton().onTrue(new StopRoller());
 
+      xboxOperator.getAButton().onTrue(new RunElevatorRaw(xboxOperator));
 
       // xboxDriver.getLeftBumper().whileTrue(new LinearDriveToPose(() -> robotState.getClosestLeftBranchPose(), () -> new ChassisSpeeds()));
       // xboxDriver.getRightBumper().whileTrue(new LinearDriveToPose(() -> robotState.getClosestRightBranchPose(), () -> new ChassisSpeeds()));

@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase {
 
             case SIM:
                 config = ElevatorConfigSim.getInstance();
-                // pivotIO = new ElevatorIOSim(config);
+                elevatorIO = new ElevatorIOSim(config);
 
                 break;
 
