@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase {
 
             case SIM:
                 config = ElevatorConfigSim.getInstance();
-                // pivotIO = new ElevatorIOSim(config);
+                elevatorIO = new ElevatorIOSim(config);
 
                 break;
 
@@ -65,12 +65,16 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         elevatorIO.updateInputs(elevatorIOInputs);
         Logger.processInputs("Elevator", elevatorIOInputs);
+
+        elevatorIO.setHeight(setpoint);
+
+        Logger.recordOutput("Elevator/setpoint", setpoint);
     }
 
     public void setHeight(double height) {
         setpoint = height;
-        elevatorIO.setHeight(height);
     }
+    
 
     public void setTorqueCurrentFOC(double torque) {
         elevatorIO.setTorqueCurrentFOC(torque);

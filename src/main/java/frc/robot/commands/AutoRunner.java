@@ -2,13 +2,18 @@ package frc.robot.commands;
 
 import java.util.HashMap;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
@@ -105,6 +110,20 @@ public class AutoRunner {
 
         
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("4PMidMASScoreTrans");
+        try{
+            // Load the path you want to follow using its name in the GUI
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("test");
+
+            // Create a path following command using AutoBuilder. This will also trigger event markers.
+            return new SequentialCommandGroup(
+                new InstantCommand(() -> RobotState.getInstance().resetPose(path.getStartingHolonomicPose().get())),
+                AutoBuilder.followPath(path)
+            );
+
+        } catch (Exception e) {
+            DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
+            return Commands.none();
+        }
+  
     }
 } 

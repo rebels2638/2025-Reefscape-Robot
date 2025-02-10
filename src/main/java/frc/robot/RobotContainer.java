@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -7,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AbsoluteFieldDrive;
+import frc.robot.commands.AutoRunner;
+import frc.robot.commands.DoSomething;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.claw.Claw;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
@@ -49,7 +54,7 @@ public class RobotContainer {
   private final Elevator elevator;
   // private final Roller roller;
 
-  // private final AutoRunner autoRunner;
+  private final AutoRunner autoRunner;
 
   private final XboxController xboxTester;
   private final XboxController xboxDriver;
@@ -68,8 +73,9 @@ public class RobotContainer {
 
     // roller = Roller.getInstance();
     elevator = Elevator.getInstance();
+    elevator = Elevator.getInstance();
 
-    // autoRunner = AutoRunner.getInstance();
+    autoRunner = AutoRunner.getInstance();
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
     pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
@@ -120,8 +126,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // return autoRunner.getAutonomousCommand();
-    return null;
+    return autoRunner.getAutonomousCommand();
   }
 
 }

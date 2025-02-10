@@ -245,7 +245,7 @@ public class RobotState {
     return robotRelativeVelocity;
   }
 
-  @AutoLogOutput
+  
   public ChassisSpeeds getFieldRelativeSpeeds() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, lastGyroOrientation.toRotation2d());
   }
