@@ -43,7 +43,7 @@ public class RobotContainer {
   private final Vision vision;
   private final RobotState robotState;
 
-  // private final Elevator elevator;
+  private final Elevator elevator;
   // private final Roller roller;
 
   private final AutoRunner autoRunner;
@@ -62,7 +62,7 @@ public class RobotContainer {
     robotState = RobotState.getInstance();
 
     // roller = Roller.getInstance();
-    // elevator = Elevator.getInstance();
+    elevator = Elevator.getInstance();
 
     autoRunner = AutoRunner.getInstance();
 
@@ -93,11 +93,11 @@ public class RobotContainer {
     // xboxOperator.getLeftBumper().onTrue(new IntakeCoral());
     // xboxOperator.getRightBumper().onTrue(new EjectCoral());
 
-    // // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
-    // xboxOperator.getAButton().onTrue(new MoveElevatorStow());
-    // xboxOperator.getBButton().onTrue(new MoveElevatorL1());
-    // xboxOperator.getYButton().onTrue(new MoveElevatorL2());
-    // xboxOperator.getXButton().onTrue(new MoveElevatorL3());
+    // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
+    xboxOperator.getAButton().onTrue(new MoveElevatorStow());
+    xboxOperator.getBButton().onTrue(new MoveElevatorL1());
+    xboxOperator.getYButton().onTrue(new MoveElevatorL2());
+    xboxOperator.getXButton().onTrue(new MoveElevatorL3());
 
     // xboxDriver.getLeftBumper().whileTrue(new LinearDriveToPose(() ->
     // robotState.getClosestLeftBranchPose(), () -> new ChassisSpeeds()));

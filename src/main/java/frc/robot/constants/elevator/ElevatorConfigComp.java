@@ -140,7 +140,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override 
     public double getMinHeightMeters() {
-        return -0.002;
+        return 0.00;
     }
 
     @Override

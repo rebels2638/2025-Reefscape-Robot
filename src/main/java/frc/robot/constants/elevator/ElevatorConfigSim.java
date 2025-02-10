@@ -15,12 +15,12 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     // CANID
     @Override
     public int getCanID1() {
-        return 1;
+        return 14;
     }
 
     @Override
     public int getCanID2() {
-        return 1;
+        return 15;
     }
 
     // Supply current limits
@@ -59,22 +59,23 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     // Characterization / Gains
     @Override
     public double getKS() {
-        return 0.5;
+        return 0;
     }
 
     @Override
     public double getKV() {
-        return 1.25;
+        return 0;
     }
 
     @Override
     public double getKA() {
-        return 0.06;
+        return 0.0;
+
     }
 
     @Override
     public double getKP() {
-        return 0.1;
+        return 400;
     }
 
     @Override
@@ -84,39 +85,40 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
 
     @Override
     public double getKD() {
-        return 0.0;
+        return 0;
     }
 
     @Override
     public double getKG() {
-        return 9.81; 
+        return 0.05; 
+
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 0.75;
+        return 11;
     }
 
     @Override
     public double getMotionMagicExpoKV() {
-        return 1.0;
+        return 10.0;
     }
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 3.0;
+        return 0.45;
     }
 
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isM1Inverted() {
-        return true;
+        return false;
     }
 
     @Override
@@ -127,17 +129,18 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     // Gear ratio
     @Override
     public double getMotorToOutputShaftRatio() {
-        return 100.0;
+        // rotations / meters  
+        return 22 / 0.66;
     }
 
     @Override
     public double getMaxHeightMeters() {
-        return 1;
+        return 1.45;
     }
 
     @Override 
     public double getMinHeightMeters() {
-        return -1;
+        return -0.002;
     }
 
     @Override
