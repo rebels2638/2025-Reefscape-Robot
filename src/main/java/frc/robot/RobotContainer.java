@@ -73,7 +73,6 @@ public class RobotContainer {
 
     // roller = Roller.getInstance();
     elevator = Elevator.getInstance();
-    elevator = Elevator.getInstance();
 
     autoRunner = AutoRunner.getInstance();
 
