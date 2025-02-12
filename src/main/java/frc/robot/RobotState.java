@@ -19,7 +19,7 @@ import frc.robot.constants.Constants.AlignmentConstants;
 import frc.robot.constants.robotState.RobotStateConfigBase;
 import frc.robot.constants.robotState.RobotStateConfigProto;
 import frc.robot.constants.robotState.RobotStateConfigSim;
-import frc.robot.constants.robotState.RobotStatenConfigComp;
+import frc.robot.constants.robotState.RobotStateConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
@@ -86,7 +86,7 @@ public class RobotState {
     switch (Constants.currentMode) {
         case COMP:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-            robotStateConfig = RobotStatenConfigComp.getInstance();
+            robotStateConfig = RobotStateConfigComp.getInstance();
 
             break;
 
@@ -104,13 +104,13 @@ public class RobotState {
 
         case REPLAY:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-            robotStateConfig = RobotStatenConfigComp.getInstance();
+            robotStateConfig = RobotStateConfigComp.getInstance();
 
             break;
 
         default:
             drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-            robotStateConfig = RobotStatenConfigComp.getInstance();
+            robotStateConfig = RobotStateConfigComp.getInstance();
 
 
             break;
@@ -261,122 +261,5 @@ public class RobotState {
 
   public Pose2d getPredictedPose(double timestamp) {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
-  }
-
-  public Pose2d offsetBranchPose(Pose2d pose, boolean isLeftBranch) {
-      double bumperOffset = drivetrainConfig.getBumperLengthMeters() / 2;
-      double invert = isLeftBranch ? 1 : -1;
-
-      return pose.transformBy(
-        new Transform2d(
-          -bumperOffset + robotStateConfig.getCoralOffsetFromRobotCenter().getX(),
-          invert * ((AlignmentConstants.kINTER_BRANCH_DIST_METER / 2) + robotStateConfig.getCoralOffsetFromRobotCenter().getY()),
-          new Rotation2d(0)
-        )
-      );
-  }
-
-  public int getClosestFace(Pose2d curr, List<Pose2d> candidates) {
-    int nearest = 0;
-    int penultimateNearest = 0;
-    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
-      if (AlignmentConstants.kCENTER_FACES[i].getTranslation().getDistance(curr.getTranslation()) < 
-          AlignmentConstants.kCENTER_FACES[nearest].getTranslation().getDistance(curr.getTranslation())
-      ) {
-        nearest = i;
-      }
-    }
-
-    for (int i = 0; i < AlignmentConstants.kCENTER_FACES.length; i++) {
-      if (i == nearest) {continue;}
-      if (AlignmentConstants.kCENTER_FACES[i].getTranslation().getDistance(curr.getTranslation()) < 
-          AlignmentConstants.kCENTER_FACES[nearest].getTranslation().getDistance(curr.getTranslation())
-      ) {
-        penultimateNearest = i;
-      }
-    }
-
-    return candidates.get(nearest).getTranslation().getDistance(curr.getTranslation()) < 
-      candidates.get(penultimateNearest).getTranslation().getDistance(curr.getTranslation()) ?
-        nearest : penultimateNearest;
-  }
-
-  public Pose2d getClosestAlgayPose() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    Pose2d current = RobotState.getInstance().getEstimatedPose();
-    List<Pose2d> candidates = new ArrayList<>();
-
-    double bumperOffset = drivetrainConfig.getBumperLengthMeters() / 2;
-
-    for (Pose2d element : AlignmentConstants.kCENTER_FACES) {
-      candidates.add(
-        element.transformBy(
-          new Transform2d(
-            robotStateConfig.getAlgayOffsetFromRobotCenter().getX() - bumperOffset,
-            robotStateConfig.getAlgayOffsetFromRobotCenter().getY(),
-            new Rotation2d(0)
-          )
-        )
-      );
-    }
-
-    Pose2d nearest = candidates.get(getClosestFace(current, candidates));
-    
-    nearest = alliance.isPresent() ? 
-      alliance.get() == DriverStation.Alliance.Blue ?
-        nearest : 
-        FlippingUtil.flipFieldPose(nearest)
-    : nearest;
-
-    Logger.recordOutput("RobotState/alignmentPoseSearch/nearest", nearest);
-    return nearest;
-  }
-
-  public Pose2d getClosestLeftBranchPose() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    Pose2d current = RobotState.getInstance().getEstimatedPose();
-    List<Pose2d> candidates = new ArrayList<>();
-  
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[0], true));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[1], false));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[2], true));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[3], false));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], true));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], false));
-
-    Pose2d nearest = candidates.get(getClosestFace(current, candidates));
-    
-    nearest = alliance.isPresent() ? 
-      alliance.get() == DriverStation.Alliance.Blue ?
-        nearest : 
-        FlippingUtil.flipFieldPose(nearest)
-    : nearest;
-
-    Logger.recordOutput("RobotState/alignmentPoseSearch/nearest", nearest);
-    return nearest;
-  }
-
-  public Pose2d getClosestRightBranchPose() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    Pose2d current = RobotState.getInstance().getEstimatedPose();
-    List<Pose2d> candidates = new ArrayList<>();
-
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[0], false));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[1], true));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[2], false));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[3], true));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[4], false));
-    candidates.add(offsetBranchPose(AlignmentConstants.kCENTER_FACES[5], true));
-
-    Pose2d nearest = candidates.get(getClosestFace(current, candidates));
-
-    nearest = alliance.isPresent() ? 
-      alliance.get() == DriverStation.Alliance.Blue ?
-        nearest : 
-        FlippingUtil.flipFieldPose(nearest)
-    : nearest;
-
-    Logger.recordOutput("RobotState/alignmentPoseSearch/nearest", nearest);
-    return nearest;
   }
 }

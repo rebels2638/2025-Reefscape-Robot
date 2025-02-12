@@ -164,4 +164,13 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
         return 0.79;
     }
 
+    @Override
+    public Translation2d getCoralOffsetFromRobotCenter() {
+        return new Translation2d(0.0,0.15); // -0.019
+    }
+
+    @Override
+    public Translation2d getAlgayOffsetFromRobotCenter() {
+        return new Translation2d(0, 0);
+    }
 }
