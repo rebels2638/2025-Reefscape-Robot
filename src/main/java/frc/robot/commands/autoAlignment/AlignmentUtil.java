@@ -68,8 +68,8 @@ public class AlignmentUtil {
 
       return pose.transformBy(
         new Transform2d(
-          -bumperOffset + config.getCoralOffsetFromRobotCenter().getX(),
-          invert * ((AlignmentConstants.kINTER_BRANCH_DIST_METER / 2) + config.getCoralOffsetFromRobotCenter().getY()),
+          -bumperOffset + config.getBranchOffsetFromRobotCenter().getX(),
+          invert * (AlignmentConstants.kINTER_BRANCH_DIST_METER / 2) + config.getBranchOffsetFromRobotCenter().getY(),
           new Rotation2d(0)
         )
       );

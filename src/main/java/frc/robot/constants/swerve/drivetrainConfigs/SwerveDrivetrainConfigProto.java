@@ -165,7 +165,7 @@ public class SwerveDrivetrainConfigProto extends SwerveDrivetrainConfigBase {
     }
 
     @Override
-    public Translation2d getCoralOffsetFromRobotCenter() {
+    public Translation2d getBranchOffsetFromRobotCenter() {
         return new Translation2d(0.0,0.15); // -0.019
     }
 

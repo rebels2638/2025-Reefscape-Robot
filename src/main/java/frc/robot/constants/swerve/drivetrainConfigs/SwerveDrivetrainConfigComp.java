@@ -161,11 +161,11 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getBumperLengthMeters() {
-        return .88;
+        return 0.88;
     }
 
     @Override
-    public Translation2d getCoralOffsetFromRobotCenter() {
+    public Translation2d getBranchOffsetFromRobotCenter() {
         return new Translation2d(0.0,0.15); // -0.019
     }
 

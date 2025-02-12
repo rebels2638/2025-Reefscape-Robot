@@ -45,6 +45,6 @@ public abstract class SwerveDrivetrainConfigBase {
 
     public abstract double getBumperLengthMeters();
         
-    public abstract Translation2d getCoralOffsetFromRobotCenter();
+    public abstract Translation2d getBranchOffsetFromRobotCenter();
     public abstract Translation2d getAlgayOffsetFromRobotCenter();
 }
