@@ -11,9 +11,6 @@ import frc.robot.constants.pivot.PivotConfigProto;
 import frc.robot.constants.pivot.PivotConfigSim;
 
 public class Pivot extends SubsystemBase {
-    private PivotIO pivotIO;
-    private PivotIOInputsAutoLogged pivotIOInputs = new PivotIOInputsAutoLogged();
-
     private final PivotConfigBase config;
     private static Pivot instance = null;
     public static Pivot getInstance() {
@@ -23,6 +20,11 @@ public class Pivot extends SubsystemBase {
 
         return instance;
     }
+
+    private PivotIO pivotIO;
+    private PivotIOInputsAutoLogged pivotIOInputs = new PivotIOInputsAutoLogged();
+
+    private Rotation2d setpoint = new Rotation2d();
 
     public Pivot() {
         // IO
@@ -63,10 +65,13 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         pivotIO.updateInputs(pivotIOInputs);
         Logger.processInputs("Pivot", pivotIOInputs);
+
+        pivotIO.setAngle(setpoint);
     }
 
     public void setAngle(Rotation2d angle) {
-        pivotIO.setAngle(angle);
+        setpoint = angle;
+        Logger.recordOutput("Pivot/setpoint", angle);
     }
 
     public void setTorqueCurrentFOC(double torque) {

@@ -51,7 +51,7 @@ public class RobotContainer {
   private final Vision vision;
   private final RobotState robotState;
 
-//   private final Pivot pivot;
+  private final Pivot pivot;
 //   private final Claw claw;
 
   private final Elevator elevator;
@@ -71,7 +71,7 @@ public class RobotContainer {
     swerveDrive = SwerveDrive.getInstance();
     vision = Vision.getInstance();
     robotState = RobotState.getInstance();
-    // pivot = Pivot.getInstance();
+    pivot = Pivot.getInstance();
     // claw = Claw.getInstance();
 
     // roller = Roller.getInstance();
@@ -83,9 +83,7 @@ public class RobotContainer {
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
     xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
-
     xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
-
     xboxDriver.getYButton().whileTrue(new AlignToAlgay());
         
     // xboxOperator.getLeftBumper().onTrue(new IntakeCoral());

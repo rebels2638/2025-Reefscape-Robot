@@ -1,5 +1,7 @@
 package frc.robot.subsystems.pivot;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,18 +18,18 @@ public class PivotIOSim implements PivotIO {
 
     private SingleJointedArmSim pivotSim;
 
-    private final PIDController feedbackController = new PIDController(0, 0, 0);
-    private final ArmFeedforward feedforwardController = new ArmFeedforward(0, 0, 0);
+    private final PIDController feedbackController;
+    private final ArmFeedforward feedforwardController;
 
     private double prevTimeInputs = 0;
     private double prevTimeState = 0;
 
     private final double kPIVOT_MOTOR_TO_OUTPUT_SHAFT_RATIO = 20;
-    private final double kJKG_METERS_SQUARED = 0.0008096955;
-    private final double kPIVOT_LENGTH_METERS = 0.2;
-    private final double kMIN_ANGLE_RAD = Math.toRadians(-40);
-    private final double kMAX_ANGLE_RAD = Math.toRadians(100);
-    private final double kSTARTING_ANGLE_RAD = Math.toRadians(100);
+    private final double kJKG_METERS_SQUARED = 11.34;
+    private final double kPIVOT_LENGTH_METERS = 0.23;
+    private final double kMIN_ANGLE_RAD;
+    private final double kMAX_ANGLE_RAD;
+    private final double kSTARTING_ANGLE_RAD = Math.toRadians(0);
 
 
     private final TrapezoidProfile trapezoidMotionProfile;
@@ -38,6 +40,12 @@ public class PivotIOSim implements PivotIO {
     
     @SuppressWarnings("static-access")
     public PivotIOSim(PivotConfigBase config) {
+        kMIN_ANGLE_RAD = config.getMinAngleRotations() * Math.PI * 2;
+        kMAX_ANGLE_RAD = config.getMaxAngleRotations() * Math.PI * 2;
+        
+        Logger.recordOutput("Pivot/minAngleRad", kMIN_ANGLE_RAD);
+        Logger.recordOutput("Pivot/maxAngleRad", kMAX_ANGLE_RAD);
+
         pivotSim = new SingleJointedArmSim(
             pivotGearBox,
             kPIVOT_MOTOR_TO_OUTPUT_SHAFT_RATIO,
@@ -49,7 +57,18 @@ public class PivotIOSim implements PivotIO {
             kSTARTING_ANGLE_RAD
         );
 
-        feedbackController.setTolerance(Math.toRadians(1.4));
+        feedbackController = new PIDController(
+            config.getKP(), 
+            config.getKI(), 
+            config.getKD()
+        );
+
+        feedforwardController = new ArmFeedforward(
+            config.getKS(), 
+            config.getKG(), 
+            config.getKV(),
+            config.getKA()
+        );
 
         trapezoidMotionProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
                 Units.rotationsToRadians(config.getMotionMagicCruiseVelocityRotationsPerSec()),
