@@ -34,3 +34,4 @@ public class RobotStatenConfigComp extends RobotStateConfigBase {
         return new Translation2d(0, 0);
     }
 }
+

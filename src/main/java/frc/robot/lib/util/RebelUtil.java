@@ -1,5 +1,7 @@
 package frc.robot.lib.util;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class RebelUtil {
     public static final double EPSILON = 1e-12;
     /**

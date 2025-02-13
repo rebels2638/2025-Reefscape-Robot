@@ -23,14 +23,4 @@ public class RobotStateConfigSim extends RobotStateConfigBase {
     public double getOdomTranslationDevBase() {
         return 0;
     }
-
-    @Override
-    public Translation2d getCoralOffsetFromRobotCenter() {
-        return new Translation2d(0,0);
-    }
-
-    @Override
-    public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(0, 0);
-    }
 }
