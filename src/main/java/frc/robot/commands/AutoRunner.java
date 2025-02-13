@@ -110,7 +110,7 @@ public class AutoRunner {
 
         
     public Command getAutonomousCommand() {
-        try{
+        try {
             // Load the path you want to follow using its name in the GUI
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("test");
 

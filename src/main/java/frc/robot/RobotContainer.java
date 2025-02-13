@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.jar.Attributes.Name;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -79,6 +81,7 @@ public class RobotContainer {
     elevator = Elevator.getInstance();
 
     autoRunner = AutoRunner.getInstance();
+    NamedCommands.registerCommand("AlignToRightBranch", new AlignToRightBranch());
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
