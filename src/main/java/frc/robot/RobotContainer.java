@@ -29,6 +29,7 @@ import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.commands.elevator.simple.MoveElevatorL1;
 import frc.robot.commands.elevator.simple.MoveElevatorL2;
 import frc.robot.commands.elevator.simple.MoveElevatorL3;
+import frc.robot.commands.elevator.simple.MoveElevatorL4;
 import frc.robot.commands.elevator.simple.MoveElevatorStow;
 import frc.robot.commands.pivot.RunPivotRaw;
 import frc.robot.commands.roller.*;
@@ -55,7 +56,7 @@ public class RobotContainer {
 //   private final Claw claw;
 
   private final Elevator elevator;
-  // private final Roller roller;
+  private final Roller roller;
 
   private final AutoRunner autoRunner;
 
@@ -92,11 +93,11 @@ public class RobotContainer {
     // xboxOperator.getLeftBumper().onTrue(new RunClawIntake(claw));
     // xboxOperator.getRightBumper().onTrue(new StopClaw(claw));
 
-    // // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
+    // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
     xboxOperator.getAButton().onTrue(new MoveElevatorStow());
-    xboxOperator.getBButton().onTrue(new MoveElevatorL1());
-    xboxOperator.getYButton().onTrue(new MoveElevatorL2());
-    xboxOperator.getXButton().onTrue(new MoveElevatorL3());
+    xboxOperator.getBButton().onTrue(new MoveElevatorL2());
+    xboxOperator.getYButton().onTrue(new MoveElevatorL3());
+    xboxOperator.getXButton().onTrue(new MoveElevatorL4());
 
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
 

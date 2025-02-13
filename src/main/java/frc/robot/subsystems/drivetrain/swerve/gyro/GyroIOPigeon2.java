@@ -57,7 +57,7 @@ public class GyroIOPigeon2 implements GyroIO {
         accelerationYSignal = gyro.getAccelerationY().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                100,
+                70,
                 yawSignal,
                 yawVelocitySignal,
                 rollSignal,
