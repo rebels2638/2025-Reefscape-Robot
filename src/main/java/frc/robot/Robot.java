@@ -11,10 +11,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.Mode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,6 +33,7 @@ public class Robot extends LoggedRobot {
    */
 
   String logPath = "/Users/conne/Downloads/"; // TODO: Remember to change this value guys (Edan)
+  Servo servo = new Servo(1);
 
   @Override
   public void robotInit() {
@@ -120,6 +122,9 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.schedule();
     }
 
+    if (Constants.currentMode != Mode.SIM && Constants.currentMode != Mode.REPLAY) {
+        servo.setAngle(75);
+    }
   }
 
   /** This function is called periodically during autonomous. */
