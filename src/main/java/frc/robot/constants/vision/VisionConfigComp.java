@@ -15,7 +15,7 @@ public class VisionConfigComp extends VisionConfigBase {
     @Override
     public String[] getNames() {
         return new String[] {
-            "limelight-back"
+            "limelight-front"
         };
     }
 
