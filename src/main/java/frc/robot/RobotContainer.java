@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
 import frc.robot.commands.DoSomething;
@@ -56,7 +57,7 @@ public class RobotContainer {
 // private final Claw claw;
 
   private final Elevator elevator;
-//   private final Roller roller;
+  private final Roller roller;
 
   private final AutoRunner autoRunner;
 
@@ -75,7 +76,7 @@ public class RobotContainer {
     // pivot = Pivot.getInstance();
     // claw = Claw.getInstance();
 
-    // roller = Roller.getInstance();
+    roller = Roller.getInstance();
     elevator = Elevator.getInstance();
 
     autoRunner = AutoRunner.getInstance();
@@ -89,6 +90,8 @@ public class RobotContainer {
         
     // xboxOperator.getLeftBumper().onTrue(new IntakeCoral());
     // xboxOperator.getRightBumper().onTrue(new EjectCoral());
+    xboxOperator.getLeftBumper().onTrue(new RunRollerIntake());
+    xboxOperator.getRightBumper().onTrue(new StopRoller());
 
     // xboxOperator.getLeftBumper().onTrue(new RunClawIntake(claw));
     // xboxOperator.getRightBumper().onTrue(new StopClaw(claw));
@@ -96,6 +99,15 @@ public class RobotContainer {
     // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
     xboxOperator.getAButton().onTrue(new MoveElevatorStow());
     xboxOperator.getBButton().onTrue(new MoveElevatorL2());
+    // xboxOperator.getYButton().onTrue(new SequentialCommandGroup(
+    //   new IntakeCoral(),
+    //   new LinearDriveToPose(
+    //     () -> AlignmentUtil.getClosestLeftBranchPose(), 
+    //     () -> new ChassisSpeeds()),
+    //   new MoveElevatorL3(),
+    //   new EjectCoral(),
+    //   new MoveElevatorStow()
+    // ));
     xboxOperator.getYButton().onTrue(new MoveElevatorL3());
     xboxOperator.getXButton().onTrue(new MoveElevatorL4());
 

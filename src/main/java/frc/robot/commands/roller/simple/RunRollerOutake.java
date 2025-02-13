@@ -12,7 +12,7 @@ public class RunRollerOutake extends Command {
 
     @Override
     public void initialize() {
-        roller.setVoltage(-7);
+        roller.setVoltage(-12);
     }
 
     @Override

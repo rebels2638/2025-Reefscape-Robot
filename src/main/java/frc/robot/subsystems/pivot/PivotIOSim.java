@@ -24,16 +24,15 @@ public class PivotIOSim implements PivotIO {
     private double prevTimeInputs = 0;
     private double prevTimeState = 0;
 
-    private final double kPIVOT_MOTOR_TO_OUTPUT_SHAFT_RATIO = 20;
-    private final double kJKG_METERS_SQUARED = 11.34;
-    private final double kPIVOT_LENGTH_METERS = 0.23;
+    private final double kPIVOT_MOTOR_TO_OUTPUT_SHAFT_RATIO = 45;
+    private final double kJKG_METERS_SQUARED = 1;
+    private final double kPIVOT_LENGTH_METERS = 0.222;
     private final double kMIN_ANGLE_RAD;
     private final double kMAX_ANGLE_RAD;
     private final double kSTARTING_ANGLE_RAD = Math.toRadians(0);
 
-
     private final TrapezoidProfile trapezoidMotionProfile;
-    private State currentProfileSetpoint;;
+    private State currentProfileSetpoint;
 
     private double currentPositionRad = 0;
     private double appliedVolts = 0;
