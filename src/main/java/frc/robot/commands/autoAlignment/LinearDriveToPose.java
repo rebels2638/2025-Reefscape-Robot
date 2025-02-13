@@ -235,13 +235,4 @@ public class LinearDriveToPose extends Command {
 
         return poseAligned && speedsAligned;
     }
-
-    /*
-     * @T time for the profile
-     * @D displacement 
-     */
-    public double calculateProfileVelo(double T, double displacement, double acel, double decel, double startVelo, double finalVelo) {
-        double discriminant = Math.pow((acel * decel * T + decel * startVelo), 2) - (acel + decel) * (decel * startVelo * startVelo + acel * finalVelo * finalVelo - 2 * acel * decel)
-        return 1;
-    }
 }

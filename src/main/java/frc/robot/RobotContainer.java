@@ -52,8 +52,8 @@ public class RobotContainer {
   private final Vision vision;
   private final RobotState robotState;
 
-  private final Pivot pivot;
-//   private final Claw claw;
+// private final Pivot pivot;
+// private final Claw claw;
 
   private final Elevator elevator;
   private final Roller roller;
@@ -72,10 +72,10 @@ public class RobotContainer {
     swerveDrive = SwerveDrive.getInstance();
     vision = Vision.getInstance();
     robotState = RobotState.getInstance();
-    pivot = Pivot.getInstance();
+    // pivot = Pivot.getInstance();
     // claw = Claw.getInstance();
 
-    // roller = Roller.getInstance();
+    roller = Roller.getInstance();
     elevator = Elevator.getInstance();
 
     autoRunner = AutoRunner.getInstance();
