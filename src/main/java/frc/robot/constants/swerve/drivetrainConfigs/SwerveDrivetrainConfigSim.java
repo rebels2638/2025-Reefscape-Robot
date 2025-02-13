@@ -161,7 +161,7 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getBumperLengthMeters() {
-        return 0.88;
+        return 0.774;
     }
 
     @Override

@@ -56,7 +56,7 @@ public class RobotContainer {
 // private final Claw claw;
 
   private final Elevator elevator;
-  private final Roller roller;
+//   private final Roller roller;
 
   private final AutoRunner autoRunner;
 
@@ -75,7 +75,7 @@ public class RobotContainer {
     // pivot = Pivot.getInstance();
     // claw = Claw.getInstance();
 
-    roller = Roller.getInstance();
+    // roller = Roller.getInstance();
     elevator = Elevator.getInstance();
 
     autoRunner = AutoRunner.getInstance();
