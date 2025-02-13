@@ -55,7 +55,7 @@ public class ClawIOTalonFX implements ClawIO {
             config.getIsMotorInverted() ?
                 InvertedValue.Clockwise_Positive :
                 InvertedValue.CounterClockwise_Positive;
-                
+
         clawConfig.MotorOutput.NeutralMode = 
             config.isNeutralModeBrake() ? 
                         NeutralModeValue.Brake : 
@@ -72,7 +72,7 @@ public class ClawIOTalonFX implements ClawIO {
         clawAccelerationStatusSignal = clawMotor.getAcceleration().clone();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                40,
+                70,
                 clawAppliedVolts,
                 clawSupplyCurrent,
                 clawTemperature,

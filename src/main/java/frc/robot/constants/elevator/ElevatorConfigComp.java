@@ -26,34 +26,34 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 30.0;
+        return 80;
     }
 
     @Override
     public double getSupplyCurrentLimitLowerTime() {
-        return 1.0;
+        return 1.2;
     }
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 20.0;
+        return 60;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 35.0;
+        return 65.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 40.0;
+        return 65.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -40.0;
+        return -65.0;
     }
 
     // Characterization / Gains
@@ -75,7 +75,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getKP() {
-        return 400;
+        return 1700;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
-        return false;
+        return true;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getMaxHeightMeters() {
-        return 1.45;
+        return 1.39;
     }
 
     @Override 
@@ -145,6 +145,6 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getToleranceMeters() {
-        return 0.02;
+        return 0.01;
     }
 }
