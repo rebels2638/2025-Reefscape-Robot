@@ -2,10 +2,12 @@ package frc.robot.subsystems.drivetrain.swerve.module;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Fahrenheit;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.Logger;
@@ -27,10 +29,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleGeneralConfigBase;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleSpecificConfigBase;
 import frc.robot.lib.util.RebelUtil;
@@ -43,6 +47,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     private final StatusSignal<Angle> drivePositionStatusSignal;
     private final StatusSignal<AngularVelocity> driveVelocityStatusSignal;
+    private final StatusSignal<AngularAcceleration> driveAccelerationStatusSignal;
+
     private final StatusSignal<Voltage> driveAppliedVolts;
     private final StatusSignal<Current> driveSupplyCurrent;
     private final StatusSignal<Temperature> driveTemperature;
@@ -203,6 +209,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         drivePositionStatusSignal = driveMotor.getPosition().clone();
         driveVelocityStatusSignal = driveMotor.getVelocity().clone();
+        driveAccelerationStatusSignal = driveMotor.getAcceleration().clone();
+
         steerPositionStatusSignal = steerMotor.getPosition().clone();
         steerVelocityStatusSignal = steerMotor.getVelocity().clone();
 
@@ -210,6 +218,7 @@ public class ModuleIOTalonFX implements ModuleIO {
             100,
             drivePositionStatusSignal,
             driveVelocityStatusSignal,
+            driveAccelerationStatusSignal,
 
             steerPositionStatusSignal,
             steerVelocityStatusSignal,
@@ -220,6 +229,8 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, drivePositionStatusSignal);
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, driveVelocityStatusSignal);
+        Phoenix6Odometry.getInstance().registerSignal(steerMotor, driveAccelerationStatusSignal);
+
         Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerPositionStatusSignal);
         Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerVelocityStatusSignal);
 
@@ -250,10 +261,11 @@ public class ModuleIOTalonFX implements ModuleIO {
         double steerRotations = BaseStatusSignal
                 .getLatencyCompensatedValue(steerPositionStatusSignal, steerVelocityStatusSignal).in(Rotation);
 
-        inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
+        inputs.timestamp = (drivePositionStatusSignal.getTimestamp().getTime() + steerPositionStatusSignal.getTimestamp().getTime()) / 2;
 
         inputs.drivePositionMeters = drivePosition;
         inputs.driveVelocityMetersPerSec = driveVelocityStatusSignal.getValue().in(RotationsPerSecond);
+        inputs.driveAccelerationMetersPerSecSec = driveAccelerationStatusSignal.getValue().in(RotationsPerSecondPerSecond);
 
         inputs.steerPosition = new Rotation2d(
                 Units.rotationsToRadians(steerRotations));

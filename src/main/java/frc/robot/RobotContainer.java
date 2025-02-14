@@ -80,8 +80,9 @@ public class RobotContainer {
     // roller = Roller.getInstance();
     elevator = Elevator.getInstance();
 
-    autoRunner = AutoRunner.getInstance();
     NamedCommands.registerCommand("AlignToRightBranch", new AlignToRightBranch());
+
+    autoRunner = AutoRunner.getInstance();
 
     swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
     xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));

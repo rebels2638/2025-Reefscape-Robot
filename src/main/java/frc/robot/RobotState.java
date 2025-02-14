@@ -10,12 +10,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.Constants;
-import frc.robot.constants.MechAElementConstants;
-import frc.robot.constants.Constants.AlignmentConstants;
 import frc.robot.constants.robotState.RobotStateConfigBase;
 import frc.robot.constants.robotState.RobotStateConfigProto;
 import frc.robot.constants.robotState.RobotStateConfigSim;
@@ -25,17 +21,9 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-
-import com.pathplanner.lib.util.FlippingUtil;
 
 public class RobotState {
   private static RobotState instance;
@@ -49,6 +37,7 @@ public class RobotState {
   public record OdometryObservation(
     SwerveModulePosition[] modulePositions, 
     SwerveModuleState[] moduleStates, 
+    SwerveModuleState[] moduleAccelerations, 
     Rotation3d gyroOrientation,
     Rotation3d gyroRates, 
     double timestamp) {}
@@ -78,6 +67,7 @@ public class RobotState {
   private Rotation3d lastGyroRates = new Rotation3d();
 
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
+  private ChassisSpeeds robotRelativeAccelerations = new ChassisSpeeds();
 
   private final SwerveDrivetrainConfigBase drivetrainConfig;
   private final RobotStateConfigBase robotStateConfig;
@@ -181,8 +171,6 @@ public class RobotState {
 
     // Add pose to buffer at timestamp
     poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition()); 
-     
-    Logger.recordOutput("RobotState/estimatedPosition", getEstimatedPose());  
   }
 
   public void addVisionObservation(VisionObservation observation) {
@@ -211,9 +199,6 @@ public class RobotState {
 
     swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
     lastEstimatedPoseUpdateTime = Timer.getTimestamp();
-
-    Logger.recordOutput("RobotState/estimatedPosition", swerveDrivePoseEstimator.getEstimatedPosition());  
-
   }
 
   /**
@@ -229,6 +214,7 @@ public class RobotState {
     resetPose(new Pose2d(getEstimatedPose().getTranslation(), new Rotation2d()));
   }
 
+  @AutoLogOutput(key = "RobotState/estimatedPose")
   public Pose2d getEstimatedPose() {
     return swerveDrivePoseEstimator.getEstimatedPosition();
   }
@@ -236,16 +222,17 @@ public class RobotState {
   public Rotation3d getGyroOrientation() {
     return lastGyroOrientation;
   }
-
+  @AutoLogOutput(key = "RobotState/lastGyroRates")
   public Rotation3d getGyroRates() {
     return lastGyroRates;
   }
   
+  @AutoLogOutput(key = "RobotState/robotRelativeSpeeds")
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return robotRelativeVelocity;
   }
 
-  
+  @AutoLogOutput(key = "RobotState/fieldRelativeSpeeds")
   public ChassisSpeeds getFieldRelativeSpeeds() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, lastGyroOrientation.toRotation2d());
   }
@@ -261,5 +248,9 @@ public class RobotState {
 
   public Pose2d getPredictedPose(double timestamp) {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
+  }
+
+  public boolean isElevatorExtendable() {
+    return Math.hypot(robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond) < 1;
   }
 }

@@ -27,10 +27,10 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     private final double maxAngularAcceleration = 12.0;
     private final double maxAutoModuleVelocity = 5.0;
 
-    private final Translation2d frontLeftPosition = new Translation2d(0.24, 0.24);
-    private final Translation2d frontRightPosition = new Translation2d(0.24, -0.24);
-    private final Translation2d backLeftPosition = new Translation2d(-0.24, 0.24);
-    private final Translation2d backRightPosition = new Translation2d(-0.24, -0.24);
+    private final Translation2d frontLeftPosition = new Translation2d(0.23, 0.23);
+    private final Translation2d frontRightPosition = new Translation2d(0.23, -0.23);
+    private final Translation2d backLeftPosition = new Translation2d(-0.23, 0.23);
+    private final Translation2d backRightPosition = new Translation2d(-0.23, -0.23);
 
     private final double rotationCompensationCoefficient = 0.0;
 

@@ -87,6 +87,7 @@ public class SwerveDrive extends SubsystemBase {
         new SwerveModuleState(),
         new SwerveModuleState()
     };
+    private SwerveModuleState[] moduleAccelerations = new SwerveModuleState[4];
 
     private final SwerveSetpointGenerator swerveSetpointGenerator;
     private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
@@ -199,7 +200,7 @@ public class SwerveDrive extends SubsystemBase {
 
     @Override
     public void periodic() {
-        var odometryTimestamp = 0.0;
+        double odometryTimestamp = 0.0;
         // Thread safe reading of the gyro and swerve inputs.
         // The read lock is released only after inputs are written via the write lock
         Phoenix6Odometry.getInstance().stateLock.readLock().lock();
@@ -217,12 +218,13 @@ public class SwerveDrive extends SubsystemBase {
             Phoenix6Odometry.getInstance().stateLock.readLock().unlock();
         }
         if (odometryTimestamp == 0.0) {
-            odometryTimestamp = HALUtil.getFPGATime() / 1.0e6;
+            odometryTimestamp = Timer.getFPGATimestamp();
         }
 
         for (int i = 0; i < 4; i++) {
             modulePositions[i] = new SwerveModulePosition(moduleInputs[i].drivePositionMeters, moduleInputs[i].steerPosition);
             moduleStates[i] = new SwerveModuleState(moduleInputs[i].driveVelocityMetersPerSec, moduleInputs[i].steerPosition);
+            moduleAccelerations[i] = new SwerveModuleState(moduleInputs[i].driveAccelerationMetersPerSecSec, moduleInputs[i].steerPosition);
         }
 
         Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
@@ -233,6 +235,7 @@ public class SwerveDrive extends SubsystemBase {
                 new RobotState.OdometryObservation(
                     modulePositions.clone(),
                     moduleStates.clone(),
+                    moduleAccelerations.clone(),
                     gyroInputs.isConnected ? 
                         gyroInputs.orientation :
                         null,

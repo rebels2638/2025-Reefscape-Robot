@@ -26,22 +26,23 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     private final double maxAngularVelocity = 3.7;
     private final double maxAngularAcceleration = 12.0;
 
-    private final Translation2d frontLeftPosition = new Translation2d(0.38, 0.38);
-    private final Translation2d frontRightPosition = new Translation2d(0.38, -0.38);
-    private final Translation2d backLeftPosition = new Translation2d(-0.38, 0.38);
-    private final Translation2d backRightPosition = new Translation2d(-0.38, -0.38);
+    private final Translation2d frontLeftPosition = new Translation2d(0.23, 0.23);
+    private final Translation2d frontRightPosition = new Translation2d(0.23, -0.23);
+    private final Translation2d backLeftPosition = new Translation2d(-0.23, 0.23);
+    private final Translation2d backRightPosition = new Translation2d(-0.23, -0.23);
 
     private final double rotationCompensationCoefficient = 0.0;
     private final double maxAutoModuleVelocity = 5.0;
 
-    private final RobotConfig autoConfig = new RobotConfig(
+    private final RobotConfig autoConfig = 
+        new RobotConfig(
             27.88,
             3.5,
             new ModuleConfig(
                 SwerveModuleGeneralConfigComp.getInstance().getDriveWheelRadiusMeters(), 
                 5.4, 
                 1.2, 
-                DCMotor.getFalcon500(1).
+                DCMotor.getKrakenX60(1).
                     withReduction(
                         SwerveModuleGeneralConfigComp.getInstance().getDriveMotorToOutputShaftRatio()
                     ),
@@ -54,8 +55,8 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
             backRightPosition
         );
     
-    private final PIDConstants steerPIDConstants = new PIDConstants(0,0,0,0);
-    private final PIDConstants drivePIDConstants = new PIDConstants(0,0,0,0);
+    private final PIDConstants steerPIDConstants = new PIDConstants(3,0,.7,0);
+    private final PIDConstants drivePIDConstants = new PIDConstants(4,0,1 ,0);
 
     @Override
     public double getMaxDrivetrainTranslationalVelocityMetersPerSec() {

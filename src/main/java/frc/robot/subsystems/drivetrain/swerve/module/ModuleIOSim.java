@@ -123,10 +123,11 @@ public class ModuleIOSim implements ModuleIO {
         steerSim.update(dt);
         driveSim.update(dt);
 
-        inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
+        inputs.timestamp = Timer.getTimestamp();
 
         inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRPM() *
                 2 * Math.PI * config.getDriveWheelRadiusMeters();
+        inputs.driveAccelerationMetersPerSecSec = driveSim.getAngularAccelerationRadPerSecSq() * config.getDriveWheelRadiusMeters();
         inputs.drivePositionMeters += inputs.driveVelocityMetersPerSec * dt;
 
         inputs.driveCurrentDrawAmps = driveSim.getCurrentDrawAmps();
