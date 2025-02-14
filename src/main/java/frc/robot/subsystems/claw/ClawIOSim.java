@@ -35,7 +35,6 @@ public class ClawIOSim implements ClawIO {
     private double currentPositionRad = 0;
     private double appliedVolts = 0;
     
-    @SuppressWarnings("static-access")
     public ClawIOSim(PivotConfigBase config) {
         pivotSim = new SingleJointedArmSim(
             pivotGearBox,

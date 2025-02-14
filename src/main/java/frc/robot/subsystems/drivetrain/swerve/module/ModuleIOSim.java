@@ -59,7 +59,6 @@ public class ModuleIOSim implements ModuleIO {
 
     double previousNonZeroDriveSetpoint = 1;
 
-    @SuppressWarnings("static-access")
     public ModuleIOSim(SwerveModuleGeneralConfigBase config, int moduleID) {
         this.config = config;
         this.moduleID = moduleID;

@@ -35,7 +35,6 @@ public class ElevatorIOSim implements ElevatorIO {
     private double currentPositionRad = 0;
     private double appliedVolts = 0;
     
-    @SuppressWarnings("static-access")
     public ElevatorIOSim(ElevatorConfigBase config) {
         kELEVATOR_MOTOR_TO_OUTPUT_SHAFT_RATIO = config.getMotorToOutputShaftRatio();
         kJKG_METERS_SQUARED = 11; // yes, this is about right

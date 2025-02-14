@@ -37,7 +37,6 @@ public class PivotIOSim implements PivotIO {
     private double currentPositionRad = 0;
     private double appliedVolts = 0;
     
-    @SuppressWarnings("static-access")
     public PivotIOSim(PivotConfigBase config) {
         kMIN_ANGLE_RAD = config.getMinAngleRotations() * Math.PI * 2;
         kMAX_ANGLE_RAD = config.getMaxAngleRotations() * Math.PI * 2;

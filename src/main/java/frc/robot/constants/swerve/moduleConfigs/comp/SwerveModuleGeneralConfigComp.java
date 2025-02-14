@@ -99,7 +99,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveMaxVelocityMetersPerSec() {
-        return 4;
+        return 4.5;
     }
 
     @Override

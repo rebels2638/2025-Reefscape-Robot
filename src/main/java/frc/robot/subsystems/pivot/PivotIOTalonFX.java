@@ -44,7 +44,7 @@ public class PivotIOTalonFX implements PivotIO {
 
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
-    @SuppressWarnings("static-access")
+
     public PivotIOTalonFX(PivotConfigBase config) {
         kMAX_ANGLE_ROTATIONS = config.getMaxAngleRotations();
         kMIN_ANGLE_ROTATIONS = config.getMinAngleRotations();
@@ -115,7 +115,6 @@ public class PivotIOTalonFX implements PivotIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(PivotIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             pivotPositionStatusSignal,

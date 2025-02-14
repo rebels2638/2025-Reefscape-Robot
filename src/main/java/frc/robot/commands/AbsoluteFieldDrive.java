@@ -76,7 +76,6 @@ public class AbsoluteFieldDrive extends Command {
     }
 
     // Called repeatedly while the command is scheduled.
-    @SuppressWarnings("static-access")
     @Override
     public void execute() {
         // Calculate speeds based on input and max speed constants.

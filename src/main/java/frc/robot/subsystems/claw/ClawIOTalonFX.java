@@ -34,7 +34,6 @@ public class ClawIOTalonFX implements ClawIO {
     private final TorqueCurrentFOC clawTorqueRequest = new TorqueCurrentFOC(0);
     private final VoltageOut clawVoltageRequest = new VoltageOut(0).withEnableFOC(false);
 
-    @SuppressWarnings("static-access")
     public ClawIOTalonFX(ClawConfigBase config) {
         // pivot motor
         TalonFXConfiguration clawConfig = new TalonFXConfiguration();
@@ -84,7 +83,6 @@ public class ClawIOTalonFX implements ClawIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(ClawIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             clawVelocityStatusSignal,

@@ -45,7 +45,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
-    @SuppressWarnings("static-access")
+
     public ClimberIOTalonFX(ClimberConfigBase config) {
         kMAX_ANGLE_ROTATIONS = config.getMaxAngleRotations();
         kMIN_ANGLE_ROTATIONS = config.getMinAngleRotations();
@@ -116,7 +116,6 @@ public class ClimberIOTalonFX implements ClimberIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(ClimberIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             pivotPositionStatusSignal,

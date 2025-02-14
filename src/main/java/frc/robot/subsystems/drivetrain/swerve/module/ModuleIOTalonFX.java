@@ -69,7 +69,6 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     private double currentDriveVelo;
 
-    @SuppressWarnings("static-access")
     public ModuleIOTalonFX(SwerveModuleGeneralConfigBase generalConfig, SwerveModuleSpecificConfigBase specificConfig, int moduleID) {
         this.generalConfig = generalConfig;
         this.moduleID = moduleID;
@@ -240,7 +239,6 @@ public class ModuleIOTalonFX implements ModuleIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(ModuleIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             driveAppliedVolts,

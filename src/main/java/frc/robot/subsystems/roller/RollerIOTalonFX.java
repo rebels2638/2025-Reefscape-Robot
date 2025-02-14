@@ -37,7 +37,6 @@ public class RollerIOTalonFX implements RollerIO {
     private final TorqueCurrentFOC rollerTorqueRequest = new TorqueCurrentFOC(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0).withEnableFOC(false);
 
-    @SuppressWarnings("static-access")
     public RollerIOTalonFX(RollerConfigBase config) {
         CANrangeConfiguration canRangeConfiguration = new CANrangeConfiguration();
 
@@ -105,7 +104,6 @@ public class RollerIOTalonFX implements RollerIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(RollerIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             rollerVelocityStatusSignal,

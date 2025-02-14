@@ -7,7 +7,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleGeneralConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
 
 public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
 
@@ -36,17 +36,17 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
 
     private final RobotConfig autoConfig = 
         new RobotConfig(
-            27.88,
-            3.5,
+            37.88,
+            13.5,
             new ModuleConfig(
-                SwerveModuleGeneralConfigComp.getInstance().getDriveWheelRadiusMeters(), 
-                5.4, 
+                SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
+                4.5, 
                 1.2, 
                 DCMotor.getKrakenX60(1).
                     withReduction(
-                        SwerveModuleGeneralConfigComp.getInstance().getDriveMotorToOutputShaftRatio()
+                        SwerveModuleGeneralConfigSim.getInstance().getDriveMotorToOutputShaftRatio()
                     ),
-                SwerveModuleGeneralConfigComp.getInstance().getDriveStatorCurrentLimit(), 
+                SwerveModuleGeneralConfigSim.getInstance().getDriveStatorCurrentLimit(), 
                 1
             ),
             frontLeftPosition, 

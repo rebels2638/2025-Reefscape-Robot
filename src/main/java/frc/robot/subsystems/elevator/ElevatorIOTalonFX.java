@@ -63,7 +63,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     private final double kMAX_HEIGHT_METERS;
     private final double kMIN_HEIGHT_METERS;
 
-    @SuppressWarnings("static-access")
     public ElevatorIOTalonFX(ElevatorConfigBase config) {
         kMAX_HEIGHT_METERS = config.getMaxHeightMeters();
         kMIN_HEIGHT_METERS = config.getMinHeightMeters();
@@ -183,7 +182,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(ElevatorIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             elevatorPositionStatusSignal1,

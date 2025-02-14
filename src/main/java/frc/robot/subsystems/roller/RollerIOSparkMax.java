@@ -35,7 +35,6 @@ public class RollerIOSparkMax implements RollerIO {
 
     private final RollerConfigBase config;
 
-    @SuppressWarnings("static-access")
     public RollerIOSparkMax(RollerConfigBase config) {
         this.config = config;
 
@@ -71,7 +70,6 @@ public class RollerIOSparkMax implements RollerIO {
     }
 
     @Override
-    @SuppressWarnings("static-access")
     public void updateInputs(RollerIOInputs inputs) {
         BaseStatusSignal.refreshAll(canRangeIsDetected);
 

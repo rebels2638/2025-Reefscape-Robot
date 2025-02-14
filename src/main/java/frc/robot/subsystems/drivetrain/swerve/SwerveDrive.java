@@ -100,7 +100,6 @@ public class SwerveDrive extends SubsystemBase {
     private final SwerveDrivetrainConfigBase drivetrainConfig;
     private final SwerveControllerConfigBase controllerConfig; 
 
-    @SuppressWarnings("static-access")
     private SwerveDrive() {
         switch (Constants.currentMode) {
             case COMP:
