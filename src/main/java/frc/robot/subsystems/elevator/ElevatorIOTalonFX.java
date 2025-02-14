@@ -148,6 +148,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorClosedLoopRefrence2 = elevatorMotor2.getClosedLoopReference().clone();
         elevatorClosedLoopOutput2 = elevatorMotor2.getClosedLoopOutput().clone();
 
+        // TODO: THIS IS NOT INCLUDE THE FEEDFORWARD?! CHECK
         elevatorPositionStatusSignal1 = elevatorMotor1.getPosition().clone();
         elevatorVelocityStatusSignal1 = elevatorMotor1.getVelocity().clone();
 

@@ -4,8 +4,6 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.sim.ChassisReference;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,8 +25,7 @@ public class LinearDriveToPose extends Command {
     private final RobotState robotState = RobotState.getInstance();
 
     private final TrapezoidProfile translationalMotionProfile;
-    private final PIDController xTranslationalFeedbackController;
-    private final PIDController yTranslationalFeedbackController;
+    private final PIDController translationalFeedbackController;
 
     private double translationalMotionProfileRotationRad = 0;
     private Pose2d initialPose = new Pose2d();
@@ -89,8 +86,7 @@ public class LinearDriveToPose extends Command {
             )
         );
 
-        this.xTranslationalFeedbackController = drivetrainConfig.getAutoAlignProfiledTranslationController();
-        this.yTranslationalFeedbackController = drivetrainConfig.getAutoAlignProfiledTranslationController();
+        this.translationalFeedbackController = drivetrainConfig.getAutoAlignProfiledTranslationController();
 
         this.rotationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
@@ -150,8 +146,7 @@ public class LinearDriveToPose extends Command {
 
         Logger.recordOutput("LinearDriveToPose/targetPose.get()", targetPose.get());
 
-        xTranslationalFeedbackController.reset();
-        yTranslationalFeedbackController.reset();
+        translationalFeedbackController.reset();
         rotationalFeedbackController.reset();
     }
 
@@ -168,37 +163,37 @@ public class LinearDriveToPose extends Command {
         Logger.recordOutput("LinearDriveToPose/currentTranslationalSetpointVelo", currentTranslationalSetpoint.velocity);
         Logger.recordOutput("LinearDriveToPose/currentTranslationalSetpointPose", currentTranslationalSetpoint.position);
 
-        currentRotationalSetpoint = rotationalMotionProfile.calculate(
-            dt,
-            currentRotationalSetpoint, 
-            rotationalGoal
-        );
+        currentRotationalSetpoint = 
+            rotationalMotionProfile.calculate(
+                dt,
+                currentRotationalSetpoint, 
+                rotationalGoal
+            );
 
         ChassisSpeeds calculatedSpeeds = new ChassisSpeeds(0, 0, 0);
 
         double xTranslationalSetpoint = currentTranslationalSetpoint.position * Math.cos(translationalMotionProfileRotationRad) + initialPose.getX();
+        double yTranslationalSetpoint = currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY();
+        
         double xVelocitySetpoint = Math.max(
             endVelo.get().vxMetersPerSecond,
             currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
         );
 
-        calculatedSpeeds.vxMetersPerSecond = 
-            xTranslationalFeedbackController.calculate(
-                robotState.getEstimatedPose().getX(),
-                xTranslationalSetpoint
-            ) + xVelocitySetpoint;
-
-        double yTranslationalSetpoint = currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY();
         double yVelocitySetpoint = Math.max( // motion profile trips out when nonzero end vel
             endVelo.get().vyMetersPerSecond,
             currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad)
         );
 
-        calculatedSpeeds.vyMetersPerSecond = 
-            xTranslationalFeedbackController.calculate(
-                robotState.getEstimatedPose().getY(),
-                yTranslationalSetpoint
-            ) + yVelocitySetpoint;
+        double xDist = robotState.getEstimatedPose().getX() - xTranslationalSetpoint;
+        double yDist = robotState.getEstimatedPose().getY() - yTranslationalSetpoint;
+        double angleOfMovement = Math.atan2(yDist, xDist);
+
+        double translationalError = Math.hypot(xDist, yDist);
+        double calculatedFeedback = translationalFeedbackController.calculate(translationalError, 0);
+
+        calculatedSpeeds.vxMetersPerSecond = calculatedFeedback * Math.cos(angleOfMovement) + xVelocitySetpoint;
+        calculatedSpeeds.vyMetersPerSecond = calculatedFeedback * Math.sin(angleOfMovement) + yVelocitySetpoint;
 
         Logger.recordOutput("LinearDriveToPose/xTranslationalSetpoint", xTranslationalSetpoint);
         Logger.recordOutput("LinearDriveToPose/xVelocitySetpoint", xVelocitySetpoint);
