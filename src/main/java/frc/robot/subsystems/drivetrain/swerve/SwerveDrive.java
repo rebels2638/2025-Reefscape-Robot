@@ -240,8 +240,12 @@ public class SwerveDrive extends SubsystemBase {
                     gyroInputs.isConnected ? 
                         gyroInputs.rates :
                         null,
+                    gyroInputs.isConnected ? 
+                        gyroInputs.fieldRelativeAccelerationMetersPerSecSec :
+                        null, 
                     odometryTimestamp
-                    ));
+                )
+            );
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {

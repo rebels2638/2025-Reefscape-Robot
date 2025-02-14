@@ -103,7 +103,7 @@ public class GyroIOPigeon2 implements GyroIO {
             yawVelocitySignal.getValue().in(RadiansPerSecond)
         );
 
-        inputs.worldAccelerationMetersPerSecSec = new Translation2d(
+        inputs.fieldRelativeAccelerationMetersPerSecSec = new Translation2d(
             accelerationXSignal.getValue().in(MetersPerSecondPerSecond), 
             accelerationYSignal.getValue().in(MetersPerSecondPerSecond)
         );

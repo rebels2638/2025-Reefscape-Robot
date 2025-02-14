@@ -23,4 +23,19 @@ public class RobotStateConfigSim extends RobotStateConfigBase {
     public double getOdomTranslationDevBase() {
         return 0;
     }
+
+    @Override
+    public double getMaxElevatorExtensionVelocity() {
+        return 1;
+    }
+    
+    @Override
+    public double getMaxElevatorExtensionAcceleration() {
+        return 1;
+    }
+
+    @Override
+    public double getMinElevatorExtensionAcceleration() {
+        return 1;
+    }
 }
