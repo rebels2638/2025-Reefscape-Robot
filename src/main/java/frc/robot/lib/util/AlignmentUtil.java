@@ -1,6 +1,7 @@
-package frc.robot.commands.autoAlignment;
+package frc.robot.lib.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.RobotState;
 import frc.robot.constants.Constants;
+import frc.robot.constants.MechAElementConstants;
 import frc.robot.constants.Constants.AlignmentConstants;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
@@ -73,6 +75,12 @@ public class AlignmentUtil {
           new Rotation2d(0)
         )
       );
+  }
+
+  public static Pose2d getClosestValidSource() { // fix this lol
+    return DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 
+      RobotState.getInstance().getEstimatedPose().nearest(Arrays.asList(MechAElementConstants.CoralStation.leftCenterFace)) :
+      RobotState.getInstance().getEstimatedPose().nearest(Arrays.asList(FlippingUtil.flipFieldPose(MechAElementConstants.CoralStation.leftCenterFace)));
   }
 
   public static int getClosestFace(Pose2d curr, List<Pose2d> candidates) {

@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
-import frc.robot.commands.autoAlignment.AlignmentUtil;
 import frc.robot.commands.autoAlignment.LinearDriveToPose;
 import frc.robot.constants.Constants.AlignmentConstants;
+import frc.robot.lib.util.AlignmentUtil;
 public class AlignToLeftBranch extends ConditionalCommand{
     public AlignToLeftBranch() {
         super(
