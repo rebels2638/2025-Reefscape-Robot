@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
-import frc.robot.commands.DoSomething;
 import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.claw.Claw;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;

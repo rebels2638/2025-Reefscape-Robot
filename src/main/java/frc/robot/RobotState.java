@@ -24,6 +24,7 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
+import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -261,5 +262,10 @@ public class RobotState {
 
   public Pose2d getPredictedPose(double timestamp) {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
+  }
+
+  public boolean getIsElevatorExtendable() {
+    return Math.hypot(robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond) < 1 && 
+      ;
   }
 }

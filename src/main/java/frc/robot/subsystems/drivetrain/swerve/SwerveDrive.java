@@ -34,8 +34,6 @@ import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleSpecificFLConfi
 import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleSpecificFRConfigComp;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleGeneralConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConfigProto;
-import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBRConfigProto;
-import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFLConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
