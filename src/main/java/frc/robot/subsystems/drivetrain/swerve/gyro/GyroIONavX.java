@@ -36,7 +36,7 @@ public class GyroIONavX implements GyroIO {
                 Math.toRadians(-gyro.getRate())
             );
 
-            inputs.worldAccelerationMetersPerSecSec = new Translation2d(
+            inputs.fieldRelativeAccelerationMetersPerSecSec = new Translation2d(
                 gyro.getWorldLinearAccelX(),
                 gyro.getWorldLinearAccelY()
             );

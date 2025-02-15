@@ -112,11 +112,11 @@ public class Vision extends SubsystemBase {
             // update LL helper BEFORE we use it in the io
             LimelightHelpers.SetRobotOrientation( 
                 config.getNames()[i],
-                robotState.getEstimatedPose().getRotation().getDegrees(),
-                robotState.getGyroRates().getMeasureY().in(Degrees),
-
                 robotState.getGyroOrientation().getMeasureZ().in(Degrees),
                 robotState.getGyroRates().getMeasureZ().in(Degrees),
+
+                robotState.getGyroOrientation().getMeasureY().in(Degrees),
+                robotState.getGyroRates().getMeasureY().in(Degrees),
 
                 robotState.getGyroOrientation().getMeasureX().in(Degrees),
                 robotState.getGyroRates().getMeasureX().in(Degrees)

@@ -59,17 +59,17 @@ public class SwerveModuleGeneralConfigSim extends SwerveModuleGeneralConfigBase 
 
     @Override
     public double getDriveKV() {
-        return 0.0013;
+        return 0;
     }
 
     @Override
     public double getDriveKA() {
-        return 0.0;
+        return 0;
     }
 
     @Override
     public double getDriveKP() {
-        return 1.9;
+        return 2;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SwerveModuleGeneralConfigSim extends SwerveModuleGeneralConfigBase 
 
     @Override
     public double getDriveKD() {
-        return 0.0;
+        return 0.03;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class SwerveModuleGeneralConfigSim extends SwerveModuleGeneralConfigBase 
 
     @Override
     public double getDriveMaxVelocityMetersPerSec() {
-        return 4;
+        return 4.5;
     }
 
     @Override

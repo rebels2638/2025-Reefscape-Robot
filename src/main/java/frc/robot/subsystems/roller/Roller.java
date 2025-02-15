@@ -51,7 +51,7 @@ public class Roller extends SubsystemBase {
 
             case SIM:
                 config = RollerConfigSim.getInstance();
-                // rollerIO = new RollerIOSim(config);
+                rollerIO = new RollerIOSim();
 
                 break;
 

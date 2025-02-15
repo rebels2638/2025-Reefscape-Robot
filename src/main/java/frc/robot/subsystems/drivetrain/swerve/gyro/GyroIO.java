@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public interface GyroIO {
     @AutoLog
@@ -12,7 +13,7 @@ public interface GyroIO {
         public boolean isConnected = false;
         public Rotation3d orientation = new Rotation3d();
         public Rotation3d rates = new Rotation3d();
-        public Translation2d worldAccelerationMetersPerSecSec = new Translation2d();
+        public Translation2d fieldRelativeAccelerationMetersPerSecSec = new Translation2d();
     }
 
     public default void updateInputs(GyroIOInputs inputs) {}

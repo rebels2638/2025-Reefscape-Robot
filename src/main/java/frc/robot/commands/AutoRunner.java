@@ -92,13 +92,7 @@ public class AutoRunner {
                 (speeds, feedforwards) -> SwerveDrive.getInstance().driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 driveController,
                 drivetrainConfig.getRobotConfig(),
-                () -> {
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return true;
-                },
+                Constants::shouldFlipPath,
                 SwerveDrive.getInstance() // Reference to this subsystem to set requirements
         ); 
     }
@@ -110,20 +104,22 @@ public class AutoRunner {
 
         
     public Command getAutonomousCommand() {
-        try {
-            // Load the path you want to follow using its name in the GUI
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("test");
+    //     try {
+    //         // Load the path you want to follow using its name in the GUI
+    //         PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("test");
 
-            // Create a path following command using AutoBuilder. This will also trigger event markers.
-            return new SequentialCommandGroup(
-                new InstantCommand(() -> RobotState.getInstance().resetPose(path.getStartingHolonomicPose().get())),
-                AutoBuilder.followPath(path)
-            );
+    //         // Create a path following command using AutoBuilder. This will also trigger event markers.
+    //         return new SequentialCommandGroup(
+    //             new InstantCommand(() -> RobotState.getInstance().resetPose(path.getStartingHolonomicPose().get())),
+    //             AutoBuilder.followPath(path)
+    //         );
 
-        } catch (Exception e) {
-            DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
-            return Commands.none();
-        }
+    //     } catch (Exception e) {
+    //         DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
+    //         return Commands.none();
+    //     }
   
+        return Autos.test;
     }
+
 } 

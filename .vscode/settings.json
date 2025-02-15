@@ -62,6 +62,7 @@
     "acel",
     "Algay",
     "Brushless",
+    "choreo",
     "DEADBAND",
     "decel",
     "dtheta",
@@ -69,6 +70,8 @@
     "feedforwards",
     "Holonomic",
     "Interpolatable",
-    "pathplanner"
+    "pathplanner",
+    "teleop",
+    "Telop"
 ]
 }
