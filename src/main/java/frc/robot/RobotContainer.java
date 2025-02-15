@@ -27,6 +27,7 @@ import frc.robot.commands.autoAlignment.reef.AlignToLeftBranch;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranch;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
+import frc.robot.commands.claw.simple.RunClawEject;
 import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.commands.elevator.simple.MoveElevatorL1;
 import frc.robot.commands.elevator.simple.MoveElevatorL2;
@@ -54,8 +55,8 @@ public class RobotContainer {
     private final Vision vision;
     private final RobotState robotState;
 
-    // private final Pivot pivot;
-    // private final Claw claw;
+    private final Pivot pivot;
+    private final Claw claw;
 
     private final Elevator elevator;
     private final Roller roller;
@@ -74,8 +75,8 @@ public class RobotContainer {
         swerveDrive = SwerveDrive.getInstance();
         vision = Vision.getInstance();
         robotState = RobotState.getInstance();
-        // pivot = Pivot.getInstance();
-        // claw = Claw.getInstance();
+        pivot = Pivot.getInstance();
+        claw = Claw.getInstance();
 
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
@@ -85,34 +86,27 @@ public class RobotContainer {
         autoRunner = AutoRunner.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
+        pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
         xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
         xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
         xboxDriver.getYButton().whileTrue(new AlignToAlgay());
+        xboxDriver.getAButton().whileTrue(new RunClawEject());
 
         // xboxDriver.getYButton().onTrue(new IntakeCoral());
 
         // xboxOperator.getLeftBumper().onTrue(new IntakeCoral());
-        xboxOperator.getRightBumper().onTrue(new EjectCoral());
+        // xboxOperator.getRightBumper().onTrue(new EjectCoral());
         // xboxOperator.getLeftBumper().onTrue(new RunRollerIntake());
         // xboxOperator.getRightBumper().onTrue(new StopRoller());
 
-        // xboxOperator.getLeftBumper().onTrue(new RunClawIntake(claw));
-        // xboxOperator.getRightBumper().onTrue(new StopClaw(claw));
+        xboxOperator.getLeftBumper().onTrue(new RunClawIntake());
+        xboxOperator.getRightBumper().onTrue(new StopClaw());
 
         // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
         xboxOperator.getAButton().onTrue(new MoveElevatorStow());
         xboxOperator.getBButton().onTrue(new MoveElevatorL2());
-        // xboxOperator.getYButton().onTrue(new SequentialCommandGroup(
-        // new IntakeCoral(),
-        // new LinearDriveToPose(
-        // () -> AlignmentUtil.getClosestLeftBranchPose(),
-        // () -> new ChassisSpeeds()),
-        // new MoveElevatorL3(),
-        // new EjectCoral(),
-        // new MoveElevatorStow()
-        // ));
         xboxOperator.getYButton().onTrue(new MoveElevatorL3());
         xboxOperator.getXButton().onTrue(new MoveElevatorL4());
 

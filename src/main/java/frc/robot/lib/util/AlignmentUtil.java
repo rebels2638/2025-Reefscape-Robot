@@ -1,6 +1,7 @@
 package frc.robot.lib.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
@@ -324,6 +325,11 @@ public class AlignmentUtil {
 
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
+    }
+
+    public static Pose2d decideScoringTarget() {
+        Pose2d curr = RobotState.getInstance().getEstimatedPose();
+        return curr.nearest(Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(), AlignmentUtil.getClosestRightBranchPose()));
     }
 
     public static Pose2d getClosestSourcePose() { 

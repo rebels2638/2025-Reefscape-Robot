@@ -24,7 +24,7 @@ public class RunPivotRaw extends Command {
     @Override 
     public void execute() {
         double userIn = MathUtil.applyDeadband(-controller.getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND);
-        double torque = userIn * 25;
+        double torque = userIn * 30;
 
         this.pivot.setTorqueCurrentFOC(torque);
 

@@ -276,12 +276,13 @@ public class RobotState {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
   }
 
-  public boolean isElevatorExtendable() {
+  public boolean getIsElevatorExtendable() {
     return 
         // ensure that robot is below a velocity threshold
         Math.hypot(getFieldRelativeSpeeds().vxMetersPerSecond, getFieldRelativeSpeeds().vyMetersPerSecond) < 1 &&
         // ensure that the robot is not decelerating / accelerating too quickly
         Math.hypot(lastFieldRelativeAccelerations.getX(), lastFieldRelativeAccelerations.getY()) < 1 &&
+        getFieldRelativeSpeeds().omegaRadiansPerSecond < 1.0 &&
         // ensure that we are decelerating in each axis of movement
         Math.signum(lastFieldRelativeAccelerations.getX()) != Math.signum(getFieldRelativeSpeeds().vxMetersPerSecond) &&
         Math.signum(lastFieldRelativeAccelerations.getY()) != Math.signum(getFieldRelativeSpeeds().vyMetersPerSecond); 

@@ -18,8 +18,8 @@ import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
-public class ScoreL1 extends ConditionalCommand { // Ideal structure
-    public ScoreL1() {
+public class ScoreL4 extends ConditionalCommand { // Ideal structure
+    public ScoreL4() {
         super (
             new ParallelCommandGroup(
                 new AlignToClosestSource(),
