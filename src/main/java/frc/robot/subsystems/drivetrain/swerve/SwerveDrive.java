@@ -294,13 +294,16 @@ public class SwerveDrive extends SubsystemBase {
         
         double dt = Timer.getTimestamp() - previousSetpointCallTime; 
         Logger.recordOutput("SwerveDrive/dt", dt);
+        // double accelTranslational = Math.hypot(previousSetpoint.robotRelativeSpeeds().vxMetersPerSecond, previousSetpoint.robotRelativeSpeeds().vyMetersPerSecond);
+        // double accelRotational = previousSetpoint.robotRelativeSpeeds().omegaRadiansPerSecond;
         previousSetpoint = swerveSetpointGenerator.generateSetpoint(
             previousSetpoint,
             desiredSpeeds,
             dt // between calls of generate setpoint
         );
+        // accelTranslational = (Math.hypot(previousSetpoint.robotRelativeSpeeds().vxMetersPerSecond, previousSetpoint.robotRelativeSpeeds().vyMetersPerSecond) - accelTranslational)/dt;
+        // accelRotational = (previousSetpoint.robotRelativeSpeeds().omegaRadiansPerSecond - accelRotational)/dt;
         previousSetpointCallTime = Timer.getTimestamp();
-        Logger.recordOutput("SwerveDrive/SetpointDT", previousSetpointCallTime);
         Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
 
         SwerveModuleState[] optimizedSetpoints = previousSetpoint.moduleStates();
