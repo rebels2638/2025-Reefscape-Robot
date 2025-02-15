@@ -264,8 +264,7 @@ public class RobotState {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
   }
 
-  public boolean getIsElevatorExtendable() {
-    return Math.hypot(robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond) < 1 && 
-      ;
+  public boolean getIsElevatorExtendable() { // needs a target distance check, not fully completed but need something stable
+    return Math.hypot(robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond) < 1;
   }
 }
