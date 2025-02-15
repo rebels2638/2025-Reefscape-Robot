@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
@@ -36,6 +37,7 @@ import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleGeneralConfigP
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
+import frc.robot.lib.util.Elastic;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIONavX;
@@ -99,8 +101,16 @@ public class SwerveDrive extends SubsystemBase {
     private final SwerveDrivetrainConfigBase drivetrainConfig;
     private final SwerveControllerConfigBase controllerConfig; 
 
+    private final Elastic.Notification disconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Error Notification", "Gyro Disconnected, Odometry may not be functioning");
+
     @SuppressWarnings("static-access")
     private SwerveDrive() {
+        if (!gyroInputs.isConnected) {
+            Elastic.sendNotification(disconnectAlert.withDisplayMilliseconds(5000));
+            DriverStation.reportError("Gyro disconnected", true);
+        }
+
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();

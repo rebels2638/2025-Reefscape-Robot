@@ -8,6 +8,8 @@ import frc.robot.constants.roller.RollerConfigBase;
 import frc.robot.constants.roller.RollerConfigComp;
 import frc.robot.constants.roller.RollerConfigProto;
 import frc.robot.constants.roller.RollerConfigSim;
+import frc.robot.lib.util.Elastic;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Roller extends SubsystemBase {
     private static Roller instance = null;
@@ -22,9 +24,17 @@ public class Roller extends SubsystemBase {
     private RollerIO rollerIO;
     private RollerIOInputsAutoLogged rollerIOInputs = new RollerIOInputsAutoLogged();
 
+    private final Elastic.Notification disconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Error Notification", "CANRange Disconnected, Roller may not be functioning");
+
     private final RollerConfigBase config;
 
     private Roller() {
+        if (!isConnected()) {
+            Elastic.sendNotification(disconnectAlert.withDisplayMilliseconds(5000));
+            DriverStation.reportError("Roller CANRange Disconnected", true);
+        }
+
         // IO
         switch (Constants.currentMode) {
             case COMP:
@@ -75,5 +85,9 @@ public class Roller extends SubsystemBase {
 
     public boolean inRoller() {
         return rollerIOInputs.inRoller;
+    }
+
+    public boolean isConnected() {
+        return rollerIOInputs.isConnected;
     }
 }
