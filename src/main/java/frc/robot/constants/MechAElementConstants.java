@@ -62,45 +62,45 @@ public class MechAElementConstants {
     public static final double faceToZoneLine =
         Units.inchesToMeters(12); // Side of the reef to the inside of the reef zone line
 
-    public static final Pose2d[] centerFaces =
+    public static final Pose2d[] reefCenterFaces =
         new Pose2d[6]; // Starting facing the driver station in clockwise order
     public static final List<Map<ReefHeight, Pose3d>> branchPositions =
         new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
 
     static {
       // Initialize faces
-      centerFaces[0] =
+      reefCenterFaces[0] =
         //bottom
           new Pose2d(
             Units.inchesToMeters(122.44), 
             Units.inchesToMeters(159.1),
             Rotation2d.fromDegrees(0));
         //top right
-      centerFaces[1] =
+      reefCenterFaces[1] =
           new Pose2d(
             Units.inchesToMeters(203.54), 
             Units.inchesToMeters(113.39),
             Rotation2d.fromDegrees(120));
         //bottom right
-      centerFaces[2] =
+      reefCenterFaces[2] =
           new Pose2d(
             Units.inchesToMeters(150.79),
             Units.inchesToMeters(113.39),
             Rotation2d.fromDegrees(60));
         //top
-      centerFaces[3] =
+      reefCenterFaces[3] =
           new Pose2d(
             Units.inchesToMeters(230.32), 
             Units.inchesToMeters(159.1),
             Rotation2d.fromDegrees(180));
         //bottom left
-      centerFaces[4] =
+      reefCenterFaces[4] =
           new Pose2d(
             Units.inchesToMeters(150.79), 
             Units.inchesToMeters(204.72),
             Rotation2d.fromDegrees(-60));
         //top left
-      centerFaces[5] =
+      reefCenterFaces[5] =
           new Pose2d(
             Units.inchesToMeters(203.94), 
             Units.inchesToMeters(208.66),

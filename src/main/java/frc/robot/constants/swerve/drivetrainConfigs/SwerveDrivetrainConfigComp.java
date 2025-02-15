@@ -7,7 +7,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import frc.robot.constants.swerve.moduleConfigs.comp.SwerveModuleGeneralConfigComp;
+import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
 
 public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
@@ -20,92 +20,94 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     }
 
     private SwerveDrivetrainConfigComp() {}
-
-    private final double maxTranslationalVelocity = 4.0;
-    private final double maxTranslationalAcceleration = 1.5;
-    private final double maxAngularVelocity = 3.7;
-    private final double maxAngularAcceleration = 12.0;
-    private final double maxAutoModuleVelocity = 5.0;
-
-    private final Translation2d frontLeftPosition = new Translation2d(0.23, 0.23);
-    private final Translation2d frontRightPosition = new Translation2d(0.23, -0.23);
-    private final Translation2d backLeftPosition = new Translation2d(-0.23, 0.23);
-    private final Translation2d backRightPosition = new Translation2d(-0.23, -0.23);
-
-    private final double rotationCompensationCoefficient = 0.0;
-
-    private final RobotConfig autoConfig = new RobotConfig(
-            37.88,
-            13.5,
-            new ModuleConfig(
-                SwerveModuleGeneralConfigComp.getInstance().getDriveWheelRadiusMeters(), 
-                4.5, 
-                1.2, 
-                DCMotor.getKrakenX60Foc(1).
-                    withReduction(
-                        SwerveModuleGeneralConfigComp.getInstance().getDriveMotorToOutputShaftRatio()
-                    ),
-                SwerveModuleGeneralConfigComp.getInstance().getDriveStatorCurrentLimit(), 
-                1
-            ),
-            frontLeftPosition, 
-            frontRightPosition, 
-            backLeftPosition, 
-            backRightPosition
-        );
-
-    private final PIDConstants steerPIDConstants = new PIDConstants(1,0,0,0);
-    private final PIDConstants drivePIDConstants = new PIDConstants(4,0,0,0);
-
+    
     @Override
-    public double getMaxDrivetrainTranslationalVelocityMetersPerSec() {
-        return maxTranslationalVelocity;
+    public double getMaxTranslationalVelocityMetersPerSec() {
+        return 4.5;
     }
 
     @Override
-    public double getMaxDrivetrainTranslationalAccelerationMetersPerSecSec() {
-        return maxTranslationalAcceleration;
+    public double getMaxTranslationalAccelerationMetersPerSecSec() {
+        return 7;
     }
 
     @Override
-    public double getMaxDrivetrainAngularVelocityRadiansPerSec() {
-        return maxAngularVelocity;
+    public double getMaxAngularVelocityRadiansPerSec() {
+        return 3.7;
     }
 
     @Override
-    public double getMaxDrivetrainAngularAccelerationRadiansPerSecSec() {
-        return maxAngularAcceleration;
+    public double getMaxAngularAccelerationRadiansPerSecSec() {
+        return 12.0;
+    }
+
+    @Override
+    public double getMaxModuleVelocity() {
+        return 4.5;
     }
 
     @Override
     public Translation2d getFrontLeftPositionMeters() {
-        return frontLeftPosition;
+        return new Translation2d(0.23, 0.23);
     }
 
     @Override
     public Translation2d getFrontRightPositionMeters() {
-        return frontRightPosition;
+        return new Translation2d(0.23, -0.23);
     }
 
     @Override
     public Translation2d getBackLeftPositionMeters() {
-        return backLeftPosition;
+        return new Translation2d(-0.23, 0.23);
     }
 
     @Override
     public Translation2d getBackRightPositionMeters() {
-        return backRightPosition;
+        return new Translation2d(-0.23, -0.23);
+    }
+
+    @Override
+    public RobotConfig getRobotConfig() {
+        return new RobotConfig(
+            37.88,
+            13.5,
+            new ModuleConfig(
+                SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
+                5.4, 
+                1.2, 
+                DCMotor.getKrakenX60(1).
+                    withReduction(
+                        SwerveModuleGeneralConfigSim.getInstance().getDriveMotorToOutputShaftRatio()
+                    ),
+                SwerveModuleGeneralConfigSim.getInstance().getDriveStatorCurrentLimit(), 
+                1
+            ),
+            getFrontLeftPositionMeters(), 
+            getFrontRightPositionMeters(), 
+            getBackLeftPositionMeters(), 
+            getBackRightPositionMeters()
+        );
+    }
+
+    @Override
+    public PIDConstants getPathplannerDrivePIDConfig() {
+        return new PIDConstants(5,0.04,0.2 ,1);
+    }
+
+    @Override
+    public PIDConstants getPathplannerSteerPIDConfig() {
+        return new PIDConstants(3,0,0,0);
     }
 
     @Override
     public double getRotationCompensationCoefficient() {
-        return rotationCompensationCoefficient;
+        return 0.0;
     }
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
         PIDController p = new PIDController(3, 0, 0.01);
-        p.setTolerance(Math.sqrt(getAutoAlignTranslationTolerance()));
+        p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
     }
@@ -113,7 +115,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
         PIDController p = new PIDController(.5, 0, 0);
-        p.setTolerance(getAutoAlignRotationTolerance());
+        p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
         return p;
@@ -138,27 +140,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     public double getAutoAlignRotationVeloTolerance() {
         return Math.toRadians(3);
     }
-
-    @Override
-    public RobotConfig getRobotConfig() {
-        return autoConfig;
-    }
-
-    @Override
-    public PIDConstants getPathplannerSteerPIDConfig() {
-        return steerPIDConstants;
-    }
-
-    @Override
-    public PIDConstants getPathplannerDrivePIDConfig() {
-        return drivePIDConstants;
-    }
-
-    @Override
-    public double getMaxAutoModuleVelocity() {
-        return maxAutoModuleVelocity;
-    }
-
+    
     @Override
     public double getBumperLengthMeters() {
         return 0.774;
@@ -166,7 +148,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getBranchOffsetFromRobotCenter() {
-        return new Translation2d(0,-0.00); // increasing the y value will move the robot to the left of the branch
+        return new Translation2d(0,0.0); // increasing the y value will move the robot to the left of the branch
     }
 
     @Override

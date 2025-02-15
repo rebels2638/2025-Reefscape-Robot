@@ -81,8 +81,8 @@ public class LinearDriveToPose extends Command {
 
         this.translationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
-                drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec(),
-                drivetrainConfig.getMaxDrivetrainTranslationalAccelerationMetersPerSecSec()
+                drivetrainConfig.getMaxTranslationalVelocityMetersPerSec(),
+                drivetrainConfig.getMaxTranslationalAccelerationMetersPerSecSec()
             )
         );
 
@@ -90,8 +90,8 @@ public class LinearDriveToPose extends Command {
 
         this.rotationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
-                drivetrainConfig.getMaxDrivetrainAngularVelocityRadiansPerSec(),
-                drivetrainConfig.getMaxDrivetrainAngularAccelerationRadiansPerSecSec()
+                drivetrainConfig.getMaxAngularVelocityRadiansPerSec(),
+                drivetrainConfig.getMaxAngularAccelerationRadiansPerSecSec()
             )
         );
 

@@ -61,18 +61,7 @@ public class AbsoluteFieldDrive extends Command {
     // Called when the command is initialized.
     @Override
     public void initialize() {
-        boolean isRed = false;
-        var alliance = DriverStation.getAlliance(); // Get the current alliance.
-
-        // Check if the alliance is Red and set invert accordingly.
-        if (alliance.isPresent()) {
-            isRed = alliance.get() == DriverStation.Alliance.Red;
-        }
-
-        // Invert drive direction if the robot is on the Red alliance.
-        if (isRed) {
-            invert = -1;
-        }
+        invert = Constants.shouldFlipPath() ? -1 : 1;
     }
 
     // Called repeatedly while the command is scheduled.
@@ -80,9 +69,9 @@ public class AbsoluteFieldDrive extends Command {
     public void execute() {
         // Calculate speeds based on input and max speed constants.
         ChassisSpeeds speeds = new ChassisSpeeds(
-            vX.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec() * invert,
-            vY.getAsDouble() * drivetrainConfig.getMaxDrivetrainTranslationalVelocityMetersPerSec() * invert,
-            heading.getAsDouble() * drivetrainConfig.getMaxDrivetrainAngularVelocityRadiansPerSec()
+            vX.getAsDouble() * drivetrainConfig.getMaxTranslationalVelocityMetersPerSec() * invert,
+            vY.getAsDouble() * drivetrainConfig.getMaxTranslationalVelocityMetersPerSec() * invert,
+            heading.getAsDouble() * drivetrainConfig.getMaxAngularVelocityRadiansPerSec()
         );
 
         swerve.driveFieldRelative(speeds); // Drive the robot using the calculated speeds.

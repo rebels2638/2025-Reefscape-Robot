@@ -8,15 +8,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public abstract class SwerveDrivetrainConfigBase {
 
-    public abstract double getMaxDrivetrainTranslationalVelocityMetersPerSec();
+    public abstract double getMaxTranslationalVelocityMetersPerSec();
 
-    public abstract double getMaxDrivetrainTranslationalAccelerationMetersPerSecSec();
+    public abstract double getMaxTranslationalAccelerationMetersPerSecSec();
 
-    public abstract double getMaxDrivetrainAngularVelocityRadiansPerSec();
+    public abstract double getMaxAngularVelocityRadiansPerSec();
 
-    public abstract double getMaxDrivetrainAngularAccelerationRadiansPerSecSec();
+    public abstract double getMaxAngularAccelerationRadiansPerSecSec();
 
-    public abstract double getMaxAutoModuleVelocity();
+    public abstract double getMaxModuleVelocity();
 
     public abstract Translation2d getFrontLeftPositionMeters();
 
@@ -26,17 +26,17 @@ public abstract class SwerveDrivetrainConfigBase {
 
     public abstract Translation2d getBackRightPositionMeters();
 
-    public abstract double getRotationCompensationCoefficient();
-
-    public abstract PIDController getAutoAlignProfiledTranslationController();
-    public abstract PIDController getAutoAlignProfiledRotationController();
-
-
     public abstract RobotConfig getRobotConfig();
 
     public abstract PIDConstants getPathplannerSteerPIDConfig();
 
     public abstract PIDConstants getPathplannerDrivePIDConfig();
+
+    public abstract double getRotationCompensationCoefficient();
+
+    public abstract PIDController getAutoAlignProfiledTranslationController();
+    public abstract PIDController getAutoAlignProfiledRotationController();
+
     public abstract double getAutoAlignTranslationTolerance();
     public abstract double getAutoAlignTranslationVeloTolerance();
 
