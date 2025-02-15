@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain.swerve.module;
 
+import java.io.Console;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.hal.HALUtil;
@@ -16,6 +18,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleGeneralConfigBase;
 import frc.robot.lib.util.RebelUtil;
 
@@ -118,6 +121,7 @@ public class ModuleIOSim implements ModuleIO {
     @Override
     public void updateInputs(ModuleIOInputs inputs) {
         double dt = Timer.getTimestamp() - prevTimeInputs;
+        prevTimeInputs = Timer.getTimestamp();
 
         steerSim.update(dt);
         driveSim.update(dt);
@@ -158,13 +162,13 @@ public class ModuleIOSim implements ModuleIO {
         Logger.recordOutput("SwerveDrive/module" + moduleID + "/currentSteerStateRad",
                 inputs.steerPosition.getRadians());
 
-        prevTimeInputs = Timer.getTimestamp();
     }
 
     @Override
     public void setState(SwerveModuleState state) {
-        // double dt = Timer.getTimestamp() - prevTimeState;
-        double dt = 0.02;
+        double dt = Timer.getTimestamp() - prevTimeState;
+        prevTimeState = Timer.getTimestamp();
+
         // a setpoint is the individual setpoint for the motor calculated by the profile
         // while the goal is the end state
         double driveSetpointMetersPerSec = RebelUtil.constrain(
@@ -235,8 +239,6 @@ public class ModuleIOSim implements ModuleIO {
 
         driveSim.setInputVoltage(driveInputVoltage);
         steerSim.setInputVoltage(steerInputVoltage);
-
-        prevTimeState = Timer.getTimestamp();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class GyroIONavX implements GyroIO {
                 gyro.getWorldLinearAccelX(),
                 gyro.getWorldLinearAccelY()
             );
-        }
+        } 
     }
 
     @Override 

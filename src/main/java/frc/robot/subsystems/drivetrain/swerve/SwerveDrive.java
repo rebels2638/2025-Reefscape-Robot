@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
@@ -36,6 +37,7 @@ import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleGeneralConfigP
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
+import frc.robot.lib.util.Elastic;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIONavX;
@@ -94,13 +96,24 @@ public class SwerveDrive extends SubsystemBase {
         DriveFeedforwards.zeros(4)
     );
 
-    double previousSetpointCallTime = Timer.getTimestamp();
+    private ChassisSpeeds desiredRobotRelativeSpeeds = new ChassisSpeeds();
+
+    double prevLoopTime = Timer.getTimestamp();
 
     private final SwerveModuleGeneralConfigBase moduleGeneralConfig;
     private final SwerveDrivetrainConfigBase drivetrainConfig;
     private final SwerveControllerConfigBase controllerConfig; 
 
+    private final Elastic.Notification disconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Error Notification", "Gyro Disconnected, Odometry may not be functioning");
+
+    @SuppressWarnings("static-access")
     private SwerveDrive() {
+        if (!gyroInputs.isConnected) {
+            Elastic.sendNotification(disconnectAlert.withDisplayMilliseconds(5000));
+            DriverStation.reportError("Gyro disconnected", true);
+        }
+
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
@@ -197,6 +210,9 @@ public class SwerveDrive extends SubsystemBase {
 
     @Override
     public void periodic() {
+        double dt = Timer.getTimestamp() - prevLoopTime; 
+        prevLoopTime = Timer.getTimestamp();
+
         double odometryTimestamp = 0.0;
         // Thread safe reading of the gyro and swerve inputs.
         // The read lock is released only after inputs are written via the write lock
@@ -245,6 +261,51 @@ public class SwerveDrive extends SubsystemBase {
                     odometryTimestamp
                 )
             );
+        
+
+        // TODO: WANT TO UPDATE MODULES IN PERIODIC IN ORDER TO TO ENSURE THAT COMMANDS DO NOT DOUBLE SCHEDULE SWERVE (EDGE CASE)
+        if (isTranslationSlowdownEnabled) {
+            desiredRobotRelativeSpeeds.vxMetersPerSecond *= this.translationCoefficient;
+            desiredRobotRelativeSpeeds.vyMetersPerSecond *= this.translationCoefficient;
+        }
+
+        if (isRotationSlowdownEnabled) {
+            desiredRobotRelativeSpeeds.omegaRadiansPerSecond *= this.rotationCoefficient;
+        }
+
+        desiredRobotRelativeSpeeds = compensateRobotRelativeSpeeds(desiredRobotRelativeSpeeds);
+        Logger.recordOutput("SwerveDrive/compensatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
+
+        if (isRotationLockEnabled) { // get the curr rot from robot state and the argument from here
+            double rotationalVelocity = MathUtil.clamp(
+                rotationalVelocityFeedbackController.calculate(
+                    RobotState.getInstance().getEstimatedPose().getRotation().getRadians(),
+                    this.rotationLock.getRadians()), 
+                -controllerConfig.getRotationalPositionMaxOutputRadSec(), 
+                controllerConfig.getRotationalPositionMaxOutputRadSec());
+
+            desiredRobotRelativeSpeeds.omegaRadiansPerSecond = rotationalVelocity;
+        }
+
+        Logger.recordOutput("SwerveDrive/lockedRotationLock", desiredRobotRelativeSpeeds);
+        
+        Logger.recordOutput("SwerveDrive/dt", dt);
+        
+        previousSetpoint = swerveSetpointGenerator.generateSetpoint(
+            previousSetpoint,
+            desiredRobotRelativeSpeeds,
+            dt // between calls of generate setpoint
+        );
+        
+        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
+
+        SwerveModuleState[] optimizedSetpoints = previousSetpoint.moduleStates();
+        for (int i = 0; i < 4; i++) {
+            optimizedSetpoints[i].optimize(moduleStates[i].angle);
+            modules[i].setState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
+        }
+
+        Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
@@ -264,55 +325,10 @@ public class SwerveDrive extends SubsystemBase {
         return speeds;
     }
     
-    public void driveRobotRelative(ChassisSpeeds desiredSpeeds) {
-        Logger.recordOutput("SwerveDrive/desiredSpeeds", desiredSpeeds);
+    public void driveRobotRelative(ChassisSpeeds speeds) {
+        Logger.recordOutput("SwerveDrive/desiredRobotRelativeSpeeds", speeds);
 
-        if (isTranslationSlowdownEnabled) {
-            desiredSpeeds.vxMetersPerSecond *= this.translationCoefficient;
-            desiredSpeeds.vyMetersPerSecond *= this.translationCoefficient;
-        }
-
-        if (isRotationSlowdownEnabled) {
-            desiredSpeeds.omegaRadiansPerSecond *= this.rotationCoefficient;
-        }
-
-        desiredSpeeds = compensateRobotRelativeSpeeds(desiredSpeeds);
-        Logger.recordOutput("SwerveDrive/compensatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
-
-        if (isRotationLockEnabled) { // get the curr rot from robotstate and the argument from here
-            double rotationalVelocity = MathUtil.clamp(
-                rotationalVelocityFeedbackController.calculate(
-                    RobotState.getInstance().getEstimatedPose().getRotation().getRadians(),
-                    this.rotationLock.getRadians()), 
-                -controllerConfig.getRotationalPositionMaxOutputRadSec(), 
-                controllerConfig.getRotationalPositionMaxOutputRadSec());
-
-            desiredSpeeds.omegaRadiansPerSecond = rotationalVelocity;
-        }
-
-        Logger.recordOutput("SwerveDrive/lockedRotationLock", desiredSpeeds);
-        
-        double dt = Timer.getTimestamp() - previousSetpointCallTime; 
-        Logger.recordOutput("SwerveDrive/dt", dt);
-        // double accelTranslational = Math.hypot(previousSetpoint.robotRelativeSpeeds().vxMetersPerSecond, previousSetpoint.robotRelativeSpeeds().vyMetersPerSecond);
-        // double accelRotational = previousSetpoint.robotRelativeSpeeds().omegaRadiansPerSecond;
-        previousSetpoint = swerveSetpointGenerator.generateSetpoint(
-            previousSetpoint,
-            desiredSpeeds,
-            dt // between calls of generate setpoint
-        );
-        // accelTranslational = (Math.hypot(previousSetpoint.robotRelativeSpeeds().vxMetersPerSecond, previousSetpoint.robotRelativeSpeeds().vyMetersPerSecond) - accelTranslational)/dt;
-        // accelRotational = (previousSetpoint.robotRelativeSpeeds().omegaRadiansPerSecond - accelRotational)/dt;
-        previousSetpointCallTime = Timer.getTimestamp();
-        Logger.recordOutput("SwerveDrive/generatedRobotRelativeSpeeds", previousSetpoint.robotRelativeSpeeds());
-
-        SwerveModuleState[] optimizedSetpoints = previousSetpoint.moduleStates();
-        for (int i = 0; i < 4; i++) {
-            optimizedSetpoints[i].optimize(moduleStates[i].angle);
-            modules[i].setState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
-        }
-
-        Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
+        desiredRobotRelativeSpeeds = speeds;
     }
 
     public void driveFieldRelative(ChassisSpeeds speeds) {
