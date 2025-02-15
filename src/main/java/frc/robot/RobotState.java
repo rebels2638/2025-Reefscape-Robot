@@ -204,14 +204,6 @@ public class RobotState {
       return;
     }
 
-    // TODO: IS THIS NECESSAY?
-    // // Get odometry based pose at timestamp
-    // Optional<Pose2d> sample = poseBuffer.getSample(observation.timestamp());
-    // if (sample.isEmpty()) {
-    //   // exit if not there
-    //   return;
-    // }
-
     Logger.recordOutput("RobotState/vision/stdDevTranslation" ,observation.stdDevs.get(0,0));
     Logger.recordOutput("RobotState/vision/visionPose", observation.visionPose);
 
@@ -262,6 +254,10 @@ public class RobotState {
   public ChassisSpeeds getFieldRelativeSpeeds() { 
     return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, lastGyroOrientation.toRotation2d());
   }
+  @AutoLogOutput(key = "RobotState/fieldRelativeAccelerations")
+  public Translation2d getFieldRelativeAccelerations() {
+    return lastFieldRelativeAccelerations;
+  }
 
   public Pose2d getPredictedPose(double translationLookaheadS, double rotationLookaheadS) {
     return getEstimatedPose()
@@ -279,9 +275,10 @@ public class RobotState {
   public boolean isElevatorExtendable() {
     return 
         // ensure that robot is below a velocity threshold
-        Math.hypot(getFieldRelativeSpeeds().vxMetersPerSecond, getFieldRelativeSpeeds().vyMetersPerSecond) < 1 &&
+        Math.hypot(getFieldRelativeSpeeds().vxMetersPerSecond, getFieldRelativeSpeeds().vyMetersPerSecond) <= robotStateConfig.getMaxElevatorExtensionVelocity() &&
         // ensure that the robot is not decelerating / accelerating too quickly
-        Math.hypot(lastFieldRelativeAccelerations.getX(), lastFieldRelativeAccelerations.getY()) < 1 &&
+        Math.hypot(lastFieldRelativeAccelerations.getX(), lastFieldRelativeAccelerations.getY()) <= robotStateConfig.getMaxElevatorExtensionAcceleration() &&
+        Math.hypot(lastFieldRelativeAccelerations.getX(), lastFieldRelativeAccelerations.getY()) >= robotStateConfig.getMinElevatorExtensionAcceleration() &&
         // ensure that we are decelerating in each axis of movement
         Math.signum(lastFieldRelativeAccelerations.getX()) != Math.signum(getFieldRelativeSpeeds().vxMetersPerSecond) &&
         Math.signum(lastFieldRelativeAccelerations.getY()) != Math.signum(getFieldRelativeSpeeds().vyMetersPerSecond); 
