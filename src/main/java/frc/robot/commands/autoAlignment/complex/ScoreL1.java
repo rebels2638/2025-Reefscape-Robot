@@ -18,17 +18,17 @@ import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
-// public class ScoreL1 extends ConditionalCommand { // Ideal structure
-//     public ScoreL1() {
-//         super (
-//             new ParallelCommandGroup(
-//                 new AlignToClosestSource(),
-//                 new IntakeCoral()
-//             ).andThen(trackToAndDeposit),
-//             trackToAndDeposit,
-//             () -> !Roller.getInstance().inRoller()
-//         );
-//     }
+public class ScoreL1 extends ConditionalCommand { // Ideal structure
+    public ScoreL1() {
+        super (
+            new ParallelCommandGroup(
+                new AlignToClosestSource(),
+                new IntakeCoral()
+            ).andThen(trackToAndDeposit),
+            trackToAndDeposit,
+            () -> !Roller.getInstance().inRoller()
+        );
+    }
 
     private static final SequentialCommandGroup trackToAndDeposit = new SequentialCommandGroup (
         new ParallelCommandGroup(
