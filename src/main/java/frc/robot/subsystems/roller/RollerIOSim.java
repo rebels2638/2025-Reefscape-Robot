@@ -1,50 +1,47 @@
 package frc.robot.subsystems.roller;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import frc.robot.RobotState;
 import frc.robot.constants.roller.RollerConfigBase;
+import frc.robot.lib.util.AlignmentUtil;
 
 public class RollerIOSim implements RollerIO {
-    private DCMotor rollerGearBox = DCMotor.getKrakenX60Foc(1);
-
-    private FlywheelSim rollerSim;
-
-    private double prevTimeInputs = 0;
     private double appliedVolts = 0;
+
+    private final RobotState robotState = RobotState.getInstance();
     
-    public RollerIOSim(RollerConfigBase config) {
-        rollerSim = new FlywheelSim(
-            LinearSystemId.createFlywheelSystem(
-                rollerGearBox,
-                0.001,
-                5
-            ),
-            rollerGearBox
-        );
-    }
+    private double rollerRunStartTime = 0;
+
+    public RollerIOSim() {}
 
     @Override
     public void updateInputs(RollerIOInputs inputs) {
-        double dt = Timer.getTimestamp() - prevTimeInputs;
-        rollerSim.update(dt);
-
-        inputs.rollerVelocityRadPerSec = rollerSim.getAngularVelocityRadPerSec();
+        inputs.rollerVelocityRadPerSec = appliedVolts * 20;
         inputs.rollerAppliedVolts = appliedVolts;
+        
+        if (Math.abs(inputs.rollerVelocityRadPerSec) == 0) {
+            rollerRunStartTime = Timer.getTimestamp();
+        }
+        double timeSinceRollerRun = Timer.getTimestamp() - rollerRunStartTime;
+        Logger.recordOutput("Roller/timeSinceRollerRun", timeSinceRollerRun);
 
-        prevTimeInputs = Timer.getTimestamp();
+        inputs.inRoller = 
+            !inputs.inRoller ?
+                AlignmentUtil.getClosestSourcePose().getTranslation().getDistance(robotState.getEstimatedPose().getTranslation()) < 0.40 &&
+                timeSinceRollerRun >= 2 : 
+                timeSinceRollerRun < 0.5;
+
     }
 
     @Override
     public void setTorqueCurrentFOC(double current) {
         appliedVolts = current;
-        rollerSim.setInputVoltage(current);
     }
 
     @Override
     public void setVoltage(double voltage) {
         appliedVolts = voltage;
-        rollerSim.setInputVoltage(voltage);
     }
 }
