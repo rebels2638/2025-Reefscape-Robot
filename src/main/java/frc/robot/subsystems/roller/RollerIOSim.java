@@ -29,9 +29,9 @@ public class RollerIOSim implements RollerIO {
 
         inputs.inRoller = 
             !inputs.inRoller ?
-                AlignmentUtil.getClosestSourcePose().getTranslation().getDistance(robotState.getEstimatedPose().getTranslation()) < 0.40 &&
-                timeSinceRollerRun >= 2 : 
-                timeSinceRollerRun < 0.5;
+                AlignmentUtil.getClosestSourcePose().getTranslation().getDistance(robotState.getEstimatedPose().getTranslation()) < 0.20 &&
+                timeSinceRollerRun >= 0.2 : 
+                timeSinceRollerRun < 0.2;
 
     }
 

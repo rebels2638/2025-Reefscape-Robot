@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.roller.simple.OutRoller;
 import frc.robot.commands.roller.simple.RunRollerIntake;
-import frc.robot.commands.roller.simple.RunRollerOutake;
+import frc.robot.commands.roller.simple.RunRollerEject;
 import frc.robot.commands.roller.simple.StopRoller;
 
 public class EjectCoral extends SequentialCommandGroup{
@@ -13,7 +13,7 @@ public class EjectCoral extends SequentialCommandGroup{
         addCommands(
             new ParallelDeadlineGroup(
                 new OutRoller(),
-                new RunRollerOutake()
+                new RunRollerEject()
             ),
             new WaitCommand(.7),
             new StopRoller()

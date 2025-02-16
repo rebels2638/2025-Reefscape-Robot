@@ -8,7 +8,9 @@ public final class Autos {
     public static final Command test = 
         AutoGenerator.generateAuto(
             "fromProcessorStartToTopRightRB", 
+            "RB L4",
             "fromTopRightRBToRightSourceTop",
-            "fromRightSourceTopToBottomRightRB"
+            "fromRightSourceTopToBottomRightRB",
+            "RB L4"
         );
 }

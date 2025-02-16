@@ -37,7 +37,7 @@ public class ElevatorIOSim implements ElevatorIO {
     
     public ElevatorIOSim(ElevatorConfigBase config) {
         kELEVATOR_MOTOR_TO_OUTPUT_SHAFT_RATIO = config.getMotorToOutputShaftRatio();
-        kJKG_METERS_SQUARED = 11; // yes, this is about right
+        kJKG_METERS_SQUARED = 0.1; 
         kELEVATOR_DRUM_RADIUS_METERS = 0.025;
         kMIN_HEIGHT_METERS = 0;
         kMAX_HEIGHT_METERS = config.getMaxHeightMeters();
@@ -57,7 +57,7 @@ public class ElevatorIOSim implements ElevatorIO {
         feedbackController = new PIDController(config.getKP(), config.getKI(), config.getKD());
         feedforwardController = new ElevatorFeedforward(config.getKS(), config.getKG(), config.getKV());
 
-        feedbackController.setTolerance(0.03);
+        feedbackController.setTolerance(0.01, 0.02);
 
         trapezoidMotionProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
                 config.getMotionMagicCruiseVelocityMetersPerSec(),

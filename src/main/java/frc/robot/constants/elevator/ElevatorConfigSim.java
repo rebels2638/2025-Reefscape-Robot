@@ -75,7 +75,7 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
 
     @Override
     public double getKP() {
-        return 400;
+        return 100;
     }
 
     @Override
@@ -90,14 +90,14 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
 
     @Override
     public double getKG() {
-        return 0.05; 
+        return 0.0; 
 
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 11;
+        return 5;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 0.45;
+        return 3;
     }
 
     // Neutral mode
@@ -130,7 +130,7 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     @Override
     public double getMotorToOutputShaftRatio() {
         // rotations / meters  
-        return 22 / 0.66;
+        return 5;
     }
 
     @Override

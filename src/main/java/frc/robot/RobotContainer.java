@@ -80,7 +80,7 @@ public class RobotContainer {
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
 
-        NamedCommands.registerCommand("AlignToRightBranch", new AlignToRightBranch());
+        NamedCommands.registerCommand("Intake", new IntakeCoral());
 
         autoRunner = AutoRunner.getInstance();
 

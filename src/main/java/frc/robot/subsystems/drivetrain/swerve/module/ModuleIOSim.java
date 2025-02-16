@@ -102,7 +102,7 @@ public class ModuleIOSim implements ModuleIO {
                 config.getSteerKV(),
                 config.getSteerKA());
 
-        driveFeedback.setTolerance(0.05);
+        driveFeedback.setTolerance(0.01);
         steerFeedback.setTolerance(Math.toRadians(1));
 
         steerFeedback.enableContinuousInput(-Math.PI, Math.PI);
