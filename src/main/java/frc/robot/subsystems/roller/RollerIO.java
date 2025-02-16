@@ -11,10 +11,12 @@ public interface RollerIO {
         public double rollerAppliedVolts = 0;
         public double rollerTemperatureFahrenheit = 0;
 
-        public boolean inRoller = true;
+        public boolean inRoller = false;
+        public boolean isConnected = false;
     }
 
     public default void updateInputs(RollerIOInputs inputs) {}
     public default void setTorqueCurrentFOC(double baseUnitMagnitude) {}    
     public default void setVoltage(double baseUnitMagnitude) {}
+    public default boolean isConnected() {return false;}
 }

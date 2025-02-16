@@ -1,4 +1,4 @@
-// package frc.robot.commands.autoAlignment.complex;
+package frc.robot.commands.autoAlignment.complex;
 
 import java.util.Arrays;
 
@@ -18,8 +18,8 @@ import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
-public class ScoreL1 extends ConditionalCommand { // Ideal structure
-    public ScoreL1() {
+public class ScoreL2 extends ConditionalCommand { // Ideal structure
+    public ScoreL2() {
         super (
             new ParallelCommandGroup(
                 new AlignToClosestSource(),
