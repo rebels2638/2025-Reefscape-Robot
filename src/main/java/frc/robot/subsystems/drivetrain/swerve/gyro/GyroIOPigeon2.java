@@ -15,6 +15,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.lib.util.Elastic;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
 public class GyroIOPigeon2 implements GyroIO {
@@ -33,6 +35,10 @@ public class GyroIOPigeon2 implements GyroIO {
     private final StatusSignal<LinearAcceleration> accelerationYSignal;
 
     private final Phoenix6Odometry odom;
+
+    private final Elastic.Notification gyroDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Gyro Disconnected", "Pigeon2 Disconnected, Gyro may not be functioning");
+
 
     public GyroIOPigeon2() {
         odom = Phoenix6Odometry.getInstance();
@@ -81,7 +87,7 @@ public class GyroIOPigeon2 implements GyroIO {
 
     @Override
     public synchronized void updateInputs(GyroIOInputs inputs) {
-        inputs.isConnected = BaseStatusSignal.refreshAll(
+        BaseStatusSignal.refreshAll(
                         yawSignal,
                         yawVelocitySignal,
                         rollSignal,
@@ -107,15 +113,16 @@ public class GyroIOPigeon2 implements GyroIO {
             accelerationXSignal.getValue().in(MetersPerSecondPerSecond), 
             accelerationYSignal.getValue().in(MetersPerSecondPerSecond)
         );
+
+        inputs.isConnected = gyro.isConnected(0.03);
+        if (!inputs.isConnected) {
+            Elastic.sendNotification(gyroDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Roller CANRange Disconnected", true);
+        }
     }
 
     @Override
     public void resetGyro(Rotation2d yaw) {
         gyro.setYaw(yaw.getDegrees());
-    }
-
-    @Override
-    public int getCanDeviceId() {
-        return 0;
     }
 }

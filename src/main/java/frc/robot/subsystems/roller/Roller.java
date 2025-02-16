@@ -24,17 +24,9 @@ public class Roller extends SubsystemBase {
     private RollerIO rollerIO;
     private RollerIOInputsAutoLogged rollerIOInputs = new RollerIOInputsAutoLogged();
 
-    private final Elastic.Notification disconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
-                                "Error Notification", "CANRange Disconnected, Roller may not be functioning");
-
     private final RollerConfigBase config;
 
     private Roller() {
-        if (!isConnected()) {
-            Elastic.sendNotification(disconnectAlert.withDisplayMilliseconds(5000));
-            DriverStation.reportError("Roller CANRange Disconnected", true);
-        }
-
         // IO
         switch (Constants.currentMode) {
             case COMP:

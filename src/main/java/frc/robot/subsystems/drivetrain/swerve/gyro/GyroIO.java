@@ -17,10 +17,5 @@ public interface GyroIO {
     }
 
     public default void updateInputs(GyroIOInputs inputs) {}
-
-    public default int getCanDeviceId() {
-        return 0;
-    }
-
     public default void resetGyro(Rotation2d yaw) {};
 }

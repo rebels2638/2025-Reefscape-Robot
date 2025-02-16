@@ -19,7 +19,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.roller.RollerConfigBase;
+import frc.robot.lib.util.Elastic;
 
 public class RollerIOTalonFX implements RollerIO {
     private final TalonFX rollerMotor;
@@ -33,9 +35,11 @@ public class RollerIOTalonFX implements RollerIO {
 
     private final StatusSignal<Boolean> canRangeIsDetected;
 
-
     private final TorqueCurrentFOC rollerTorqueRequest = new TorqueCurrentFOC(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0).withEnableFOC(false);
+
+    private final Elastic.Notification canRangeDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Roller Disconnected", "CANRange Disconnected, Roller may not be functioning");
 
     public RollerIOTalonFX(RollerConfigBase config) {
         CANrangeConfiguration canRangeConfiguration = new CANrangeConfiguration();
@@ -120,6 +124,13 @@ public class RollerIOTalonFX implements RollerIO {
         inputs.rollerCurrentDrawAmps = rollerSupplyCurrent.getValue().in(Amps);
         inputs.rollerAppliedVolts = rollerAppliedVolts.getValue().in(Volts);
         inputs.rollerTemperatureFahrenheit = rollerTemperature.getValue().in(Fahrenheit);
+
+        
+
+        if (canRange.isConnected(0.1)) {
+            Elastic.sendNotification(canRangeDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Roller CANRange Disconnected", true);
+        }
     }
 
     @Override
