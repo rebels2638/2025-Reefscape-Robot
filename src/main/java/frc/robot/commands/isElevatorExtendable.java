@@ -8,6 +8,6 @@ public class isElevatorExtendable extends Command {
 
     @Override
     public boolean isFinished() {
-        return RobotState.getInstance().isElevatorExtendable();
+        return RobotState.getInstance().getIsElevatorExtendable();
     }
 }
