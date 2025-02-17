@@ -193,7 +193,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorMotor1.optimizeBusUtilization();
         elevatorMotor2.optimizeBusUtilization();
 
-        elevatorMotor2.setControl(new StrictFollower(config.getCanID1()));
+        elevatorMotor2.setControl(new StrictFollower(config.getCanID1()).withUpdateFreqHz(1000));
     }
 
     @Override
