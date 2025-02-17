@@ -3,6 +3,8 @@ package frc.robot.subsystems.elevator;
 import org.littletonrobotics.junction.Logger;
 import org.opencv.highgui.HighGui;
 
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.elevator.ElevatorConfigBase;
@@ -73,6 +75,13 @@ public class Elevator extends SubsystemBase {
 
     public void setHeight(double height) {
         setpoint = height;
+    }
+
+    public Constants.level getElevatorHeight() {
+        return MathUtil.isNear(0.1, elevatorIOInputs.elevatorHeightMeters, 0.01) ? Constants.level.L1 : 
+            MathUtil.isNear(0.34, elevatorIOInputs.elevatorHeightMeters, 0.03)  ? Constants.level.L2 :
+                MathUtil.isNear(0.77, elevatorIOInputs.elevatorHeightMeters, 0.03) ? Constants.level.L3 :
+                    MathUtil.isNear(1.38, elevatorIOInputs.elevatorHeightMeters, 0.03) ? Constants.level.L3 : Constants.level.IDLE;
     }
     
 

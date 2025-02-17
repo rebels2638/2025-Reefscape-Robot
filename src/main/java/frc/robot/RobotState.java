@@ -1,9 +1,25 @@
 package frc.robot;
 
-import edu.wpi.first.math.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import org.opencv.photo.AlignExposures;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.interpolation.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -12,20 +28,19 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.AlignmentConstants;
 import frc.robot.constants.robotState.RobotStateConfigBase;
+import frc.robot.constants.robotState.RobotStateConfigComp;
 import frc.robot.constants.robotState.RobotStateConfigProto;
 import frc.robot.constants.robotState.RobotStateConfigSim;
-import frc.robot.constants.robotState.RobotStateConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
-
-import java.util.NoSuchElementException;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.lib.util.AlignmentUtil;
 
 public class RobotState {
+
   private static RobotState instance;
   public static RobotState getInstance() {
     if (instance == null) {
@@ -35,7 +50,8 @@ public class RobotState {
   }
   
   public record OdometryObservation(
-    SwerveModulePosition[] modulePositions, 
+    SwerveModulePosition[]
+    modulePositions, 
     SwerveModuleState[] moduleStates, 
     SwerveModuleState[] moduleAccelerations, 
     Rotation3d gyroOrientation,
@@ -48,6 +64,12 @@ public class RobotState {
     double timestamp, 
     Matrix<N3, N1> stdDevs) {}
 
+  public record ScoringObservation(
+    Constants.scoredPositions position,
+    Constants.level level,
+    Constants.GamePiece GamePiece,
+    double timestamp
+  ) {}
 
   private static final double poseBufferSizeSeconds = 2.0;
   private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(poseBufferSizeSeconds);
@@ -72,6 +94,9 @@ public class RobotState {
 
   private final SwerveDrivetrainConfigBase drivetrainConfig;
   private final RobotStateConfigBase robotStateConfig;
+
+  private final ArrayList<Pair<Pair<Constants.scoredPositions, Constants.level>, Constants.GamePiece>> scoredPositions = 
+    new ArrayList<Pair<Pair<Constants.scoredPositions, Constants.level> , Constants.GamePiece>>(); // implement something with this and figure out an elastic widget
 
   private RobotState() {
     switch (Constants.currentMode) {
@@ -210,6 +235,36 @@ public class RobotState {
 
     swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
     lastEstimatedPoseUpdateTime = Timer.getTimestamp();
+  }
+
+  public void addScoringObservation(ScoringObservation observation) {
+    Pair<Constants.scoredPositions, Constants.level> inner = new Pair<>(observation.position, observation.level);
+    Pair<Pair<Constants.scoredPositions, Constants.level>, Constants.GamePiece> outer = new Pair<>(inner, observation.GamePiece);
+    this.scoredPositions.add(outer);
+  }
+
+  public boolean alreadyScored(Pose2d target, Constants.level requestedLevel, Constants.GamePiece gamePiece) {
+    Constants.scoredPositions target_position = getReefPosition(target);
+    for (Pair<Pair<Constants.scoredPositions, Constants.level>, Constants.GamePiece> a : scoredPositions) {
+      if (a.getFirst().getFirst() == target_position && a.getFirst().getSecond() == requestedLevel && a.getSecond() == gamePiece) { // game piece needs to not be fixed
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public Constants.scoredPositions getReefPosition(Pose2d arg) { // check if the distance is within tolerance
+    if (arg == null) {arg = getEstimatedPose();}
+    return Arrays.asList(
+      Constants.scoredPositions.values()
+      ).get(
+        AlignmentUtil.yieldPotentialAlignmentTargetsClockwise()
+        .indexOf(arg
+          .nearest(AlignmentUtil
+            .yieldPotentialAlignmentTargetsClockwise()
+            )
+          )
+        );
   }
 
   /**

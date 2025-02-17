@@ -30,6 +30,47 @@ import frc.robot.lib.util.AlignmentUtil.Axis;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static enum GamePiece {
+        ALGAY,
+        CORAL
+    }
+    
+    public static enum scoredPositions {
+        BOTTOM_RIGHT,
+        BOTTOM_MID,
+        BOTTOM_LEFT,
+
+        BOTTOM_LEFT_RIGHT,
+        BOTTOM_LEFT_MID,
+        BOTTOM_LEFT_LEFT,
+
+        TOP_LEFT_RIGHT,
+        TOP_LEFT_MID,
+        TOP_LEFT_LEFT,
+
+        TOP_RIGHT,
+        TOP_MID,
+        TOP_LEFT,
+
+        TOP_RIGHT_RIGHT,
+        TOP_RIGHT_MID,
+        TOP_RIGHT_LEFT,
+
+        BOTTOM_RIGHT_RIGHT,
+        BOTTOM_RIGHT_MID,
+        BOTTOM_RIGHT_LEFT,
+
+    }
+
+    public static enum level {
+        IDLE,
+        L1,
+        L2,
+        L3,
+        L4
+    }
+
     public static final Mode currentMode = Mode.COMP; // TODO: change this if sim
     // public static final boolean isSYSID = true; // TODO: change this if sysid
 

@@ -124,9 +124,7 @@ public class RollerIOTalonFX implements RollerIO {
         inputs.rollerCurrentDrawAmps = rollerSupplyCurrent.getValue().in(Amps);
         inputs.rollerAppliedVolts = rollerAppliedVolts.getValue().in(Volts);
         inputs.rollerTemperatureFahrenheit = rollerTemperature.getValue().in(Fahrenheit);
-
         
-
         if (canRange.isConnected(0.1)) {
             Elastic.sendNotification(canRangeDisconnectAlert.withDisplayMilliseconds(10000));
             DriverStation.reportError("Roller CANRange Disconnected", true);

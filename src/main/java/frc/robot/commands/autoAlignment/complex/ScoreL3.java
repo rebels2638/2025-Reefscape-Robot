@@ -1,13 +1,9 @@
 package frc.robot.commands.autoAlignment.complex;
 
-import java.util.Arrays;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.RobotState;
 import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearDriveToPose;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSource;
@@ -15,6 +11,7 @@ import frc.robot.commands.elevator.simple.MoveElevatorL1;
 import frc.robot.commands.elevator.simple.MoveElevatorStow;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
+import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
@@ -37,7 +34,7 @@ public class ScoreL3 extends ConditionalCommand { // Ideal structure
                 new MoveElevatorL1()
             ),
             new LinearDriveToPose(
-                () -> AlignmentUtil.decideScoringTarget(),
+                () -> AlignmentUtil.decideScoringTarget(3, Constants.GamePiece.CORAL),
                 () -> new ChassisSpeeds())
         ),
         new MoveElevatorL1(),

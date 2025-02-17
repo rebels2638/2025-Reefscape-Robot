@@ -2,6 +2,8 @@ package frc.robot.lib.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
@@ -133,6 +135,19 @@ public class AlignmentUtil {
 
     private static final SwerveDrivetrainConfigBase config;
 
+    private static final Comparator<Pose2d> poseComparator(Pose2d curr) {
+        return (Pose2d a, Pose2d b) -> {
+            double distA = a.getTranslation().getDistance(curr.getTranslation());
+            double distB = b.getTranslation().getDistance(curr.getTranslation());
+
+            if (distA != distB) {Double.compare(distA, distB);}
+
+            return Double.compare(Math.abs(a.getRotation().getRadians() - curr.getRotation().getRadians()),
+                Math.abs(b.getRotation().getRadians() - curr.getRotation().getRadians()));
+        
+        };
+    }
+
     private static List<Pose2d> leftBranchCandidates = new ArrayList<>();
     private static List<Pose2d> rightBranchCandidates = new ArrayList<>();
     private static List<Pose2d> algayCandidates = new ArrayList<>();
@@ -254,6 +269,18 @@ public class AlignmentUtil {
         }
     }
 
+    public static ArrayList<Pose2d> yieldPotentialAlignmentTargetsClockwise() {
+        ArrayList<Pose2d> all_candidates = new ArrayList<>();
+
+        for (int i = 0; i < leftBranchCandidates.size(); i++) {
+            all_candidates.add(rightBranchCandidates.get(i));
+            all_candidates.add(algayCandidates.get(i));
+            all_candidates.add(leftBranchCandidates.get(i));
+        }
+
+        return all_candidates;
+    }
+
     public static Pose2d offsetPoseToPreAlignment(Pose2d pose) {
         return pose.transformBy(
                 new Transform2d(
@@ -274,62 +301,70 @@ public class AlignmentUtil {
                         new Rotation2d(0)));
     }
 
-    public static int getClosestReefFace(Pose2d curr, List<Pose2d> candidates) {
-        curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr;
+    private static Pose2d getClosestReefFace(Pose2d curr, List<Pose2d> candidates, int nthTarget) { // reference n-1th and nth target
+        curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr; // why the hell would this be flipped?
+        Collections.sort(candidates, poseComparator(curr));
+        double a = candidates.get(nthTarget).getTranslation().getDistance(curr.getTranslation());
+        double b = candidates.get(nthTarget+1).getTranslation().getDistance(curr.getTranslation());
 
-        int nearest = 0;
-        int penultimateNearest = 0;
-        for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
-            if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
-                    .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
-                            .getTranslation().getDistance(curr.getTranslation())) {
-                nearest = i;
-            }
-        }
-
-        for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
-            if (i == nearest) {
-                continue;
-            }
-            if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
-                    .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
-                            .getTranslation().getDistance(curr.getTranslation())) {
-                penultimateNearest = i;
-            }
-        }
-
-        return candidates.get(nearest).getTranslation().getDistance(curr.getTranslation()) < candidates
-                .get(penultimateNearest).getTranslation().getDistance(curr.getTranslation()) ? nearest
-                        : penultimateNearest;
+        return a < b ? candidates.get(nthTarget) : candidates.get(nthTarget+1);
     }
 
-    public static Pose2d getClosestAlgayPose() {
+    public static Pose2d getClosestAlgayPose(int n) {
         Pose2d current = RobotState.getInstance().getEstimatedPose();
-        Pose2d nearest = algayCandidates.get(getClosestReefFace(current, algayCandidates));
+        Pose2d nearest = getClosestReefFace(current, algayCandidates, n);
 
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
     }
 
-    public static Pose2d getClosestLeftBranchPose() { // relative to blue driver station
+    public static Pose2d getClosestLeftBranchPose(int n) { // relative to blue driver station
         Pose2d current = RobotState.getInstance().getEstimatedPose();
-        Pose2d nearest = leftBranchCandidates.get(getClosestReefFace(current, leftBranchCandidates));
+        Pose2d nearest = getClosestReefFace(current, leftBranchCandidates, n);
 
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
     }
 
-    public static Pose2d getClosestRightBranchPose() { // relative to blue driver station
+    public static Pose2d getClosestRightBranchPose(int n) { // relative to blue driver station
         Pose2d current = RobotState.getInstance().getEstimatedPose();
-        Pose2d nearest = rightBranchCandidates.get(getClosestReefFace(current, rightBranchCandidates));
+        Pose2d nearest = getClosestReefFace(current, rightBranchCandidates, n);
 
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
     }
 
-    public static Pose2d decideScoringTarget() {
+    public static Pose2d decideScoringTarget(int requestedLevel, Constants.GamePiece piece) {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();
-        return curr.nearest(Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(), AlignmentUtil.getClosestRightBranchPose()));
+        Pose2d target = new Pose2d();
+        int n = 0;
+
+        while (n < 13) {
+            if (RobotState.getInstance()
+                    .alreadyScored(
+                        curr
+                            .nearest(
+                                Arrays.asList(
+                                    AlignmentUtil.getClosestLeftBranchPose(n), 
+                                    AlignmentUtil.getClosestRightBranchPose(n))), 
+                    Arrays.asList(Constants.level.values()).get(requestedLevel), 
+                    piece
+                    )
+                ) {
+
+                n++;
+            }
+            else {
+                target = curr.nearest(
+                    Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(n), 
+                    AlignmentUtil.getClosestRightBranchPose(n))
+                );
+
+                break;
+            }
+        }
+
+        return target;
     }
 
     public static Pose2d getClosestSourcePose() { 

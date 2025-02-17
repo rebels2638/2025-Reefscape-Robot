@@ -11,12 +11,11 @@ import frc.robot.commands.elevator.simple.MoveElevatorL1;
 import frc.robot.commands.elevator.simple.MoveElevatorStow;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
-import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
-public class ScoreL2 extends ConditionalCommand { // Ideal structure
-    public ScoreL2() {
+public class ScoreAlgayBarge extends ConditionalCommand { // Ideal structure
+    public ScoreAlgayBarge() {
         super (
             new ParallelCommandGroup(
                 new AlignToClosestSource(),
@@ -34,7 +33,7 @@ public class ScoreL2 extends ConditionalCommand { // Ideal structure
                 new MoveElevatorL1()
             ),
             new LinearDriveToPose(
-                () -> AlignmentUtil.decideScoringTarget(2, Constants.GamePiece.CORAL),
+                () -> AlignmentUtil.getClosestAlgayPose(0),
                 () -> new ChassisSpeeds())
         ),
         new MoveElevatorL1(),
