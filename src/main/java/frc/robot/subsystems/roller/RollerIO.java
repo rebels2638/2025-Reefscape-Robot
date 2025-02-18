@@ -11,7 +11,7 @@ public interface RollerIO {
         public double rollerAppliedVolts = 0;
         public double rollerTemperatureFahrenheit = 0;
 
-        public boolean inRoller = false;
+        public boolean inRoller = true;
         public boolean isConnected = false;
     }
 

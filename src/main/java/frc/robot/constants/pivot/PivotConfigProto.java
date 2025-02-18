@@ -102,6 +102,11 @@ public class PivotConfigProto extends PivotConfigBase {
         return 3.0;
     }
 
+    @Override
+    public double getToleranceDegrees() {
+        return 1;
+    }
+
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {

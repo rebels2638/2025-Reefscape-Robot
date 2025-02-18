@@ -126,7 +126,7 @@ public class PivotIOTalonFX implements PivotIO {
         
         double pivotRotations = BaseStatusSignal
                 .getLatencyCompensatedValue(pivotPositionStatusSignal, pivotVelocityStatusSignal).in(Rotation);
-        inputs.pivotPositionRad = new Rotation2d(
+        inputs.pivotPosition = new Rotation2d(
                 Units.rotationsToRadians(pivotRotations));
         inputs.pivotVelocityRadPerSec = pivotVelocityStatusSignal.getValue().in(RadiansPerSecond);
 

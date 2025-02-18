@@ -11,7 +11,6 @@ import frc.robot.constants.pivot.PivotConfigProto;
 import frc.robot.constants.pivot.PivotConfigSim;
 
 public class Pivot extends SubsystemBase {
-    private final PivotConfigBase config;
     private static Pivot instance = null;
     public static Pivot getInstance() {
         if (instance == null) {
@@ -26,7 +25,9 @@ public class Pivot extends SubsystemBase {
 
     private Rotation2d setpoint = new Rotation2d();
 
-    public Pivot() {
+    private final PivotConfigBase config;
+
+    private Pivot() {
         // IO
         switch (Constants.currentMode) {
             case COMP:
@@ -80,5 +81,13 @@ public class Pivot extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         pivotIO.setVoltage(voltage);
+    }
+
+    public boolean reachedSetpoint() {
+        return Math.abs(setpoint.minus(pivotIOInputs.pivotPosition).getDegrees()) <= config.getToleranceDegrees();
+    }
+
+    public Rotation2d getAngle() {
+        return pivotIOInputs.pivotPosition;
     }
 }

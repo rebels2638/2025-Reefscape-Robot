@@ -30,6 +30,8 @@ public abstract class PivotConfigBase {
     public abstract double getMotionMagicExpoKV();
     public abstract double getMotionMagicCruiseVelocityRotationsPerSec();
 
+    public abstract double getToleranceDegrees();
+    
     // Neutral mode
     public abstract boolean isNeutralModeBrake();
 
