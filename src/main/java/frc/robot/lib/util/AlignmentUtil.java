@@ -339,29 +339,37 @@ public class AlignmentUtil {
         Pose2d target = new Pose2d();
         int n = 0;
 
-        while (n < 13) {
-            if (RobotState.getInstance()
-                    .alreadyScored(
-                        curr
-                            .nearest(
-                                Arrays.asList(
-                                    AlignmentUtil.getClosestLeftBranchPose(n), 
-                                    AlignmentUtil.getClosestRightBranchPose(n))), 
-                    Arrays.asList(Constants.level.values()).get(requestedLevel), 
-                    piece
-                    )
-                ) {
-
-                n++;
+        while (requestedLevel > 0) {
+            while (n < 13) {
+                if (RobotState.getInstance()
+                        .alreadyScored(
+                            curr
+                                .nearest(
+                                    Arrays.asList(
+                                        AlignmentUtil.getClosestLeftBranchPose(n), 
+                                        AlignmentUtil.getClosestRightBranchPose(n))), 
+                        Arrays.asList(Constants.level.values()).get(requestedLevel), 
+                        piece
+                        )
+                    ) {
+    
+                    n++;
+                }
+                else {
+                    target = curr.nearest(
+                        Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(n), 
+                        AlignmentUtil.getClosestRightBranchPose(n))
+                    );
+    
+                    break;
+                }
             }
-            else {
-                target = curr.nearest(
-                    Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(n), 
-                    AlignmentUtil.getClosestRightBranchPose(n))
-                );
 
-                break;
+            if (target.equals(new Pose2d())) {
+                requestedLevel--;
             }
+
+            else {break;}
         }
 
         return target;
