@@ -246,16 +246,17 @@ public class RobotState {
   public boolean alreadyScored(Pose2d target, Constants.level requestedLevel, Constants.GamePiece gamePiece) {
     Constants.scoredPositions target_position = getReefPosition(target);
     for (Pair<Pair<Constants.scoredPositions, Constants.level>, Constants.GamePiece> a : scoredPositions) {
-      if (a.getFirst().getFirst() == target_position && a.getFirst().getSecond() == requestedLevel && a.getSecond() == gamePiece) { // game piece needs to not be fixed
+      if (a.getFirst().getFirst() == target_position && a.getFirst().getSecond() == requestedLevel && a.getSecond() == gamePiece) {
         return true;
       }
     }
     return false;
   }
 
-  public Constants.scoredPositions getReefPosition(Pose2d arg) { // check if the distance is within tolerance
+  public Constants.scoredPositions getReefPosition(Pose2d arg) {
     if (arg == null) {arg = getEstimatedPose();}
-    return Arrays.asList(
+    return arg.nearest(AlignmentUtil.yieldPotentialAlignmentTargetsClockwise()).getTranslation().getDistance(arg.getTranslation()) < 1 ? 
+    Arrays.asList(
       Constants.scoredPositions.values()
       ).get(
         AlignmentUtil.yieldPotentialAlignmentTargetsClockwise()
@@ -264,7 +265,7 @@ public class RobotState {
             .yieldPotentialAlignmentTargetsClockwise()
             )
           )
-        );
+        ) : null;
   }
 
   /**

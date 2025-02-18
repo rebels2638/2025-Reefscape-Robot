@@ -93,7 +93,7 @@ public class Roller extends SubsystemBase {
         double preWindow = 0.0;
         double postWindow = 0.0;
 
-        if (status.size() > 2) {
+        if (status.size() > 2 && pos != null) {
 
             double currentTime = Timer.getFPGATimestamp();
         
