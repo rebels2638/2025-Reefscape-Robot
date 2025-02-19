@@ -97,17 +97,17 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 5;
+        return 1;
     }
 
     @Override
     public double getMotionMagicExpoKV() {
-        return 10.0;
+        return .5;
     }
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 3;
+        return 1.3;
     }
 
     // Neutral mode

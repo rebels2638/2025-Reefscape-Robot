@@ -24,17 +24,17 @@ public class RobotStateConfigComp extends RobotStateConfigBase {
     }
 
     @Override
-    public double getMaxElevatorExtensionVelocity() {
+    public double getMaxElevatorExtensionVelocityMeterPerSec() {
         return 1;
     }
     
     @Override
-    public double getMaxElevatorExtensionAcceleration() {
+    public double getMaxElevatorExtensionAccelerationMetersPerSecPerSec() {
         return 1;
     }
 
     @Override
-    public double getMinElevatorExtensionAcceleration() {
+    public double getMaxRotationalVelocityRadPerSecPerSec() {
         return 1;
     }
 }

@@ -274,6 +274,22 @@ public class AlignmentUtil {
                         new Rotation2d(0)));
     }
 
+    public static Pose2d getClosestReefFaceSimple(Pose2d curr) {
+        curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr;
+        
+        int nearest = 0;
+        for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
+            if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
+                    .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
+                            .getTranslation().getDistance(curr.getTranslation())) {
+                nearest = i;
+            }
+        }
+        return Constants.shouldFlipPath() ? 
+            FlippingUtil.flipFieldPose(AlignmentConstants.kREEF_CENTER_FACES[nearest]) : 
+            AlignmentConstants.kREEF_CENTER_FACES[nearest];
+    }
+
     public static int getClosestReefFace(Pose2d curr, List<Pose2d> candidates) {
         curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr;
 

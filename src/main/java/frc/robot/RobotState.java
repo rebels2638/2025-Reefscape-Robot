@@ -272,13 +272,15 @@ public class RobotState {
     return getPredictedPose(timestamp - lastEstimatedPoseUpdateTime, timestamp - lastEstimatedPoseUpdateTime);
   }
 
+  @AutoLogOutput(key = "RobotState/isElevatorExtendable")
   public boolean getIsElevatorExtendable() {
     return 
         // ensure that robot is below a velocity threshold
-        Math.hypot(getFieldRelativeSpeeds().vxMetersPerSecond, getFieldRelativeSpeeds().vyMetersPerSecond) <= robotStateConfig.getMaxElevatorExtensionVelocity() &&
+        Math.hypot(getFieldRelativeSpeeds().vxMetersPerSecond, getFieldRelativeSpeeds().vyMetersPerSecond) <= robotStateConfig.getMaxElevatorExtensionVelocityMeterPerSec() &&
         // ensure that the robot is not decelerating / accelerating too quickly
-        Math.hypot(lastFieldRelativeAccelerations.getX(), lastFieldRelativeAccelerations.getY()) < 1 &&
-        getFieldRelativeSpeeds().omegaRadiansPerSecond < 1.0 &&
+        Math.hypot(lastFieldRelativeAccelerations.getX(), lastFieldRelativeAccelerations.getY()) <= robotStateConfig.getMaxElevatorExtensionAccelerationMetersPerSecPerSec() &&
+        // ensure that the robot is not rotating too quickly
+        Math.abs(getFieldRelativeSpeeds().omegaRadiansPerSecond) <= robotStateConfig.getMaxRotationalVelocityRadPerSecPerSec() &&
         // ensure that we are decelerating in each axis of movement
         Math.signum(lastFieldRelativeAccelerations.getX()) != Math.signum(getFieldRelativeSpeeds().vxMetersPerSecond) &&
         Math.signum(lastFieldRelativeAccelerations.getY()) != Math.signum(getFieldRelativeSpeeds().vyMetersPerSecond); 

@@ -59,8 +59,8 @@ public class ModuleIOSim implements ModuleIO {
     private double previousWrappedAngleRad = 0;
 
     double previousDriveDesiredVeloMps = 0;
-
     double previousNonZeroDriveSetpoint = 1;
+    double previousDriveVelo = 0;
 
     public ModuleIOSim(SwerveModuleGeneralConfigBase config, int moduleID) {
         this.config = config;
@@ -130,7 +130,9 @@ public class ModuleIOSim implements ModuleIO {
 
         inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRPM() *
                 2 * Math.PI * config.getDriveWheelRadiusMeters();
-        inputs.driveAccelerationMetersPerSecSec = driveSim.getAngularAccelerationRadPerSecSq() * config.getDriveWheelRadiusMeters();
+        inputs.driveAccelerationMetersPerSecSec = (inputs.driveVelocityMetersPerSec - previousDriveVelo) / dt;
+        previousDriveVelo = inputs.driveVelocityMetersPerSec;
+
         inputs.drivePositionMeters += inputs.driveVelocityMetersPerSec * dt;
 
         inputs.driveCurrentDrawAmps = driveSim.getCurrentDrawAmps();

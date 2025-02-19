@@ -1,7 +1,5 @@
 package frc.robot.constants.robotState;
 
-import edu.wpi.first.math.geometry.Translation2d;
-
 public class RobotStateConfigSim extends RobotStateConfigBase {
     private static RobotStateConfigSim instance;
     public static RobotStateConfigSim getInstance() {
@@ -25,17 +23,17 @@ public class RobotStateConfigSim extends RobotStateConfigBase {
     }
 
     @Override
-    public double getMaxElevatorExtensionVelocity() {
-        return 1;
+    public double getMaxElevatorExtensionVelocityMeterPerSec() {
+        return 4.5;
     }
     
     @Override
-    public double getMaxElevatorExtensionAcceleration() {
-        return 1;
+    public double getMaxElevatorExtensionAccelerationMetersPerSecPerSec() {
+        return 7.2;
     }
 
     @Override
-    public double getMinElevatorExtensionAcceleration() {
-        return 1;
+    public double getMaxRotationalVelocityRadPerSecPerSec() {
+        return 2 * Math.PI * 0.5;
     }
 }

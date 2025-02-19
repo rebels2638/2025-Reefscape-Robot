@@ -15,7 +15,7 @@ public class EjectCoral extends SequentialCommandGroup{
                 new OutRoller(),
                 new RunRollerEject()
             ),
-            new WaitCommand(.7),
+            new WaitCommand(.5),
             new StopRoller()
         );
     }

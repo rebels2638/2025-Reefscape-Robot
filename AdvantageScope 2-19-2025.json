@@ -4,12 +4,11 @@
       "x": 0,
       "y": 37,
       "width": 1470,
-      "height": 833,
+      "height": 827,
       "state": {
         "sidebar": {
           "width": 500,
           "expanded": [
-            "/AdvantageKit",
             "/AdvantageKit/RealOutputs",
             "/AdvantageKit/RealOutputs/LockDriveAxis",
             "/AdvantageKit/RealOutputs/LockDriveAxis/goalSpeeds",
@@ -32,18 +31,30 @@
             "/AdvantageKit/RealOutputs/MechanismVisualizer/SuperstructureMech",
             "/AdvantageKit/RealOutputs/RobotState",
             "/AdvantageKit/RealOutputs/Pivot/setpoint",
-            "/AdvantageKit/Roller"
+            "/AdvantageKit/Roller",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs/SwerveDrive",
+            "/AdvantageKit/RealOutputs/SwerveDrive/measuredModuleStates",
+            "/AdvantageKit/RealOutputs/RobotState/lastFieldRelativeAccelerations",
+            "/AdvantageKit/RealOutputs/RobotState/fieldRelativeSpeeds",
+            "/AdvantageKit/RealOutputs/RobotState/observation",
+            "/AdvantageKit/RealOutputs/RobotState/observation/moduleAccelerations",
+            "/AdvantageKit/RealOutputs/RobotState/observation/moduleAccelerations/0",
+            "/AdvantageKit/RealOutputs/RobotState/observation/moduleStates",
+            "/AdvantageKit/RealOutputs/RobotState/observation/moduleStates/0",
+            "/AdvantageKit/RealOutputs/Elevator",
+            "/AdvantageKit/RealOutputs/WarmUpElevatorReef"
           ]
         },
         "tabs": {
-          "selected": 4,
+          "selected": 8,
           "tabs": [
             {
               "type": 0,
               "title": "",
               "controller": null,
               "controllerUUID": "nma2xxtf34sy02zzh7g5v0zfi0t5bh2z",
-              "renderer": "#/tab-reference/mechanism",
+              "renderer": "#/",
               "controlsHeight": 0
             },
             {
@@ -179,6 +190,98 @@
               "controlsHeight": 200
             },
             {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotState/lastFieldRelativeAccelerations/x",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotState/fieldRelativeSpeeds/vx",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 1,
+                "rightFilter": 1
+              },
+              "controllerUUID": "ntqcd0qx2tykgtlkm9xzvwxgt60pondl",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotState/observation/moduleAccelerations/0/speed",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotState/observation/moduleStates/0/speed",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 1
+              },
+              "controllerUUID": "vv6qviiw3lxahyw6lqes3jdd33fk14uu",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
               "type": 9,
               "title": "Swerve",
               "controller": {
@@ -232,6 +335,77 @@
               "controlsHeight": 200
             },
             {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveDrive/optimizedModuleStates/0/speed",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveDrive/measuredModuleStates/0/speed",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveDrive/module0/driveSetpointMetersPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "ftxtw4qnntsttdpi4df24760tjdu8gq8",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 10,
+              "title": "Mechanism",
+              "controller": [
+                {
+                  "type": "mechanism",
+                  "logKey": "NT:/AdvantageKit/RealOutputs/MechanismVisualizer/SuperstructureMech",
+                  "logType": "Mechanism2d",
+                  "visible": true,
+                  "options": {}
+                }
+              ],
+              "controllerUUID": "2tawb1byr8kc38ajd24ws89i5v25k0w2",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
               "type": 3,
               "title": "3D Field",
               "controller": {
@@ -254,6 +428,15 @@
                   },
                   {
                     "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/MechanismVisualizer/coralPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Coral"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
                     "logKey": "NT:/AdvantageKit/RealOutputs/MechanismVisualizer/rollerPose",
                     "logType": "Pose3d",
                     "visible": true,
@@ -262,12 +445,13 @@
                     }
                   },
                   {
-                    "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/MechanismVisualizer/coralPoses",
-                    "logType": "Pose3d[]",
+                    "type": "trajectory",
+                    "logKey": "NT:/PathPlanner/activePath",
+                    "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
-                      "variant": "Coral"
+                      "color": "#00ff00",
+                      "size": "normal"
                     }
                   },
                   {
@@ -281,50 +465,34 @@
                     }
                   },
                   {
-                    "type": "trajectory",
-                    "logKey": "NT:/PathPlanner/activePath",
-                    "logType": "Pose2d[]",
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/WarmUpElevatorReef/closestReefFace",
+                    "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
+                      "model": "2025 KitBot",
+                      "color": "#00ff00"
                     }
                   }
                 ],
                 "game": "2025 Field (Welded)",
                 "origin": "blue"
               },
-              "controllerUUID": "e8rnsof3v4bxjg8yty3ucu3bbjd75c6s",
+              "controllerUUID": "ueeekhxcxjwk8353lq4zp2i0v4qnf4e8",
               "renderer": {
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  -13.748741983119743,
-                  1.6227842578147147,
-                  18.06424283674091
+                  -3.906917265588022,
+                  8.467432365576482,
+                  4.834355166933174
                 ],
                 "cameraTarget": [
-                  -13.338227369600071,
-                  -20.792029573008513,
-                  15.434245725256678
+                  -4.968158986775917,
+                  0.5,
+                  1.2996996886453134
                 ]
               },
-              "controlsHeight": 200
-            },
-            {
-              "type": 10,
-              "title": "Mechanism",
-              "controller": [
-                {
-                  "type": "mechanism",
-                  "logKey": "NT:/AdvantageKit/RealOutputs/MechanismVisualizer/SuperstructureMech",
-                  "logType": "Mechanism2d",
-                  "visible": true,
-                  "options": {}
-                }
-              ],
-              "controllerUUID": "2tawb1byr8kc38ajd24ws89i5v25k0w2",
-              "renderer": null,
               "controlsHeight": 200
             }
           ]
@@ -332,6 +500,18 @@
       }
     }
   ],
-  "satellites": [],
+  "satellites": [
+    {
+      "x": 288,
+      "y": 732,
+      "width": 900,
+      "height": 500,
+      "state": {
+        "type": 1,
+        "visualizer": null
+      },
+      "uuid": "8p4t232cv3j736d4xza6en0v1has4tgr"
+    }
+  ],
   "version": "4.1.0"
 }

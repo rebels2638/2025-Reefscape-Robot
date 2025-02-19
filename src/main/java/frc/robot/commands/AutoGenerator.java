@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
@@ -12,18 +13,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranch;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranch;
+import frc.robot.commands.autoAlignment.reef.WarmUpElevatorReef;
 import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
-import frc.robot.commands.roller.IntakeCoral;
-import frc.robot.commands.roller.IntakeCoralAuto;
+import frc.robot.commands.elevator.simple.MoveElevatorL1;
+import frc.robot.commands.elevator.simple.MoveElevatorL2;
+import frc.robot.commands.elevator.simple.MoveElevatorL3;
+import frc.robot.commands.elevator.simple.MoveElevatorL4;
+import frc.robot.commands.elevator.simple.MoveElevatorStow;
+import frc.robot.commands.roller.EjectCoral;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.roller.Roller;
 
 import com.pathplanner.lib.util.FlippingUtil;
 
@@ -36,12 +42,13 @@ public class AutoGenerator {
      * @ param params made up of path names and what branch to score on:
      *  - "path" -> follows path. Must be the first param. Needs to be a real path in choreo - ex. "processorStartToTopRightRB"
      *  - "branch / level " -> where to score - ex. "RB L4" -> scores on L4 on the closest right branch (driver station relative)
-     *  - "intake" -> will schedule a intake command. 
+     *  - "intake" -> will schedule a intake command. Pass after the drive to source command
      *    this could be passed before a source going path ex. -> "intake", "fromRightSourceTopToBottomRightRB"
      */
     public static Command generateAuto(String... params) {
         SequentialCommandGroup auto = new SequentialCommandGroup();
-        
+        ArrayList<Command> commands = new ArrayList<>();
+
         try {
             PathPlannerPath firstPath = PathPlannerPath.fromChoreoTrajectory(params[0]);
             auto.addCommands(
@@ -59,27 +66,30 @@ public class AutoGenerator {
                     )
                 )
             );
-
-            auto.addCommands(AutoBuilder.followPath(firstPath));
         } 
         catch (Exception e) {
             DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
             return Commands.none();
         }
         
-        for (int i = 1; i < params.length; i++) {
+        for (int i = 0; i < params.length; i++) {
             String param = params[i];
 
             if (param.split(" ").length == 2) {
+                Command alignCommand;
+                Command scoreCommand;
+                Command raiseElevatorCommand1;
+                Command raiseElevatorCommand2;
+
                 try {
                     String[] split = param.split(" ");
                     switch (split[0]) { // auto align because we need maximal accuracy
                         case "RB":
-                            auto.addCommands(new AlignToRightBranch());
+                            alignCommand = new AlignToRightBranch();
                             break;
                     
                         case "LB":
-                            auto.addCommands(new AlignToLeftBranch());
+                            alignCommand = new AlignToLeftBranch();
                             break;
     
                         default:
@@ -88,19 +98,31 @@ public class AutoGenerator {
     
                     switch (split[1]) {
                         case "L1":
-                            auto.addCommands(new ScoreL1Superstructure());
+                            scoreCommand = new ScoreL1Superstructure();
+                            raiseElevatorCommand1 = new MoveElevatorL1();
+                            raiseElevatorCommand2 = new MoveElevatorL1();
+
                             break;
                     
                         case "L2":
-                            auto.addCommands(new ScoreL2Superstructure());
+                            scoreCommand =new ScoreL2Superstructure();
+                            raiseElevatorCommand1 = new MoveElevatorL2();
+                            raiseElevatorCommand2 = new MoveElevatorL2();
+
                             break;
     
                         case "L3":
-                            auto.addCommands(new ScoreL3Superstructure());
+                            scoreCommand = new ScoreL3Superstructure();
+                            raiseElevatorCommand1 = new MoveElevatorL3();
+                            raiseElevatorCommand2 = new MoveElevatorL3();
+
                             break;
     
                         case "L4":
-                            auto.addCommands(new ScoreL4Superstructure());
+                            scoreCommand =new ScoreL4Superstructure();
+                            raiseElevatorCommand1 = new MoveElevatorL4();
+                            raiseElevatorCommand2 = new MoveElevatorL4();
+
                             break;
     
                         default:
@@ -111,12 +133,68 @@ public class AutoGenerator {
                     DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
                     return Commands.none();
                 }
-                
+
+                if (i + 1 < params.length && params[i + 1].split(" ").length != 2 && params[i + 1] != "intake") {
+                    try {
+                        int index = commands.size() - 1;
+                        commands.set(
+                            index,
+                            new SequentialCommandGroup(
+                                new ParallelDeadlineGroup(
+                                    commands.get(index), // driving command,
+                                    new SequentialCommandGroup(
+                                        new WarmUpElevatorReef(),
+                                        raiseElevatorCommand1
+                                    )
+                                ),
+                                new SequentialCommandGroup(
+                                    alignCommand,
+                                    raiseElevatorCommand2,
+                                    new EjectCoral()
+                                )
+                            )
+                        );
+                        commands.add(
+                            new ParallelCommandGroup(
+                                AutoBuilder.followPath(PathPlannerPath.fromChoreoTrajectory(params[i + 1])),
+                                new MoveElevatorStow()
+                            )   
+                        );
+                        i++;
+                    } 
+                    catch (Exception e) {
+                        DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
+                        return Commands.none();
+                    }
+                }
+                else {
+                    int index = commands.size() - 1;
+                    commands.set(
+                        index,
+                        new SequentialCommandGroup(
+                            new ParallelDeadlineGroup(
+                                commands.get(index), // driving command,
+                                new SequentialCommandGroup(
+                                    new WarmUpElevatorReef(),
+                                    raiseElevatorCommand1
+                                )
+                            ),
+                            new SequentialCommandGroup(
+                                alignCommand,
+                                scoreCommand
+                            )
+                        )
+                    );
+                }
             }
+
+            // else if (param == "intake") {
+
+            // }
             
             else {
                 try {
-                    auto.addCommands(AutoBuilder.followPath(PathPlannerPath.fromChoreoTrajectory(param)));
+                    commands.add(AutoBuilder.followPath(PathPlannerPath.fromChoreoTrajectory(param)));
                 } 
                 catch (Exception e) {
                     DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
@@ -125,6 +203,9 @@ public class AutoGenerator {
             }
         }
 
-        return new ParallelCommandGroup(auto);
+        for (Command command : commands) {
+            auto.addCommands(command);
+        }
+        return auto;
     }
 }

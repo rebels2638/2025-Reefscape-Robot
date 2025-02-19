@@ -39,7 +39,7 @@ public class SwerveModuleGeneralConfigSim extends SwerveModuleGeneralConfigBase 
 
     @Override
     public double getDriveStatorCurrentLimit() {
-        return 60.0;
+        return 80.0;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class SwerveModuleGeneralConfigSim extends SwerveModuleGeneralConfigBase 
 
     @Override
     public double getDriveMotionMagicVelocityAccelerationMetersPerSecSec() {
-        return 7;
+        return 14;
     }
 
     @Override

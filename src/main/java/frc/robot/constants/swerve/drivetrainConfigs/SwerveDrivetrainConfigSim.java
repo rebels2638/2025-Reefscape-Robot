@@ -73,8 +73,8 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
             13.5,
             new ModuleConfig(
                 SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
-                5.4, 
-                1.2, 
+                4.9, 
+                1.5, 
                 DCMotor.getKrakenX60(1).
                     withReduction(
                         SwerveModuleGeneralConfigSim.getInstance().getDriveMotorToOutputShaftRatio()

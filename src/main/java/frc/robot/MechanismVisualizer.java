@@ -16,9 +16,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -127,7 +124,7 @@ public class MechanismVisualizer extends SubsystemBase {
                                 coral.getRotation()
                             ) :
                             coral;
-                            
+
                     if (coral.getTranslation().getDistance(rollerPose.getTranslation()) < 
                         nearest.getTranslation().getDistance(rollerPose.getTranslation()) &&
                         coral.getTranslation().getDistance(rollerPose.getTranslation()) < 0.5) {
