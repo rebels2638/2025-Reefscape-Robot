@@ -13,6 +13,8 @@ import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.commands.autoAlignment.complex.*;
+import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.roller.*;
 
 public class RobotContainer {
@@ -32,9 +34,11 @@ public class RobotContainer {
 
     private final Pivot pivot;
     // private final Claw claw;
+    // private final Claw claw;
 
     private final Elevator elevator;
     private final Roller roller;
+    private final MechanismVisualizer mechanismVisualizer;
 
     private final AutoRunner autoRunner;
 
@@ -52,23 +56,29 @@ public class RobotContainer {
         robotState = RobotState.getInstance();
         pivot = Pivot.getInstance();
         // claw = Claw.getInstance();
+        // claw = Claw.getInstance();
 
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
 
+        mechanismVisualizer = MechanismVisualizer.getInstance();
+        
         NamedCommands.registerCommand("Intake", new IntakeCoral());
 
         autoRunner = AutoRunner.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
+        // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        //uncomment later
-        // xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
-        // xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
+        xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
+        xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
         // xboxDriver.getYButton().whileTrue(new AlignToAlgay());
         // xboxDriver.getAButton().whileTrue(new RunClawEject());
+
+        xboxDriver.getAButton().onTrue(new MovePivotAlgay());
+        xboxDriver.getBButton().onTrue(new MovePivotStow());
 
         // xboxDriver.getYButton().onTrue(new IntakeCoral());
 
@@ -78,16 +88,14 @@ public class RobotContainer {
         // xboxOperator.getLeftBumper().onTrue(new RunClawIntake());
         // xboxOperator.getRightBumper().onTrue(new StopClaw());
 
-        elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
-        xboxOperator.getAButton().onTrue(new ScoreL1());
-        xboxOperator.getBButton().onTrue(new ScoreL2());
-        xboxOperator.getYButton().onTrue(new ScoreL3());
-        xboxOperator.getXButton().onTrue(new ScoreL4());
+        // xboxOperator.getLeftBumper().onTrue(new RunClawIntake());
+        // xboxOperator.getRightBumper().onTrue(new StopClaw());
 
-        xboxDriver.getXButton().onTrue(new ScoreL1());
-        xboxDriver.getAButton().onTrue(new ScoreL2());
-        xboxDriver.getBButton().onTrue(new ScoreL3());
-        xboxDriver.getYButton().onTrue(new ScoreL4());
+        // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
+        xboxOperator.getAButton().onTrue(new MoveElevatorStow());
+        xboxOperator.getBButton().onTrue(new MoveElevatorL2());
+        xboxOperator.getYButton().onTrue(new MoveElevatorL3());
+        xboxOperator.getXButton().onTrue(new MoveElevatorL4());
 
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
 

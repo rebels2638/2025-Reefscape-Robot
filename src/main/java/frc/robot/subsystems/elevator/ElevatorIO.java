@@ -8,12 +8,14 @@ public interface ElevatorIO {
         public double elevatorHeightMeters = 0;
         public double elevatorVelocityMetersPerSec = 0;
 
-        public double elevatorCurrentDrawAmps1 = 0;
         public double elevatorAppliedVolts1 = 0;
+        public double elevatorTorqueCurrent1 = 0;
+        public double elevatorAppliedDutyCycle1 = 0;
         public double elevatorTemperatureFahrenheit1 = 0;
 
-        public double elevatorCurrentDrawAmps2 = 0;
         public double elevatorAppliedVolts2 = 0;
+        public double elevatorTorqueCurrent2 = 0;
+        public double elevatorAppliedDutyCycle2 = 0;
         public double elevatorTemperatureFahrenheit2 = 0;
     }
 

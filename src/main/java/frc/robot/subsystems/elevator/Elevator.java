@@ -96,4 +96,8 @@ public class Elevator extends SubsystemBase {
     public boolean reachedSetpoint() {
         return Math.abs(setpoint - elevatorIOInputs.elevatorHeightMeters) <= config.getToleranceMeters();
     }
+
+    public double getHeight() {
+        return elevatorIOInputs.elevatorHeightMeters;
+    }
 }

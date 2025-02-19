@@ -119,7 +119,7 @@ public class AutoRunner {
     //         return Commands.none();
     //     }
   
-        return Autos.test;
+        return Autos.test4;
     }
 
 } 

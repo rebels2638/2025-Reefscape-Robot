@@ -42,13 +42,13 @@ public class LinearDriveToPose extends Command {
     private double previousTimestamp = Timer.getTimestamp();
 
     protected Supplier<Pose2d> targetPose;
-    protected Supplier<ChassisSpeeds> endVelo;
+    protected Supplier<ChassisSpeeds> feedforwardVelo;
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
     // This is the blue alliance pose! 
     // field relative velo and pose and velocity
-    public LinearDriveToPose(Supplier<Pose2d> targetPose, Supplier<ChassisSpeeds> endVelo) {
+    public LinearDriveToPose(Supplier<Pose2d> targetPose, Supplier<ChassisSpeeds> feedforwardVelo) {
         switch (Constants.currentMode) {
             case COMP:
                 drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
@@ -77,7 +77,7 @@ public class LinearDriveToPose extends Command {
         }
         
         this.targetPose = targetPose;
-        this.endVelo = endVelo;
+        this.feedforwardVelo = feedforwardVelo;
 
         this.translationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
@@ -129,7 +129,7 @@ public class LinearDriveToPose extends Command {
 
         rotationalGoal = new State(
             robotState.getEstimatedPose().getRotation().getRadians() + rotationError,
-            endVelo.get().omegaRadiansPerSecond
+            0
         );
 
         currentTranslationalSetpoint = new State(
@@ -176,14 +176,14 @@ public class LinearDriveToPose extends Command {
         double yTranslationalSetpoint = currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY();
         
         double xVelocitySetpoint = Math.max(
-            endVelo.get().vxMetersPerSecond,
+            feedforwardVelo.get().vxMetersPerSecond,
             currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
         );
 
-        double yVelocitySetpoint = Math.max( // motion profile trips out when nonzero end vel
-            endVelo.get().vyMetersPerSecond,
-            currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad)
-        );
+        double yVelocitySetpoint = // motion profile trips out when nonzero end vel
+            feedforwardVelo.get().vyMetersPerSecond +
+            currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad);
+        
 
         double xDist = robotState.getEstimatedPose().getX() - xTranslationalSetpoint;
         double yDist = robotState.getEstimatedPose().getY() - yTranslationalSetpoint;
@@ -207,7 +207,7 @@ public class LinearDriveToPose extends Command {
                 currentRotationalSetpoint.position
             ) + 
             Math.max(
-                endVelo.get().omegaRadiansPerSecond,
+                feedforwardVelo.get().omegaRadiansPerSecond,
                 currentRotationalSetpoint.velocity
             );
 
@@ -225,7 +225,7 @@ public class LinearDriveToPose extends Command {
                 drivetrainConfig.getAutoAlignRotationTolerance();
         
         boolean speedsAligned = 
-            endVelo.get().vxMetersPerSecond == 0 && endVelo.get().vyMetersPerSecond == 0 && endVelo.get().omegaRadiansPerSecond == 0 ?
+            feedforwardVelo.get().vxMetersPerSecond == 0 && feedforwardVelo.get().vyMetersPerSecond == 0 && feedforwardVelo.get().omegaRadiansPerSecond == 0 ?
                 Math.abs(Math.hypot(
                     robotState.getFieldRelativeSpeeds().vxMetersPerSecond,
                     robotState.getFieldRelativeSpeeds().vyMetersPerSecond
@@ -234,5 +234,10 @@ public class LinearDriveToPose extends Command {
             true;
 
         return poseAligned && speedsAligned;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        swerveDrive.driveFieldRelative(feedforwardVelo.get());
     }
 }

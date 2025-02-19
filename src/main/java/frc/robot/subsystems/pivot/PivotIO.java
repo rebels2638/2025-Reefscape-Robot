@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface PivotIO {
     @AutoLog
     class PivotIOInputs {
-        public Rotation2d pivotPositionRad = new Rotation2d();
+        public Rotation2d pivotPosition = new Rotation2d();
         public double pivotVelocityRadPerSec = 0;
 
         public double pivotCurrentDrawAmps = 0;

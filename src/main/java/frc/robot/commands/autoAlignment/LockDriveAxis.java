@@ -131,7 +131,7 @@ public class LockDriveAxis extends LinearDriveToPose {
         Logger.recordOutput("LockDriveAxis/goalSpeeds", goalSpeeds);
 
         super.targetPose = () -> nextPoint;
-        super.endVelo = () -> goalSpeeds;
+        super.feedforwardVelo = () -> goalSpeeds;
         
         super.execute();
 
