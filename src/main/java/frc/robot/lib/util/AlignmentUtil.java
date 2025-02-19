@@ -15,7 +15,9 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.RobotState;
 import frc.robot.constants.Constants;
+import frc.robot.constants.MechAElementConstants;
 import frc.robot.constants.Constants.AlignmentConstants;
+import frc.robot.constants.Constants.GamePiece;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
@@ -269,7 +271,7 @@ public class AlignmentUtil {
         }
     }
 
-    public static ArrayList<Pose2d> yieldPotentialAlignmentTargetsClockwise() {
+    public static ArrayList<Pose2d> yieldPotentialScoringAlignmentTargetsClockwise() {
         ArrayList<Pose2d> all_candidates = new ArrayList<>();
 
         for (int i = 0; i < leftBranchCandidates.size(); i++) {
@@ -277,6 +279,8 @@ public class AlignmentUtil {
             all_candidates.add(algayCandidates.get(i));
             all_candidates.add(leftBranchCandidates.get(i));
         }
+        all_candidates.add(Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(MechAElementConstants.Processor.centerFace) : MechAElementConstants.Processor.centerFace); // TODO: processor
+        all_candidates.add(Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(new Pose2d(MechAElementConstants.Barge.middleCage, new Rotation2d(0))) : new Pose2d(MechAElementConstants.Barge.middleCage, new Rotation2d(0))); // TODO: alliance barge
 
         return all_candidates;
     }
@@ -339,39 +343,57 @@ public class AlignmentUtil {
         Pose2d target = new Pose2d();
         int n = 0;
 
-        while (requestedLevel > 0) {
-            while (n < 13) {
-                if (RobotState.getInstance()
-                        .alreadyScored(
-                            curr
-                                .nearest(
-                                    Arrays.asList(
-                                        AlignmentUtil.getClosestLeftBranchPose(n), 
-                                        AlignmentUtil.getClosestRightBranchPose(n))), 
-                        Arrays.asList(Constants.level.values()).get(requestedLevel), 
-                        piece
-                        )
-                    ) {
-    
-                    n++;
+        if (piece == Constants.GamePiece.CORAL) {
+            while (requestedLevel > 0) {
+                while (n < 13) {
+                    if (RobotState.getInstance()
+                            .alreadyScored(
+                                curr
+                                    .nearest(
+                                        Arrays.asList(
+                                            AlignmentUtil.getClosestLeftBranchPose(n), 
+                                            AlignmentUtil.getClosestRightBranchPose(n))), 
+                            Arrays.asList(Constants.level.values()).get(requestedLevel), 
+                            piece
+                            )
+                        ) {n++;}
+                    else {
+                        target = curr.nearest(
+                            Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(n), 
+                            AlignmentUtil.getClosestRightBranchPose(n))
+                        );
+        
+                        break;
+                    }
                 }
+
+                if (target.equals(new Pose2d())) {
+                    requestedLevel--;
+                }
+
+                else {break;}
+            }
+        }
+
+        else {
+            while(n < 7) {
+                if (RobotState.getInstance()
+                    .alreadyScored(
+                        curr
+                            .nearest(
+                                Arrays.asList(
+                                    AlignmentUtil.getClosestAlgayPose(n))),
+                    Arrays.asList(Constants.level.values()).get(requestedLevel), 
+                    piece
+                    )
+                ) {n++;}
+
                 else {
-                    target = curr.nearest(
-                        Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(n), 
-                        AlignmentUtil.getClosestRightBranchPose(n))
-                    );
-    
+                    target = AlignmentUtil.getClosestAlgayPose(n);
                     break;
                 }
             }
-
-            if (target.equals(new Pose2d())) {
-                requestedLevel--;
-            }
-
-            else {break;}
         }
-
         return target;
     }
 

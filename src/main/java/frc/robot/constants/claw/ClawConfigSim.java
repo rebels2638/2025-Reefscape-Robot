@@ -1,5 +1,7 @@
 package frc.robot.constants.claw;
 
+import com.ctre.phoenix6.signals.UpdateModeValue;
+
 public class ClawConfigSim extends ClawConfigBase {
     private static ClawConfigSim instance;
     public static ClawConfigSim getInstance() {
@@ -75,6 +77,57 @@ public class ClawConfigSim extends ClawConfigBase {
     @Override
     public boolean getIsMotorInverted() {
         return true;
+    }
+
+    // CANrange configuration fields
+    @Override
+    public double getFOVCenterX() {
+        return 0;
+    }
+
+    @Override
+    public double getFOVCenterY() {
+        return 0;
+    }
+
+    @Override
+    public double getFOVRangeX() {
+        return 6.75;
+    }
+
+    @Override
+    public int getCanRangeCanID() {
+        return 17;
+    }
+
+    @Override
+    public double getFOVRangeY() {
+        return 6.75;
+    }
+
+    @Override
+    public double getMinSignalStrengthForValidMeasurement() {
+        return 2000;
+    }
+
+    @Override
+    public double getProximityHysteresis() {
+        return 0.01;
+    }
+
+    @Override
+    public double getProximityThreshold() {
+        return 0.10;
+    }
+
+    @Override
+    public double getToFUpdateFrequency() {
+        return 50;
+    }
+
+    @Override
+    public UpdateModeValue getToFUpdateMode() {
+        return UpdateModeValue.ShortRange100Hz;
     }
     
 }

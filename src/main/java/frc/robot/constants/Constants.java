@@ -61,6 +61,8 @@ public final class Constants {
         BOTTOM_RIGHT_MID,
         BOTTOM_RIGHT_LEFT,
 
+        PROCESSOR,
+        BARGE
     }
 
     public static enum level {

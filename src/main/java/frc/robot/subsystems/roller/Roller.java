@@ -69,8 +69,8 @@ public class Roller extends SubsystemBase {
     @Override
     public void periodic() {
         rollerIO.updateInputs(rollerIOInputs);
-        status.addValue(rollerIOInputs.inRoller);
         Logger.processInputs("Roller", rollerIOInputs);
+        status.addValue(rollerIOInputs.inRoller);
     }
 
     public void setTorqueCurrentFOC(double current) {
@@ -121,7 +121,7 @@ public class Roller extends SubsystemBase {
             double preThreshold = 0.8 * status.getSampleCount(preStart, preEnd);
             double postThreshold = 0.8 * status.getSampleCount(postStart, currentTime);
 
-            if (preTrueCount >= preThreshold && postFalseCount >= postThreshold ) {
+            if (preTrueCount >= preThreshold && postFalseCount >= postThreshold) {
                 RobotState.getInstance().addScoringObservation(new ScoringObservation(pos, level, Constants.GamePiece.CORAL, currentTime));
             }
 

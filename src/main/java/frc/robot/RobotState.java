@@ -244,7 +244,7 @@ public class RobotState {
   }
 
   public boolean alreadyScored(Pose2d target, Constants.level requestedLevel, Constants.GamePiece gamePiece) {
-    Constants.scoredPositions target_position = getReefPosition(target);
+    Constants.scoredPositions target_position = getScoredPosition(target);
     for (Pair<Pair<Constants.scoredPositions, Constants.level>, Constants.GamePiece> a : scoredPositions) {
       if (a.getFirst().getFirst() == target_position && a.getFirst().getSecond() == requestedLevel && a.getSecond() == gamePiece) {
         return true;
@@ -253,16 +253,16 @@ public class RobotState {
     return false;
   }
 
-  public Constants.scoredPositions getReefPosition(Pose2d arg) {
+  public Constants.scoredPositions getScoredPosition(Pose2d arg) {
     if (arg == null) {arg = getEstimatedPose();}
-    return arg.nearest(AlignmentUtil.yieldPotentialAlignmentTargetsClockwise()).getTranslation().getDistance(arg.getTranslation()) < 1 ? 
+    return arg.nearest(AlignmentUtil.yieldPotentialScoringAlignmentTargetsClockwise()).getTranslation().getDistance(arg.getTranslation()) < 1 ? // TODO: Constant
     Arrays.asList(
       Constants.scoredPositions.values()
       ).get(
-        AlignmentUtil.yieldPotentialAlignmentTargetsClockwise()
+        AlignmentUtil.yieldPotentialScoringAlignmentTargetsClockwise()
         .indexOf(arg
           .nearest(AlignmentUtil
-            .yieldPotentialAlignmentTargetsClockwise()
+            .yieldPotentialScoringAlignmentTargetsClockwise()
             )
           )
         ) : null;
