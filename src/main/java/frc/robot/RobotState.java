@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.robotState.RobotStateConfigBase;
 import frc.robot.constants.robotState.RobotStateConfigProto;
@@ -20,12 +21,15 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
+import frc.robot.lib.util.RebelUtil;
+import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
+import frc.robot.subsystems.elevator.Elevator;
 
 import java.util.NoSuchElementException;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class RobotState {
+public class RobotState extends SubsystemBase {
   private static RobotState instance;
   public static RobotState getInstance() {
     if (instance == null) {
@@ -284,5 +288,18 @@ public class RobotState {
         // ensure that we are decelerating in each axis of movement
         Math.signum(lastFieldRelativeAccelerations.getX()) != Math.signum(getFieldRelativeSpeeds().vxMetersPerSecond) &&
         Math.signum(lastFieldRelativeAccelerations.getY()) != Math.signum(getFieldRelativeSpeeds().vyMetersPerSecond); 
+  }
+
+  @Override
+  public void periodic() {
+    double height = 
+        RebelUtil.constrain(
+            Elevator.getInstance().getHeight(),
+            0, 
+            1.39
+        );
+    SwerveDrive.getInstance().setSlowdownCoeffs(
+        1 - Math.pow(height / 1.4, 3), 
+        1 - Math.pow(height / 1.42, 3));
   }
 }
