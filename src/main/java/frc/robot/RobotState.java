@@ -241,6 +241,10 @@ public class RobotState {
     Pair<Constants.scoredPositions, Constants.level> inner = new Pair<>(observation.position, observation.level);
     Pair<Pair<Constants.scoredPositions, Constants.level>, Constants.GamePiece> outer = new Pair<>(inner, observation.GamePiece);
     this.scoredPositions.add(outer);
+
+    for (int i = 0; i < scoredPositions.size(); i++) {
+      System.out.println(scoredPositions.get(i));
+    }
   }
 
   public boolean alreadyScored(Pose2d target, Constants.level requestedLevel, Constants.GamePiece gamePiece) {

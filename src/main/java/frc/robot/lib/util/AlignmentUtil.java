@@ -306,7 +306,7 @@ public class AlignmentUtil {
     }
 
     private static Pose2d getClosestReefFace(Pose2d curr, List<Pose2d> candidates, int nthTarget) { // reference n-1th and nth target
-        curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr; // why the hell would this be flipped?
+        // curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr; // why the hell would this be flipped?
         Collections.sort(candidates, poseComparator(curr));
         double a = candidates.get(nthTarget).getTranslation().getDistance(curr.getTranslation());
         double b = candidates.get(nthTarget+1).getTranslation().getDistance(curr.getTranslation());
