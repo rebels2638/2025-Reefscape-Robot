@@ -67,12 +67,12 @@ public class RollerConfigProto extends RollerConfigBase {
     // CANrange configuration fields
     @Override
     public double getFOVCenterX() {
-        return 0;
+        return 1;
     }
 
     @Override
     public double getFOVCenterY() {
-        return 0;
+        return 1;
     }
 
     @Override

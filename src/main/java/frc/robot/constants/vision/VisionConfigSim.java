@@ -29,7 +29,7 @@ public class VisionConfigSim extends VisionConfigBase {
 
     @Override
     public double getTranslationDevTaScaler() {
-        return 0;
+        return 15;
     }
 
     @Override

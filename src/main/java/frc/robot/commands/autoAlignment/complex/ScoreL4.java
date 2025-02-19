@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearDriveToPose;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSource;
-import frc.robot.commands.elevator.simple.MoveElevatorL1;
+import frc.robot.commands.elevator.simple.MoveElevatorL4;
 import frc.robot.commands.elevator.simple.MoveElevatorStow;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
@@ -15,30 +15,33 @@ import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
-public class ScoreL4 extends ConditionalCommand { // Ideal structure
+public class ScoreL4 extends ConditionalCommand {
     public ScoreL4() {
         super (
             new ParallelCommandGroup(
                 new AlignToClosestSource(),
                 new IntakeCoral()
-            ).andThen(trackToAndDeposit),
-            trackToAndDeposit,
+            ).andThen(createTrackToAndDeposit()),
+            createTrackToAndDeposit(),
             () -> !Roller.getInstance().inRoller()
         );
     }
 
-    private static final SequentialCommandGroup trackToAndDeposit = new SequentialCommandGroup (
-        new ParallelCommandGroup(
-            new SequentialCommandGroup(
-                new isElevatorExtendable(),
-                new MoveElevatorL1()
+    private static SequentialCommandGroup createTrackToAndDeposit() {
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                    new isElevatorExtendable(),
+                    new MoveElevatorL4()
+                ),
+                new LinearDriveToPose(
+                    () -> AlignmentUtil.decideScoringTarget(4, Constants.GamePiece.CORAL),
+                    () -> new ChassisSpeeds()
+                )
             ),
-            new LinearDriveToPose(
-                () -> AlignmentUtil.decideScoringTarget(4, Constants.GamePiece.CORAL),
-                () -> new ChassisSpeeds())
-        ),
-        new MoveElevatorL1(),
-        new EjectCoral(),
-        new MoveElevatorStow()
-    );
+            new MoveElevatorL4(),
+            new EjectCoral(),
+            new MoveElevatorStow()
+        );
+    }
 }

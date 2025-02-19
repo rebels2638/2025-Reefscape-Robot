@@ -21,24 +21,27 @@ public class ScoreL1 extends ConditionalCommand { // Ideal structure
             new ParallelCommandGroup(
                 new AlignToClosestSource(),
                 new IntakeCoral()
-            ).andThen(trackToAndDeposit),
-            trackToAndDeposit,
+            ).andThen(createTrackToAndDeposit()),
+            createTrackToAndDeposit(),
             () -> !Roller.getInstance().inRoller()
         );
     }
 
-    private static final SequentialCommandGroup trackToAndDeposit = new SequentialCommandGroup (
-        new ParallelCommandGroup(
-            new SequentialCommandGroup(
-                new isElevatorExtendable(),
-                new MoveElevatorL1()
+    private static SequentialCommandGroup createTrackToAndDeposit() {
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                    new isElevatorExtendable(),
+                    new MoveElevatorL1()
+                ),
+                new LinearDriveToPose(
+                    () -> AlignmentUtil.decideScoringTarget(1, Constants.GamePiece.CORAL),
+                    () -> new ChassisSpeeds()
+                )
             ),
-            new LinearDriveToPose(
-                () -> AlignmentUtil.decideScoringTarget(1, Constants.GamePiece.CORAL),
-                () -> new ChassisSpeeds())
-        ),
-        new MoveElevatorL1(),
-        new EjectCoral(),
-        new MoveElevatorStow()
-    );
+            new MoveElevatorL1(),
+            new EjectCoral(),
+            new MoveElevatorStow()
+        );
+    }
 }

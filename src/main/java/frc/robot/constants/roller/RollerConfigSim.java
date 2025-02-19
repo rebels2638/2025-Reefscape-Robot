@@ -22,7 +22,7 @@ public class RollerConfigSim extends RollerConfigBase {
 
     @Override
     public int getCanRangeCanID() {
-        return 1;
+        return 12;
     }
 
     // Supply current limits
@@ -77,32 +77,32 @@ public class RollerConfigSim extends RollerConfigBase {
 
     @Override
     public double getFOVRangeX() {
-        return 1;
+        return 6.75;
     }
 
     @Override
     public double getFOVRangeY() {
-        return 1;
+        return 6.75;
     }
 
     @Override
     public double getMinSignalStrengthForValidMeasurement() {
-        return 1;
+        return 2500;
     }
 
     @Override
     public double getProximityHysteresis() {
-        return 1;
+        return 0.005;
     }
 
     @Override
     public double getProximityThreshold() {
-        return 1;
+        return 0.03;
     }
 
     @Override
     public double getToFUpdateFrequency() {
-        return 1;
+        return 100;
     }
 
     @Override

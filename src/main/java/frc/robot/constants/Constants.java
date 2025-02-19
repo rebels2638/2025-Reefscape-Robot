@@ -73,7 +73,7 @@ public final class Constants {
         L4
     }
 
-    public static final Mode currentMode = Mode.COMP; // TODO: change this if sim
+    public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
     // public static final boolean isSYSID = true; // TODO: change this if sysid
 
     public static enum Mode {

@@ -1,7 +1,5 @@
 package frc.robot.constants.robotState;
 
-import edu.wpi.first.math.geometry.Translation2d;
-
 public class RobotStateConfigSim extends RobotStateConfigBase {
     private static RobotStateConfigSim instance;
     public static RobotStateConfigSim getInstance() {
@@ -16,12 +14,12 @@ public class RobotStateConfigSim extends RobotStateConfigBase {
 
     @Override
     public double getVisionTranslationDevBase() {
-        return 0;
+        return 0.15;
     }
 
     @Override
     public double getOdomTranslationDevBase() {
-        return 0;
+        return 0.05;
     }
 
     @Override
