@@ -15,17 +15,32 @@ public final class Autos {
         );
     
         public static final Command test4 = 
-        AutoGenerator.generateAuto(
-            "fromProcessorStartToTopRightLB", 
-            "LB L4",
-            "fromTopRightLBToRightSourceTop",
-            "fromRightSourceTopToBottomRightLB",
-            "LB L4",
-            "fromBottomRightLBToRightSourceTop",
-            "fromRightSourceTopToBottomRightRB",
-            "RB L4",
-            "fromBottomRightRBToRightSourceTop",
-            "fromRightSourceTopToTopRightRB",
-            "RB L4"
-        );
+            AutoGenerator.generateAuto(
+                "fromProcessorStartToTopRightLB", 
+                "LB L4",
+                "fromTopRightLBToRightSourceTop",
+                "fromRightSourceTopToBottomRightLB",
+                "LB L4",
+                "fromBottomRightLBToRightSourceTop",
+                "fromRightSourceTopToBottomRightRB",
+                "RB L4",
+                "fromBottomRightRBToRightSourceTop",
+                "fromRightSourceTopToTopRightRB",
+                "RB L4"
+            );
+        
+        public static final Command test5 = 
+            AutoGenerator.generateAuto(
+                "fromProcessorStartToTopRightLB", 
+                "LB L3",
+                "fromTopRightLBToRightSourceTop",
+                "fromRightSourceTopToBottomRightLB",
+                "LB L3",
+                "fromBottomRightLBToRightSourceTop",
+                "fromRightSourceTopToBottomRightRB",
+                "RB L3",
+                "fromBottomRightRBToRightSourceTop",
+                "fromRightSourceTopToTopRightRB",
+                "RB L3"
+            );
 }
