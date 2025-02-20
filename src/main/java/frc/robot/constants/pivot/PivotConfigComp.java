@@ -15,7 +15,7 @@ public class PivotConfigComp extends PivotConfigBase {
     // CANID
     @Override
     public int getCanID() {
-        return 19;
+        return 20;
     }
 
     // Supply current limits

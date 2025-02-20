@@ -21,7 +21,7 @@ public class VisionConfigComp extends VisionConfigBase {
 
     @Override
     public double getTranslationDevBase() {
-        return 0.05;
+        return 1e-19; // 0.05
     }
 
     @Override
@@ -36,6 +36,6 @@ public class VisionConfigComp extends VisionConfigBase {
 
     @Override
     public double getObservationBufferSizeSeconds() {
-        return 1;
+        return 2;
     }
 }

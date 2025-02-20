@@ -38,6 +38,7 @@ import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConf
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
 import frc.robot.lib.util.Elastic;
+import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIONavX;
@@ -46,6 +47,7 @@ import frc.robot.subsystems.drivetrain.swerve.module.ModuleIO;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOInputsAutoLogged;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOSim;
 import frc.robot.subsystems.drivetrain.swerve.module.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
 
 public class SwerveDrive extends SubsystemBase {
     private static SwerveDrive instance = null;
@@ -298,6 +300,18 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);
+
+        double height = 
+        RebelUtil.constrain(
+            Elevator.getInstance().getHeight(),
+            0, 
+            1.39
+        );
+        setSlowdownCoeffs(
+            1 - Math.pow(height / 1.4, 3), 
+            1 - Math.pow(height / 1.42, 3)
+        );
+
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
