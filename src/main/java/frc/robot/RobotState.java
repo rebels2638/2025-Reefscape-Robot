@@ -269,7 +269,7 @@ public class RobotState {
             .yieldPotentialScoringAlignmentTargetsClockwise()
             )
           )
-        ) : null;
+        ) : Constants.scoredPositions.BARGE;
   }
 
   /**

@@ -280,7 +280,6 @@ public class AlignmentUtil {
         }
         all_candidates.add(Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(MechAElementConstants.Processor.centerFace) : MechAElementConstants.Processor.centerFace); // TODO: processor
         all_candidates.add(Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(new Pose2d(MechAElementConstants.Barge.middleCage, new Rotation2d(0))) : new Pose2d(MechAElementConstants.Barge.middleCage, new Rotation2d(0))); // TODO: alliance barge
-
         return all_candidates;
     }
 

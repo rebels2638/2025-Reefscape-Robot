@@ -15,7 +15,6 @@ public class RunRollerEject extends Command {
     @Override
     public void initialize() {
         roller.setVoltage(-12);
-        roller.isScored(RobotState.getInstance().getScoredPosition(RobotState.getInstance().getEstimatedPose()), Elevator.getInstance().getElevatorHeight());
     }
 
     @Override
