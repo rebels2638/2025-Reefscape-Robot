@@ -121,7 +121,11 @@ public class MechanismVisualizer extends SubsystemBase {
                                 FlippingUtil.flipFieldPose(coral.toPose2d()).getX(),
                                 FlippingUtil.flipFieldPose(coral.toPose2d()).getY(),
                                 coral.getTranslation().getZ(),
-                                coral.getRotation()
+                                new Rotation3d(
+                                    coral.getRotation().getX(),
+                                    coral.getRotation().getY(),
+                                    FlippingUtil.flipFieldPose(coral.toPose2d()).getRotation().getRadians()
+                                )
                             ) :
                             coral;
 
