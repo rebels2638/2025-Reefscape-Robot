@@ -22,7 +22,7 @@ public class WarmUpElevatorReef extends Command {
     @Override
     public boolean isFinished() {
         Logger.recordOutput("WarmUpElevatorReef/closestReefFace", AlignmentUtil.getClosestReefFaceSimple(robotState.getEstimatedPose()));
-        boolean a =  
+        boolean isFinished =  
             robotState.getIsElevatorExtendable() && 
             AlignmentUtil.
                 getClosestReefFaceSimple(robotState.getEstimatedPose()).
@@ -30,7 +30,7 @@ public class WarmUpElevatorReef extends Command {
                 getDistance(robotState.getEstimatedPose().
                 getTranslation()) <= 2;
 
-        Logger.recordOutput("WarmUpElevatorReef/a", a);
-        return a;
+        Logger.recordOutput("WarmUpElevatorReef/a", isFinished);
+        return isFinished;
     }
 }
