@@ -71,15 +71,15 @@ public class RobotContainer {
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
-        xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
+        xboxDriver.getLeftMiddleButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
         xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
         xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
 
-        xboxDriver.getAButton().onTrue(new ScoreL1Routine());
-        xboxDriver.getBButton().onTrue(new ScoreL2Routine());
-        xboxDriver.getYButton().onTrue(new ScoreL3Routine());
-        xboxDriver.getXButton().onTrue(new ScoreL4Routine());
+        xboxDriver.getAButton().whileTrue(new ScoreL1Routine());
+        xboxDriver.getBButton().whileTrue(new ScoreL2Routine());
+        xboxDriver.getYButton().whileTrue(new ScoreL3Routine());
+        xboxDriver.getXButton().whileTrue(new ScoreL4Routine());
 
         // xboxDriver.getAButton().onTrue(new MovePivotAlgay());
         // xboxDriver.getBButton().onTrue(new MovePivotStow());

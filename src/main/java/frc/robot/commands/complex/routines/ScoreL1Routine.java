@@ -1,5 +1,7 @@
 package frc.robot.commands.complex.routines;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -30,6 +32,9 @@ public class ScoreL1Routine extends ConditionalCommand { // Ideal structure
             createTrackToAndDeposit(),
             () -> !Roller.getInstance().inRoller()
         );
+
+        Logger.recordOutput("ScoreL1Routine/scoredPositions", RobotState.getInstance().getScoredPosition(commandTarget));
+        Logger.recordOutput("ScoreL1Routine/commandTarget", commandTarget);
 
         Roller.getInstance().isScored(RobotState.getInstance().getScoredPosition(commandTarget), Elevator.getInstance().getElevatorHeight());
     }
