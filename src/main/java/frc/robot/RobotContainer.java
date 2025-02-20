@@ -11,14 +11,12 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.commands.autoAlignment.complex.ScoreL1;
-import frc.robot.commands.autoAlignment.complex.ScoreL2;
-import frc.robot.commands.autoAlignment.complex.ScoreL3;
-import frc.robot.commands.autoAlignment.complex.ScoreL4;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranch;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranch;
-import frc.robot.commands.pivot.simple.MovePivotAlgay;
-import frc.robot.commands.pivot.simple.MovePivotStow;
+import frc.robot.commands.complex.routines.ScoreL1Routine;
+import frc.robot.commands.complex.routines.ScoreL2Routine;
+import frc.robot.commands.complex.routines.ScoreL3Routine;
+import frc.robot.commands.complex.routines.ScoreL4Routine;
 import frc.robot.commands.roller.*;
 
 public class RobotContainer {
@@ -78,10 +76,10 @@ public class RobotContainer {
         xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
         xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
 
-        xboxDriver.getAButton().onTrue(new ScoreL1());
-        xboxDriver.getBButton().onTrue(new ScoreL2());
-        xboxDriver.getYButton().onTrue(new ScoreL3());
-        xboxDriver.getXButton().onTrue(new ScoreL4());
+        xboxDriver.getAButton().onTrue(new ScoreL1Routine());
+        xboxDriver.getBButton().onTrue(new ScoreL2Routine());
+        xboxDriver.getYButton().onTrue(new ScoreL3Routine());
+        xboxDriver.getXButton().onTrue(new ScoreL4Routine());
 
         // xboxDriver.getAButton().onTrue(new MovePivotAlgay());
         // xboxDriver.getBButton().onTrue(new MovePivotStow());

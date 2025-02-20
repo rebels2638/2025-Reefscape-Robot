@@ -1,4 +1,4 @@
-package frc.robot.commands.autoAlignment.complex;
+package frc.robot.commands.complex.routines;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -16,7 +16,7 @@ import frc.robot.subsystems.roller.Roller;
 
 public class ScoreAlgayBarge extends ConditionalCommand { // Ideal structure
     public ScoreAlgayBarge() {
-        super (
+        super(
             new ParallelCommandGroup(
                 new AlignToClosestSource(),
                 new IntakeCoral()

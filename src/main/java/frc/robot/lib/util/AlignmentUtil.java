@@ -17,7 +17,6 @@ import frc.robot.RobotState;
 import frc.robot.constants.Constants;
 import frc.robot.constants.MechAElementConstants;
 import frc.robot.constants.Constants.AlignmentConstants;
-import frc.robot.constants.Constants.GamePiece;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
@@ -142,7 +141,7 @@ public class AlignmentUtil {
             double distA = a.getTranslation().getDistance(curr.getTranslation());
             double distB = b.getTranslation().getDistance(curr.getTranslation());
 
-            if (distA != distB) {Double.compare(distA, distB);}
+            if (distA != distB) {return Double.compare(distA, distB);}
 
             return Double.compare(Math.abs(a.getRotation().getRadians() - curr.getRotation().getRadians()),
                 Math.abs(b.getRotation().getRadians() - curr.getRotation().getRadians()));
@@ -306,10 +305,21 @@ public class AlignmentUtil {
     }
 
     private static Pose2d getClosestReefFace(Pose2d curr, List<Pose2d> candidates, int nthTarget) { // reference n-1th and nth target
-        // curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr; // why the hell would this be flipped?
         Collections.sort(candidates, poseComparator(curr));
+
+        if (nthTarget >= candidates.size()) {
+            return candidates.get(candidates.size() - 1);
+        }
+
         double a = candidates.get(nthTarget).getTranslation().getDistance(curr.getTranslation());
         double b = candidates.get(nthTarget+1).getTranslation().getDistance(curr.getTranslation());
+
+        if (a == b) {
+            double rotA = Math.abs(candidates.get(nthTarget).getRotation().getRadians() - curr.getRotation().getRadians());
+            double rotB = Math.abs(candidates.get(nthTarget+1).getRotation().getRadians() - curr.getRotation().getRadians());
+
+            return rotA < rotB ? candidates.get(nthTarget) : candidates.get(nthTarget+1);
+        }
 
         return a < b ? candidates.get(nthTarget) : candidates.get(nthTarget+1);
     }
@@ -338,7 +348,41 @@ public class AlignmentUtil {
         return nearest;
     }
 
-    public static Pose2d decideScoringTarget(int requestedLevel, Constants.GamePiece piece) {
+    public static Pose2d decideScoringTargetMinDist(int requestedLevel, Constants.GamePiece piece) { // distance, then points
+        Pose2d curr = RobotState.getInstance().getEstimatedPose();
+        Pose2d target = new Pose2d();
+
+        if (piece == Constants.GamePiece.CORAL) {
+            double minDistance = Double.MAX_VALUE;
+            for (int n = 0; n < 13; n++) {
+                List<Pose2d> candidates = Arrays.asList(
+                    AlignmentUtil.getClosestLeftBranchPose(n),
+                    AlignmentUtil.getClosestRightBranchPose(n)
+                );
+    
+                for (Pose2d candidate : candidates) {
+                    if (!RobotState.getInstance().alreadyScored(candidate,
+                            Arrays.asList(Constants.level.values()).get(requestedLevel),
+                            piece)) {
+    
+                        double distance = candidate.getTranslation().getDistance(curr.getTranslation());
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            target = candidate;
+                        }
+                    }
+                }
+            }
+        }
+
+        else {
+            target = decideScoringTargetMaxPoints(requestedLevel, piece);
+        }
+
+        return target;
+    }
+
+    public static Pose2d decideScoringTargetMaxPoints(int requestedLevel, Constants.GamePiece piece) { // points, then distance
         Pose2d curr = RobotState.getInstance().getEstimatedPose();
         Pose2d target = new Pose2d();
         int n = 0;
