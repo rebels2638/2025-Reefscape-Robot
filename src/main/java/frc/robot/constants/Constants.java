@@ -127,7 +127,7 @@ public final class Constants {
 
     public static final class AlignmentConstants {
         // these assume the robot's volume is zero. does not take into account frame
-        public static final double kMAX_ALIGNMENT_DIST_METERS = 1.5;
+        public static final double kMAX_ALIGNMENT_DIST_METERS = 5;
 
         public static final double kINTER_BRANCH_DIST_METER = 0.34;
 
