@@ -4,7 +4,9 @@ import java.util.HashMap;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -120,6 +122,16 @@ public class AutoRunner {
     //     }
   
         return Autos.test5;
+    }
+
+    public PathConstraints getPathConstraints() {
+        return
+            new PathConstraints(
+                drivetrainConfig.getMaxTranslationalVelocityMetersPerSec(),
+                drivetrainConfig.getMaxTranslationalAccelerationMetersPerSecSec(), 
+                drivetrainConfig.getMaxAngularVelocityRadiansPerSec(),
+                drivetrainConfig.getMaxAngularAccelerationRadiansPerSecSec()
+            );
     }
 
 } 

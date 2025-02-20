@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
 import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearDriveToPose;
-import frc.robot.commands.autoAlignment.source.AlignToClosestSource;
+import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinear;
 import frc.robot.commands.elevator.simple.MoveElevatorL1;
 import frc.robot.commands.elevator.simple.MoveElevatorStow;
 import frc.robot.commands.roller.EjectCoral;
@@ -22,7 +22,7 @@ public class ScoreL2 extends ConditionalCommand { // Ideal structure
     public ScoreL2() {
         super (
             new ParallelCommandGroup(
-                new AlignToClosestSource(),
+                new AlignToClosestSourceLinear(),
                 new IntakeCoral()
             ).andThen(trackToAndDeposit),
             trackToAndDeposit,

@@ -22,9 +22,10 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.*;
-import frc.robot.commands.autoAlignment.reef.AlignToAlgay;
-import frc.robot.commands.autoAlignment.reef.AlignToLeftBranch;
-import frc.robot.commands.autoAlignment.reef.AlignToRightBranch;
+import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinear;
+import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinear;
+import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinear;
+import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.commands.claw.simple.RunClawEject;
@@ -94,9 +95,11 @@ public class RobotContainer {
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranch());
-        xboxDriver.getRightBumper().whileTrue(new AlignToRightBranch());
-        // xboxDriver.getYButton().whileTrue(new AlignToAlgay());
+        xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranchLinear());
+        xboxDriver.getRightBumper().whileTrue(new AlignToRightBranchLinear());
+        // xboxDriver.getYButton().whileTrue(new AlignToAlgayLinear());
+        xboxDriver.getYButton().whileTrue(new AlignToClosestSourcePathfind(xboxDriver));
+
         // xboxDriver.getAButton().whileTrue(new RunClawEject());
 
         xboxDriver.getAButton().onTrue(new MovePivotAlgay());

@@ -72,6 +72,8 @@
     "feedforwards",
     "Holonomic",
     "Interpolatable",
+    "Pathfind",
+    "Pathfinding",
     "pathplanner",
     "teleop",
     "Telop"

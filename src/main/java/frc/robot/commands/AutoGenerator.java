@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
-import frc.robot.commands.autoAlignment.reef.AlignToLeftBranch;
-import frc.robot.commands.autoAlignment.reef.AlignToRightBranch;
+import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinear;
+import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinear;
 import frc.robot.commands.autoAlignment.reef.WarmUpElevatorReef;
 import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
@@ -85,11 +85,11 @@ public class AutoGenerator {
                     String[] split = param.split(" ");
                     switch (split[0]) { // auto align because we need maximal accuracy
                         case "RB":
-                            alignCommand = new AlignToRightBranch();
+                            alignCommand = new AlignToRightBranchLinear();
                             break;
                     
                         case "LB":
-                            alignCommand = new AlignToLeftBranch();
+                            alignCommand = new AlignToLeftBranchLinear();
                             break;
     
                         default:
