@@ -23,6 +23,22 @@ import frc.robot.lib.util.AlignmentUtil.Axis;
  */
 public final class Constants {
 
+    public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
+    // public static final boolean isSYSID = true; // TODO: change this if sysid
+
+    public static enum Mode {
+        /** Running on a real robot. */
+        COMP,
+
+        PROTO,
+
+        /** Running a physics simulator. */
+        SIM,
+
+        /** Replaying from a log file. */
+        REPLAY
+    }
+
     public static enum GamePiece {
         ALGAY,
         CORAL
@@ -63,22 +79,6 @@ public final class Constants {
         L2,
         L3,
         L4
-    }
-
-    public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
-    // public static final boolean isSYSID = true; // TODO: change this if sysid
-
-    public static enum Mode {
-        /** Running on a real robot. */
-        COMP,
-
-        PROTO,
-
-        /** Running a physics simulator. */
-        SIM,
-
-        /** Replaying from a log file. */
-        REPLAY
     }
 
     public static final double kLOOP_CYCLE_MS;
@@ -127,7 +127,7 @@ public final class Constants {
 
     public static final class AlignmentConstants {
         // these assume the robot's volume is zero. does not take into account frame
-        public static final double kMAX_ALIGNMENT_DIST_METERS = 5;
+        public static final double kMAX_ALIGNMENT_DIST_METERS = 10;
 
         public static final double kINTER_BRANCH_DIST_METER = 0.34;
 
