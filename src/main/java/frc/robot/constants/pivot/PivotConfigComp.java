@@ -54,22 +54,22 @@ public class PivotConfigComp extends PivotConfigBase {
     // Characterization / Gains
     @Override
     public double getKS() {
-        return 0.5;
+        return 0;
     }
 
     @Override
     public double getKV() {
-        return 1.25;
+        return 0;
     }
 
     @Override
     public double getKA() {
-        return 0.06;
+        return 0.0;
     }
 
     @Override
     public double getKP() {
-        return 0.1;
+        return 0;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getKG() {
-        return 9.81; 
+        return 0; 
     }
 
     // Motion magic parameters

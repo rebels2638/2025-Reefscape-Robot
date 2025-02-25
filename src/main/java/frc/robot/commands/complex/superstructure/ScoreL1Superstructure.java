@@ -9,7 +9,7 @@ import frc.robot.commands.roller.EjectCoral;
 public class ScoreL1Superstructure extends SequentialCommandGroup {
     public ScoreL1Superstructure() {
         addCommands(
-            new WarmUpElevatorReef(),
+            // new WarmUpElevatorReef(),
             new MoveElevatorL1(),
             new EjectCoral(),
             new MoveElevatorStow()

@@ -259,7 +259,8 @@ public class ModuleIOTalonFX implements ModuleIO {
         double steerRotations = BaseStatusSignal
                 .getLatencyCompensatedValue(steerPositionStatusSignal, steerVelocityStatusSignal).in(Rotation);
 
-        inputs.timestamp = (drivePositionStatusSignal.getTimestamp().getTime() + steerPositionStatusSignal.getTimestamp().getTime()) / 2;
+        // inputs.timestamp = (drivePositionStatusSignal.getTimestamp().getTime() + steerPositionStatusSignal.getTimestamp().getTime()) / 2;
+        inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
 
         inputs.drivePositionMeters = drivePosition;
         inputs.driveVelocityMetersPerSec = driveVelocityStatusSignal.getValue().in(RotationsPerSecond);
