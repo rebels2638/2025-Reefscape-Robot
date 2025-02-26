@@ -2,6 +2,7 @@ package frc.robot.commands.autoAlignment.source;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import frc.robot.commands.autoAlignment.OverridePathplannerFeedback;
 import frc.robot.commands.autoAlignment.OverridePathplannerFeedbackXboxController;
 import frc.robot.commands.autoAlignment.PathfindThenAlign;
 import frc.robot.lib.input.XboxController;
@@ -12,7 +13,8 @@ public class AlignToClosestSourcePathfind extends ParallelDeadlineGroup {
             new PathfindThenAlign(
                 () -> AlignmentUtil.getClosestSourcePose(),
                 () -> new ChassisSpeeds(),
-                10
+                () -> OverridePathplannerFeedback.getTranslationOverrideMagnitude() >= 2,
+                10.0
             ),
             new OverridePathplannerFeedbackXboxController(controller)
         );

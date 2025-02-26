@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class OverridePathplannerFeedback extends Command {
     private final Supplier<ChassisSpeeds> speedsSupplier;
-    
+    private static ChassisSpeeds mostRecentSpeeds = new ChassisSpeeds();
     /*
      * @param speedsSupplier A supplier that supplies the speeds to override the pathplanner feedback with - field relative
      */
@@ -52,6 +52,8 @@ public class OverridePathplannerFeedback extends Command {
 
             Logger.recordOutput("OverridePathplannerFeedback/clearing", false);
         }
+
+        mostRecentSpeeds = speedsSupplier.get();
     }
 
     @Override
@@ -63,5 +65,14 @@ public class OverridePathplannerFeedback extends Command {
     public void end(boolean interrupted) {
         // Clear all feedback overrides
         PPHolonomicDriveController.clearFeedbackOverrides();
+
+        mostRecentSpeeds = new ChassisSpeeds();
+    }
+
+    public static double getTranslationOverrideMagnitude() {
+        return Math.hypot(
+            mostRecentSpeeds.vxMetersPerSecond,
+            mostRecentSpeeds.vyMetersPerSecond
+        );
     }
 }
