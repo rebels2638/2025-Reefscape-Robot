@@ -25,6 +25,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
@@ -85,6 +86,14 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveConfig.Slot0.kV = generalConfig.getDriveKV();
         driveConfig.Slot0.kA = generalConfig.getDriveKA();
         driveConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+
+        driveConfig.Slot1.kP = generalConfig.getDriveKP();
+        driveConfig.Slot1.kI = generalConfig.getDriveKI();
+        driveConfig.Slot1.kD = 0;
+        driveConfig.Slot1.kS = generalConfig.getDriveKS();
+        driveConfig.Slot1.kV = generalConfig.getDriveKV();
+        driveConfig.Slot1.kA = 0;
+        driveConfig.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         driveConfig.MotionMagic.MotionMagicAcceleration = generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec();
         driveConfig.MotionMagic.MotionMagicJerk = generalConfig.getDriveMotionMagicVelocityJerkMetersPerSecSecSec();
@@ -185,11 +194,11 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         // status signals
         driveAppliedVolts = driveMotor.getMotorVoltage().clone();
-        driveSupplyCurrent = driveMotor.getSupplyCurrent().clone();
+        driveSupplyCurrent = driveMotor.getTorqueCurrent().clone();
         driveTemperature = driveMotor.getDeviceTemp().clone();
 
         steerAppliedVolts = steerMotor.getMotorVoltage().clone();
-        steerSupplyCurrent = steerMotor.getSupplyCurrent().clone();
+        steerSupplyCurrent = steerMotor.getTorqueCurrent().clone();
         steerTemperature = steerMotor.getDeviceTemp().clone();
 
         steerEncoderAbsolutePosition = steerEncoder.getAbsolutePosition().clone();
@@ -259,7 +268,6 @@ public class ModuleIOTalonFX implements ModuleIO {
         double steerRotations = BaseStatusSignal
                 .getLatencyCompensatedValue(steerPositionStatusSignal, steerVelocityStatusSignal).in(Rotation);
 
-        // inputs.timestamp = (drivePositionStatusSignal.getTimestamp().getTime() + steerPositionStatusSignal.getTimestamp().getTime()) / 2;
         inputs.timestamp = HALUtil.getFPGATime() / 1.0e6;
 
         inputs.drivePositionMeters = drivePosition;
@@ -291,12 +299,19 @@ public class ModuleIOTalonFX implements ModuleIO {
                 state.speedMetersPerSecond,
                 -generalConfig.getDriveMaxVelocityMetersPerSec(),
                 generalConfig.getDriveMaxVelocityMetersPerSec())
+            ).
+            withAcceleration(
+                Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
+                    generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec() :
+                    generalConfig.getDriveMotionMagicVelocityDecelerationMetersPerSecSec()
+            ).
+            withSlot(
+                MathUtil.isNear(driveVelocityStatusSignal.getValue().in(RotationsPerSecond), 0, generalConfig.getDriveMaxWallVeloMetersPerSec()) && 
+                Math.abs(driveSupplyCurrent.getValue().in(Amps)) >= generalConfig.getDriveMinWallCurrent() &&
+                Math.signum(state.speedMetersPerSecond) == Math.signum(Math.abs(driveSupplyCurrent.getValue().in(Amps))) ?
+                    1 : // no acel config to prevent the backlash 
+                    0 // regular w acel
             )
-            // withAcceleration(
-            //     Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
-            //     generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec() :
-            //     generalConfig.getDriveMotionMagicVelocityDecelerationMetersPerSecSec()
-            // )
         );
         
         steerMotor.setControl(

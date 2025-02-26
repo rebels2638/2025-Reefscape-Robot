@@ -62,4 +62,7 @@ public abstract class SwerveModuleGeneralConfigBase {
 
     public abstract SensorDirectionValue getCancoderSensorDirection();
     public abstract double getCancoderAbsoluteSensorDiscontinuityPoint();
+
+    public abstract double getDriveMinWallCurrent();
+    public abstract double getDriveMaxWallVeloMetersPerSec();
 }

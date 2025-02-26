@@ -227,4 +227,14 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
     public double getCancoderAbsoluteSensorDiscontinuityPoint() {
         return 0.5;
     }
+
+    @Override
+    public double getDriveMinWallCurrent() {
+        return 0;
+    }
+
+    @Override
+    public double getDriveMaxWallVeloMetersPerSec() {
+        return 0.02;
+    }
 }
