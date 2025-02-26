@@ -291,12 +291,12 @@ public class ModuleIOTalonFX implements ModuleIO {
                 state.speedMetersPerSecond,
                 -generalConfig.getDriveMaxVelocityMetersPerSec(),
                 generalConfig.getDriveMaxVelocityMetersPerSec())
-            ).
-            withAcceleration(
-                Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
-                generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec() :
-                generalConfig.getDriveMotionMagicVelocityDecelerationMetersPerSecSec()
             )
+            // withAcceleration(
+            //     Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
+            //     generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec() :
+            //     generalConfig.getDriveMotionMagicVelocityDecelerationMetersPerSecSec()
+            // )
         );
         
         steerMotor.setControl(
