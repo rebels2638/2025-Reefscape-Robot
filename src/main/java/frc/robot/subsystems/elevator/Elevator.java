@@ -104,9 +104,12 @@ public class Elevator extends SubsystemBase {
                 this.heightRequest = height.L1;
                 break;
             case 2:
-                this.heightRequest = height.L3;
+                this.heightRequest = height.L2;
                 break;
             case 3:
+                this.heightRequest = height.L3;
+                break;
+            case 4:
                 this.heightRequest = height.L4;
                 break;
         }
