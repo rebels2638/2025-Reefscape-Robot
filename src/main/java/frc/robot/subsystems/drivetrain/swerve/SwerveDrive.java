@@ -308,8 +308,8 @@ public class SwerveDrive extends SubsystemBase {
             1.39
         );
         setSlowdownCoeffs(
-            1 - Math.pow(height / 1.4, 3), 
-            1 - Math.pow(height / 1.42, 3)
+            MathUtil.clamp(1 - Math.pow(height / 1.4, 3), 0.6, 1),
+            MathUtil.clamp(1 - Math.pow(height / 1.42, 3), 0.6, 1)
         );
 
     }

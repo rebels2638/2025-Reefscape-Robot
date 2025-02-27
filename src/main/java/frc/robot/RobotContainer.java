@@ -5,6 +5,7 @@ import java.util.jar.Attributes.Name;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -100,10 +101,11 @@ public class RobotContainer {
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftBumper().whileTrue(new AlignToLeftBranchLinear());
-        xboxDriver.getRightBumper().whileTrue(new AlignToRightBranchLinear());
+        xboxDriver.getLeftTriggerButton().whileTrue(new AlignToLeftBranchLinear());
+        xboxDriver.getRightTriggerButton().whileTrue(new AlignToRightBranchLinear());
+        // xboxDriver.getRightBumper().whileFalse()
         xboxDriver.getYButton().whileTrue(new AlignToAlgayLinear());
-        xboxDriver.getAButton().onTrue(new Score());
+        // xboxDriver.getAButton().onTrue(new Score());
         // xboxDriver.getYButton().whileTrue(new AlignToClosestSourcePathfind(xboxDriver));
 
         // xboxDriver.getAButton().whileTrue(new RunClawEject());

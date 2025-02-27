@@ -8,7 +8,6 @@ import frc.robot.commands.roller.EjectCoral;
 public class Score extends SequentialCommandGroup {
     public Score() {
         addCommands(
-            new DequeueElevatorAction(),
             new EjectCoral(),
             new QueueStowAction(),
             new DequeueElevatorAction()
