@@ -13,7 +13,7 @@ public class MoveElevatorL2 extends Command {
 
     @Override
     public void initialize() {
-        elevator.setHeight(0.34);
+        elevator.requestLevel(2);
     }
 
     @Override

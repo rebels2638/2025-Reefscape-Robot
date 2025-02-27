@@ -23,7 +23,7 @@ public class Elevator extends SubsystemBase {
         L4
     };
     private height heightRequest = height.IDLE;
-    private List<Double> extensionHeights = Arrays.asList(0.0);
+    private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.38);
 
     private static Elevator instance = null;
     public static Elevator getInstance() {
@@ -33,7 +33,7 @@ public class Elevator extends SubsystemBase {
         return instance;
     }
 
-    private double setpoint;
+    private double setpoint = 0;
 
     private ElevatorIO elevatorIO;
     private ElevatorIOInputsAutoLogged elevatorIOInputs = new ElevatorIOInputsAutoLogged();
@@ -103,7 +103,6 @@ public class Elevator extends SubsystemBase {
         }
     }
     
-
     public void setTorqueCurrentFOC(double torque) {
         elevatorIO.setTorqueCurrentFOC(torque);
     }
