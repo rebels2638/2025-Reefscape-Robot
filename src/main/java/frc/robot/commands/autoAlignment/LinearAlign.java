@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotState;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.subsystems.elevator.Elevator;
 
 public class LinearAlign extends Command {
     private ConditionalCommand command;
@@ -52,6 +53,9 @@ public class LinearAlign extends Command {
 
     @Override
     public boolean isFinished() {
+        // if (command.isFinished()) { TODO: Immediate extension after autoAlign, viable but ehhh
+        //     Elevator.getInstance().setSetpointSettable(true);
+        // }
         return command.isFinished();
     }
 

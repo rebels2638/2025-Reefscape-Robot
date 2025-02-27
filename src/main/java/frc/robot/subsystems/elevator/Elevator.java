@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.elevator.ElevatorConfigBase;
@@ -34,6 +35,7 @@ public class Elevator extends SubsystemBase {
     }
 
     private double setpoint = 0;
+    private boolean setpointModifiable = false;
 
     private ElevatorIO elevatorIO;
     private ElevatorIOInputsAutoLogged elevatorIOInputs = new ElevatorIOInputsAutoLogged();
@@ -81,9 +83,16 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs("Elevator", elevatorIOInputs);
         setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(heightRequest));
 
-        elevatorIO.setHeight(setpoint);
+        if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
 
         Logger.recordOutput("Elevator/setpoint", setpoint);
+        Logger.recordOutput("Elevator/setPointQueued", 
+            !(setpointModifiable || 
+                (MathUtil.isNear(setpoint, elevatorIOInputs.elevatorVelocityMetersPerSec, 0.2) || 
+                    !MathUtil.isNear(elevatorIOInputs.elevatorVelocityMetersPerSec, 0, 0.3)
+                )
+            )
+        );
     }
 
     public void requestLevel(int level) {
@@ -103,6 +112,10 @@ public class Elevator extends SubsystemBase {
         }
     }
     
+    public void setSetpointSettable(boolean settable) {
+        this.setpointModifiable = settable;
+    }
+
     public void setTorqueCurrentFOC(double torque) {
         elevatorIO.setTorqueCurrentFOC(torque);
     }

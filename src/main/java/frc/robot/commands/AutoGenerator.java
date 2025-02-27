@@ -23,11 +23,11 @@ import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
-import frc.robot.commands.elevator.simple.MoveElevatorL1;
-import frc.robot.commands.elevator.simple.MoveElevatorL2;
-import frc.robot.commands.elevator.simple.MoveElevatorL3;
-import frc.robot.commands.elevator.simple.MoveElevatorL4;
-import frc.robot.commands.elevator.simple.MoveElevatorStow;
+import frc.robot.commands.elevator.simple.QueueL1Action;
+import frc.robot.commands.elevator.simple.QueueL2Action;
+import frc.robot.commands.elevator.simple.QueueL3Action;
+import frc.robot.commands.elevator.simple.QueueL4Action;
+import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.constants.Constants;
 
@@ -99,29 +99,29 @@ public class AutoGenerator {
                     switch (split[1]) {
                         case "L1":
                             scoreCommand = new ScoreL1Superstructure();
-                            raiseElevatorCommand1 = new MoveElevatorL1();
-                            raiseElevatorCommand2 = new MoveElevatorL1();
+                            raiseElevatorCommand1 = new QueueL1Action();
+                            raiseElevatorCommand2 = new QueueL1Action();
 
                             break;
                     
                         case "L2":
                             scoreCommand =new ScoreL2Superstructure();
-                            raiseElevatorCommand1 = new MoveElevatorL2();
-                            raiseElevatorCommand2 = new MoveElevatorL2();
+                            raiseElevatorCommand1 = new QueueL2Action();
+                            raiseElevatorCommand2 = new QueueL2Action();
 
                             break;
     
                         case "L3":
                             scoreCommand = new ScoreL3Superstructure();
-                            raiseElevatorCommand1 = new MoveElevatorL3();
-                            raiseElevatorCommand2 = new MoveElevatorL3();
+                            raiseElevatorCommand1 = new QueueL3Action();
+                            raiseElevatorCommand2 = new QueueL3Action();
 
                             break;
     
                         case "L4":
                             scoreCommand =new ScoreL4Superstructure();
-                            raiseElevatorCommand1 = new MoveElevatorL4();
-                            raiseElevatorCommand2 = new MoveElevatorL4();
+                            raiseElevatorCommand1 = new QueueL4Action();
+                            raiseElevatorCommand2 = new QueueL4Action();
 
                             break;
     
@@ -157,7 +157,7 @@ public class AutoGenerator {
                         commands.add(
                             new ParallelCommandGroup(
                                 AutoBuilder.followPath(PathPlannerPath.fromChoreoTrajectory(params[i + 1])),
-                                new MoveElevatorStow()
+                                new QueueStowAction()
                             )   
                         );
                         i++;

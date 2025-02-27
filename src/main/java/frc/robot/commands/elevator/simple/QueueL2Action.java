@@ -3,9 +3,9 @@ package frc.robot.commands.elevator.simple;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.elevator.Elevator;
 
-public class MoveElevatorL1 extends Command {
+public class QueueL2Action extends Command {
     private final Elevator elevator;
-    public MoveElevatorL1() {
+    public QueueL2Action() {
         this.elevator = Elevator.getInstance();
         
         addRequirements(elevator);
@@ -13,17 +13,16 @@ public class MoveElevatorL1 extends Command {
 
     @Override
     public void initialize() {
-        elevator.requestLevel(1);
+        elevator.requestLevel(2);
     }
 
     @Override
     public boolean isFinished() {
-        return elevator.reachedSetpoint();
+        return true;
     }
 
 
     @Override
     public void end(boolean interrupted) {
-
     }
 }
