@@ -13,7 +13,7 @@ public class QueueL4Action extends Command {
 
     @Override
     public void initialize() {
-        elevator.requestLevel(4);
+        elevator.requestLevel(Elevator.height.L4);
     }
 
     @Override

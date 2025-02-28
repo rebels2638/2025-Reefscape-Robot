@@ -13,7 +13,7 @@ public class QueueStowAction extends Command {
 
     @Override
     public void initialize() {
-        elevator.requestLevel(0);
+        elevator.requestLevel(Elevator.height.STOW);
     }
 
     @Override

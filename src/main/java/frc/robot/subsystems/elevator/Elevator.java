@@ -15,17 +15,6 @@ import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
 
 public class Elevator extends SubsystemBase {
-
-    public static enum height {
-        IDLE,
-        L1,
-        L2,
-        L3,
-        L4
-    };
-    private height heightRequest = height.IDLE;
-    private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.38);
-
     private static Elevator instance = null;
     public static Elevator getInstance() {
         if (instance == null) {
@@ -33,6 +22,17 @@ public class Elevator extends SubsystemBase {
         }
         return instance;
     }
+
+    public static enum height {
+        STOW,
+        L1,
+        L2,
+        L3,
+        L4
+    };
+    
+    private height heightRequest = height.STOW;
+    private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.38);
 
     private double setpoint = 0;
     private boolean setpointModifiable = false;
@@ -95,24 +95,8 @@ public class Elevator extends SubsystemBase {
         );
     }
 
-    public void requestLevel(int level) {
-        switch (level) {
-            case 0:
-                this.heightRequest = height.IDLE;
-                break;
-            case 1:
-                this.heightRequest = height.L1;
-                break;
-            case 2:
-                this.heightRequest = height.L2;
-                break;
-            case 3:
-                this.heightRequest = height.L3;
-                break;
-            case 4:
-                this.heightRequest = height.L4;
-                break;
-        }
+    public void requestLevel(height level) {
+        this.heightRequest = level;
     }
     
     public void setSetpointSettable(boolean settable) {
