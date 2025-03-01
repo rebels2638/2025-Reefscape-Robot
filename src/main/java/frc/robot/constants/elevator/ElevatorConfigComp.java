@@ -26,7 +26,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 80;
+        return 100;
     }
 
     @Override
@@ -36,46 +36,46 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 60;
+        return 90;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 65.0;
+        return 80;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 65.0;
+        return 80.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -65.0;
+        return -80.0;
     }
 
     // Characterization / Gains
     @Override
     public double getKS() {
-        return 4.3;
+        return 8;
     }
 
     @Override
     public double getKV() {
-        return 0;
+        return 0; //6
     }
 
     @Override
     public double getKA() {
-        return 0.0;
+        return 0; //2
 
     }
 
     @Override
     public double getKP() {
-        return 1700;
+        return 120;//30
     }
 
     @Override
@@ -85,19 +85,19 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getKD() {
-        return 35;
+        return 30;//30
     }
 
     @Override
     public double getKG() {
-        return 12.2; 
+        return 18; 
 
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 7;
+        return 1;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 0.45;
+        return 1;
     }
 
     // Neutral mode
@@ -130,7 +130,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     @Override
     public double getMotorToOutputShaftRatio() {
         // rotations / meters  
-        return 22 / 0.66;
+        return 15 / 0.57;
     }
 
     @Override

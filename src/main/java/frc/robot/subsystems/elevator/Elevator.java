@@ -33,7 +33,7 @@ public class Elevator extends SubsystemBase {
     };
     
     private height currHeightRequest = height.STOW;
-    private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.38);
+    private List<Double> extensionHeights = Arrays.asList(0.02, 0.1, 0.34, 0.77, 1.38);
 
     private double setpoint = 0;
     private boolean setpointModifiable = false;

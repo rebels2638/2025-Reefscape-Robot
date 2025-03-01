@@ -22,7 +22,7 @@ public class RunElevatorRaw extends Command {
     @Override 
     public void execute() {
         double userIn = MathUtil.applyDeadband(-controller.getLeftY(), Constants.OperatorConstants.LEFT_Y_DEADBAND);
-        double torque = userIn * 40;
+        double torque = userIn * 60;
 
         elevator.setTorqueCurrentFOC(torque);
 
