@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntFunction;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -31,7 +32,8 @@ public class Elevator extends SubsystemBase {
         L4
     };
     
-    private height heightRequest = height.STOW;
+    private height currHeightRequest = height.STOW;
+    private height lastHeightRequest = currHeightRequest;
     private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.38);
 
     private double setpoint = 0;
@@ -81,9 +83,12 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         elevatorIO.updateInputs(elevatorIOInputs);
         Logger.processInputs("Elevator", elevatorIOInputs);
-        setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(heightRequest));
+        setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(currHeightRequest));
 
-        if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
+        if (setpointModifiable) {
+            if (currHeightRequest == height.STOW) {setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(lastHeightRequest));}
+            elevatorIO.setHeight(setpoint);
+        }
 
         Logger.recordOutput("Elevator/setpoint", setpoint);
         Logger.recordOutput("Elevator/setPointQueued", 
@@ -96,7 +101,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void requestLevel(height level) {
-        this.heightRequest = level;
+        if (level != height.STOW) {this.lastHeightRequest = level;}
+        this.currHeightRequest = level;
     }
     
     public void setSetpointSettable(boolean settable) {

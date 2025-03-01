@@ -317,7 +317,7 @@ public class SwerveDrive extends SubsystemBase {
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
         Rotation2d angularVelocity = new Rotation2d(speeds.omegaRadiansPerSecond * drivetrainConfig.getRotationCompensationCoefficient());
         if (angularVelocity.getRadians() != 0.0) {
-            speeds =  ChassisSpeeds.fromFieldRelativeSpeeds(
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 ChassisSpeeds.fromRobotRelativeSpeeds( // why should this be split into two?
                     speeds.vxMetersPerSecond,
                     speeds.vyMetersPerSecond,
