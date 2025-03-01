@@ -122,7 +122,7 @@ public class Elevator extends SubsystemBase {
         return 
             MathUtil.isNear(setpoint, elevatorIOInputs.elevatorHeightMeters, config.getToleranceMeters()) &&
             MathUtil.isNear(elevatorIOInputs.elevatorVelocityMetersPerSec, 0, config.getToleranceMetersPerSec());
-    
+
     }
 
     public double getHeight() {

@@ -8,8 +8,8 @@ import frc.robot.commands.autoAlignment.LinearAlign;
 import frc.robot.commands.complex.superstructure.Score;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.lib.util.AlignmentUtil;
-public class AlignToLeftBranchLinear extends SequentialCommandGroup {
-    public AlignToLeftBranchLinear() {
+public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
+    public AlignToRightBranchLinearAndScore() {
         addCommands(
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
@@ -17,7 +17,7 @@ public class AlignToLeftBranchLinear extends SequentialCommandGroup {
                     new DequeueElevatorAction()
                 ),
                 new LinearAlign(
-                    () -> AlignmentUtil.getClosestLeftBranchPose(),
+                    () -> AlignmentUtil.getClosestRightBranchPose(),
                     () -> new ChassisSpeeds(),
                     2
                 )
