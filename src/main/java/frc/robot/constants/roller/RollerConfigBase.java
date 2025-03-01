@@ -19,8 +19,8 @@ public abstract class RollerConfigBase {
     public abstract double getPeakForwardTorqueCurrent();
     public abstract double getPeakReverseTorqueCurrent();
 
-    // Neutral mode
     public abstract boolean isNeutralModeBrake();
+    public abstract boolean isInverted();
 
     // CANrange configuration fields
     public abstract double getFOVCenterX();

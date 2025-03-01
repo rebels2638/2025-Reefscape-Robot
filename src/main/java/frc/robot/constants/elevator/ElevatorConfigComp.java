@@ -147,4 +147,9 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     public double getToleranceMeters() {
         return 0.01;
     }
+
+    @Override
+    public double getToleranceMetersPerSec() {
+        return 0.03;
+    }
 }

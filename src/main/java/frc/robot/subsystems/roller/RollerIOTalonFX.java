@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -22,6 +23,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.roller.RollerConfigBase;
 import frc.robot.lib.util.Elastic;
+import frc.robot.lib.util.PhoenixUtil;
 
 public class RollerIOTalonFX implements RollerIO {
     private final TalonFX rollerMotor;
@@ -81,10 +83,15 @@ public class RollerIOTalonFX implements RollerIO {
                         NeutralModeValue.Brake : 
                         NeutralModeValue.Coast;
 
+        rollerConfig.MotorOutput.Inverted = 
+            config.isInverted() ?
+                InvertedValue.Clockwise_Positive :
+                InvertedValue.CounterClockwise_Positive;
+
         rollerConfig.FutureProofConfigs = true;
 
         rollerMotor = new TalonFX(config.getRollerMotorCanID());
-        rollerMotor.getConfigurator().apply(rollerConfig);
+        PhoenixUtil.tryUntilOk(5, () -> rollerMotor.getConfigurator().apply(rollerConfig, 0.25));
 
         rollerAppliedVolts = rollerMotor.getMotorVoltage().clone();
         rollerSupplyCurrent = rollerMotor.getSupplyCurrent().clone();

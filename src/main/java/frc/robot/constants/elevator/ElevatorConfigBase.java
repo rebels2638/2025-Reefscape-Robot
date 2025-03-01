@@ -44,5 +44,7 @@ public abstract class ElevatorConfigBase {
     public abstract double getMinHeightMeters();
 
     public abstract double getToleranceMeters();
+    public abstract double getToleranceMetersPerSec();
+
 
 }

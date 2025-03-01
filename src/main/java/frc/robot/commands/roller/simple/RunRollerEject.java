@@ -12,7 +12,7 @@ public class RunRollerEject extends Command {
 
     @Override
     public void initialize() {
-        roller.setTorqueCurrentFOC(-50);
+        roller.setTorqueCurrentFOC(50);
     }
 
     @Override

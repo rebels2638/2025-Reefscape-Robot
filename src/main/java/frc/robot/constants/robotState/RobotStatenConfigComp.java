@@ -1,7 +1,5 @@
 package frc.robot.constants.robotState;
 
-import edu.wpi.first.math.geometry.Translation2d;
-
 public class RobotStatenConfigComp extends RobotStateConfigBase {
     private static RobotStatenConfigComp instance;
     public static RobotStatenConfigComp getInstance() {

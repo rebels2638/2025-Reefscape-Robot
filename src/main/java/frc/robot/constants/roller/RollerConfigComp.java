@@ -64,6 +64,11 @@ public class RollerConfigComp extends RollerConfigBase {
         return true;
     }
 
+    @Override
+    public boolean isInverted() {
+        return true;
+    }
+    
     // CANrange configuration fields
     @Override
     public double getFOVCenterX() {

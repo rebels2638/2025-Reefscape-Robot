@@ -85,10 +85,11 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs("Elevator", elevatorIOInputs);
         setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(currHeightRequest));
 
-        if (setpointModifiable) {
-            if (currHeightRequest == height.STOW) {setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(lastHeightRequest));}
-            elevatorIO.setHeight(setpoint);
+        if (currHeightRequest == height.STOW && MathUtil.isNear(elevatorIOInputs.elevatorHeightMeters, 0, config.getToleranceMeters())) {
+            setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(lastHeightRequest));
         }
+
+        if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
 
         Logger.recordOutput("Elevator/setpoint", setpoint);
         Logger.recordOutput("Elevator/setPointQueued", 
@@ -118,7 +119,10 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean reachedSetpoint() {
-        return Math.abs(setpoint - elevatorIOInputs.elevatorHeightMeters) <= config.getToleranceMeters();
+        return 
+            MathUtil.isNear(setpoint, elevatorIOInputs.elevatorHeightMeters, config.getToleranceMeters()) &&
+            MathUtil.isNear(elevatorIOInputs.elevatorVelocityMetersPerSec, 0, config.getToleranceMetersPerSec());
+    
     }
 
     public double getHeight() {

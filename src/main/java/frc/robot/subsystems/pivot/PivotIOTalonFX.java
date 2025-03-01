@@ -26,6 +26,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.pivot.PivotConfigBase;
+import frc.robot.lib.util.PhoenixUtil;
 
 public class PivotIOTalonFX implements PivotIO {
     private TalonFX pivotMotor;
@@ -93,7 +94,7 @@ public class PivotIOTalonFX implements PivotIO {
         pivotConfig.FutureProofConfigs = true;
 
         pivotMotor = new TalonFX(config.getCanID());
-        pivotMotor.getConfigurator().apply(pivotConfig);
+        PhoenixUtil.tryUntilOk(5, () -> pivotMotor.getConfigurator().apply(pivotConfig, 0.25));
 
         pivotAppliedVolts = pivotMotor.getMotorVoltage().clone();
         pivotSupplyCurrent = pivotMotor.getSupplyCurrent().clone();

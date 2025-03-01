@@ -2,9 +2,6 @@ package frc.robot.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 

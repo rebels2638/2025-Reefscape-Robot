@@ -1,9 +1,5 @@
 package frc.robot.constants.robotState;
 
-import java.util.concurrent.TransferQueue;
-
-import edu.wpi.first.math.geometry.Translation2d;
-
 public class RobotStateConfigProto extends RobotStateConfigBase {
     private static RobotStateConfigProto instance;
     public static RobotStateConfigProto getInstance() {

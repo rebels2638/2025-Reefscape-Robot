@@ -2,8 +2,6 @@ package frc.robot.subsystems.drivetrain.swerve.module;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Fahrenheit;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -35,11 +33,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleGeneralConfigBase;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleSpecificConfigBase;
 import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
+import frc.robot.lib.util.PhoenixUtil;
 
 public class ModuleIOTalonFX implements ModuleIO {
     private final TalonFX driveMotor;
@@ -51,13 +49,13 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final StatusSignal<AngularAcceleration> driveAccelerationStatusSignal;
 
     private final StatusSignal<Voltage> driveAppliedVolts;
-    private final StatusSignal<Current> driveSupplyCurrent;
+    private final StatusSignal<Current> driveTorqueCurrent;
     private final StatusSignal<Temperature> driveTemperature;
 
     private final StatusSignal<Angle> steerPositionStatusSignal;
     private final StatusSignal<AngularVelocity> steerVelocityStatusSignal;
     private final StatusSignal<Voltage> steerAppliedVolts;
-    private final StatusSignal<Current> steerSupplyCurrent;
+    private final StatusSignal<Current> steerTorqueCurrent;
     private final StatusSignal<Temperature> steerTemperature;
     private final StatusSignal<Angle> steerEncoderPositionStatusSignal;
     private final StatusSignal<Angle> steerEncoderAbsolutePosition;
@@ -129,7 +127,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         driveConfig.FutureProofConfigs = true;
         
         driveMotor = new TalonFX(specificConfig.getDriveCanId(), generalConfig.getCanBusName());
-        driveMotor.getConfigurator().apply(driveConfig);
+        PhoenixUtil.tryUntilOk(5, () -> driveMotor.getConfigurator().apply(driveConfig, 0.25));
 
         // ABS encoder
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
@@ -140,7 +138,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         encoderConfig.FutureProofConfigs = true;
 
         steerEncoder = new CANcoder(specificConfig.getCancoderCanId(), generalConfig.getCanBusName());
-        steerEncoder.getConfigurator().apply(encoderConfig);
+        PhoenixUtil.tryUntilOk(5, () -> steerEncoder.getConfigurator().apply(encoderConfig, 0.25));
 
         // Steer motor
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
@@ -190,15 +188,15 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerConfig.FutureProofConfigs = true;
 
         steerMotor = new TalonFX(specificConfig.getSteerCanId(), generalConfig.getCanBusName());
-        steerMotor.getConfigurator().apply(steerConfig);
+        PhoenixUtil.tryUntilOk(5, () -> steerMotor.getConfigurator().apply(steerConfig, 0.25));
 
         // status signals
         driveAppliedVolts = driveMotor.getMotorVoltage().clone();
-        driveSupplyCurrent = driveMotor.getTorqueCurrent().clone();
+        driveTorqueCurrent = driveMotor.getTorqueCurrent().clone();
         driveTemperature = driveMotor.getDeviceTemp().clone();
 
         steerAppliedVolts = steerMotor.getMotorVoltage().clone();
-        steerSupplyCurrent = steerMotor.getTorqueCurrent().clone();
+        steerTorqueCurrent = steerMotor.getTorqueCurrent().clone();
         steerTemperature = steerMotor.getDeviceTemp().clone();
 
         steerEncoderAbsolutePosition = steerEncoder.getAbsolutePosition().clone();
@@ -207,11 +205,11 @@ public class ModuleIOTalonFX implements ModuleIO {
         BaseStatusSignal.setUpdateFrequencyForAll(
             100,
             driveAppliedVolts,
-            driveSupplyCurrent,
+            driveTorqueCurrent,
             driveTemperature,
 
             steerAppliedVolts,
-            steerSupplyCurrent,
+            steerTorqueCurrent,
             steerTemperature
         );
 
@@ -251,11 +249,11 @@ public class ModuleIOTalonFX implements ModuleIO {
     public void updateInputs(ModuleIOInputs inputs) {
         BaseStatusSignal.refreshAll(
             driveAppliedVolts,
-            driveSupplyCurrent,
+            driveTorqueCurrent,
             driveTemperature,
 
             steerAppliedVolts,
-            steerSupplyCurrent,
+            steerTorqueCurrent,
             steerTemperature,
 
             steerEncoderAbsolutePosition,
@@ -278,11 +276,11 @@ public class ModuleIOTalonFX implements ModuleIO {
                 Units.rotationsToRadians(steerRotations));
         inputs.steerVelocityRadPerSec = steerVelocityStatusSignal.getValue().in(RadiansPerSecond);
 
-        inputs.driveCurrentDrawAmps = driveSupplyCurrent.getValue().in(Amps);
+        inputs.driveCurrentDrawAmps = driveTorqueCurrent.getValue().in(Amps);
         inputs.driveAppliedVolts = driveAppliedVolts.getValue().in(Volts);
         inputs.driveTemperatureFahrenheit = driveTemperature.getValue().in(Fahrenheit);
 
-        inputs.steerCurrentDrawAmps = steerSupplyCurrent.getValue().in(Amps);
+        inputs.steerCurrentDrawAmps = steerTorqueCurrent.getValue().in(Amps);
         inputs.steerAppliedVolts = steerAppliedVolts.getValue().in(Volts);
         inputs.steerTemperatureFahrenheit = steerTemperature.getValue().in(Fahrenheit);
 
@@ -307,8 +305,8 @@ public class ModuleIOTalonFX implements ModuleIO {
             ).
             withSlot(
                 MathUtil.isNear(driveVelocityStatusSignal.getValue().in(RotationsPerSecond), 0, generalConfig.getDriveMaxWallVeloMetersPerSec()) && 
-                Math.abs(driveSupplyCurrent.getValue().in(Amps)) >= generalConfig.getDriveMinWallCurrent() &&
-                Math.signum(state.speedMetersPerSecond) == Math.signum(Math.abs(driveSupplyCurrent.getValue().in(Amps))) ?
+                Math.abs(driveTorqueCurrent.getValue().in(Amps)) >= generalConfig.getDriveMinWallCurrent() &&
+                Math.signum(state.speedMetersPerSecond) == Math.signum(Math.abs(driveTorqueCurrent.getValue().in(Amps))) ?
                     1 : // no acel config to prevent the backlash 
                     0 // regular w acel
             )
