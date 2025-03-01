@@ -113,7 +113,7 @@ public class RobotContainer {
         //     CommandScheduler.getInstance().isScheduled(new AlignToAlgayLinear(), new AlignToLeftBranchLinearAndScore(), new AlignToRightBranchLinearAndScore()) ?
             
         // )
-        new Trigger(() -> (xboxOperator.getRightTriggerButton().getAsBoolean() && xboxOperator.getLeftTriggerButton().getAsBoolean())).onTrue(new AlignToAlgayLinear());
+        new Trigger(() -> (xboxOperator.getRightTriggerButton(0.94).getAsBoolean() && xboxOperator.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinear());
         // xboxDriver.getAButton().onTrue(new Score());
         // xboxDriver.getYButton().whileTrue(new AlignToClosestSourcePathfind(xboxDriver));
 
