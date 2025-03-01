@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.constants.claw.ClawConfigBase;
+import frc.robot.lib.util.PhoenixUtil;
 
 public class ClawIOTalonFX implements ClawIO {
     private TalonFX clawMotor;
@@ -28,7 +29,7 @@ public class ClawIOTalonFX implements ClawIO {
     private final StatusSignal<AngularAcceleration> clawAccelerationStatusSignal;
 
     private final StatusSignal<Voltage> clawAppliedVolts;
-    private final StatusSignal<Current> clawSupplyCurrent;
+    private final StatusSignal<Current> clawTorqueCurrent;
     private final StatusSignal<Temperature> clawTemperature;
 
     private final TorqueCurrentFOC clawTorqueRequest = new TorqueCurrentFOC(0);
@@ -61,10 +62,10 @@ public class ClawIOTalonFX implements ClawIO {
                         NeutralModeValue.Coast;
 
         clawMotor = new TalonFX(config.getCanID());
-        clawMotor.getConfigurator().apply(clawConfig);
+        PhoenixUtil.tryUntilOk( 5, () -> clawMotor.getConfigurator().apply(clawConfig, 0.25));
 
         clawAppliedVolts = clawMotor.getMotorVoltage().clone();
-        clawSupplyCurrent = clawMotor.getSupplyCurrent().clone();
+        clawTorqueCurrent = clawMotor.getTorqueCurrent().clone();
         clawTemperature = clawMotor.getDeviceTemp().clone();
 
         clawVelocityStatusSignal = clawMotor.getVelocity().clone();
@@ -73,7 +74,7 @@ public class ClawIOTalonFX implements ClawIO {
         BaseStatusSignal.setUpdateFrequencyForAll(
                 70,
                 clawAppliedVolts,
-                clawSupplyCurrent,
+                clawTorqueCurrent,
                 clawTemperature,
                 clawVelocityStatusSignal,
                 clawAccelerationStatusSignal
@@ -87,7 +88,7 @@ public class ClawIOTalonFX implements ClawIO {
         BaseStatusSignal.refreshAll(
             clawVelocityStatusSignal,
             clawAppliedVolts,
-            clawSupplyCurrent,
+            clawTorqueCurrent,
             clawTemperature
         );
 
@@ -95,7 +96,7 @@ public class ClawIOTalonFX implements ClawIO {
 
         inputs.clawVelocityRadPerSec = clawVel;
 
-        inputs.clawCurrentDrawAmps = clawSupplyCurrent.getValue().in(Amps);
+        inputs.clawCurrentDrawAmps = clawTorqueCurrent.getValue().in(Amps);
         inputs.clawAppliedVolts = clawAppliedVolts.getValue().in(Volts);
         inputs.clawTemperatureFahrenheit = clawTemperature.getValue().in(Fahrenheit);
 

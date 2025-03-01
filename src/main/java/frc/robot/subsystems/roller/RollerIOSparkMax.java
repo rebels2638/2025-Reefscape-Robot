@@ -63,7 +63,7 @@ public class RollerIOSparkMax implements RollerIO {
         inputs.rollerVelocityRadPerSec = rollerMotor.getEncoder().getVelocity();
         inputs.inRoller = canRangeIsDetected.getValue().booleanValue();
 
-        inputs.isConnected = canRange.isConnected();
+        inputs.isCanRangeConnected = canRange.isConnected();
 
         inputs.rollerCurrentDrawAmps = rollerMotor.getOutputCurrent();
         inputs.rollerAppliedVolts = rollerMotor.getAppliedOutput() * 12;

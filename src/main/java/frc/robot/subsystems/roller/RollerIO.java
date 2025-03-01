@@ -12,7 +12,8 @@ public interface RollerIO {
         public double rollerTemperatureFahrenheit = 0;
 
         public boolean inRoller = true;
-        public boolean isConnected = false;
+        public boolean isMotorConnected = true;
+        public boolean isCanRangeConnected = true;
     }
 
     public default void updateInputs(RollerIOInputs inputs) {}
