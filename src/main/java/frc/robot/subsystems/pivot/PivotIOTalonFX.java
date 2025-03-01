@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -25,8 +26,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.pivot.PivotConfigBase;
 import frc.robot.lib.util.PhoenixUtil;
+import frc.robot.lib.util.Elastic;
 
 public class PivotIOTalonFX implements PivotIO {
     private TalonFX pivotMotor;
@@ -45,6 +48,11 @@ public class PivotIOTalonFX implements PivotIO {
 
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
+
+    private final Debouncer pivotConnectedDebouncer = new Debouncer(0.25);
+
+    private final Elastic.Notification pivotDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+        "Pivot Motor Disconnected", "Pivot Disconnected, GOOD LUCK");
 
     public PivotIOTalonFX(PivotConfigBase config) {
         kMAX_ANGLE_ROTATIONS = config.getMaxAngleRotations();
@@ -117,12 +125,15 @@ public class PivotIOTalonFX implements PivotIO {
 
     @Override
     public void updateInputs(PivotIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
-            pivotPositionStatusSignal,
-            pivotVelocityStatusSignal,
-            pivotAppliedVolts,
-            pivotTorqueCurrent,
-            pivotTemperature
+        inputs.pivotMotorConnected = 
+            pivotConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    pivotPositionStatusSignal,
+                    pivotVelocityStatusSignal,
+                    pivotAppliedVolts,
+                    pivotTorqueCurrent,
+                    pivotTemperature
+                ).isOK()
         );
         
         double pivotRotations = BaseStatusSignal
@@ -134,6 +145,11 @@ public class PivotIOTalonFX implements PivotIO {
         inputs.pivotCurrentDrawAmps = pivotTorqueCurrent.getValue().in(Amps);
         inputs.pivotAppliedVolts = pivotAppliedVolts.getValue().in(Volts);
         inputs.pivotTemperatureFahrenheit = pivotTemperature.getValue().in(Fahrenheit);
+
+        if (!inputs.pivotMotorConnected) {
+            Elastic.sendNotification(pivotDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Pivot Motor Disconnected", false);
+        }
 
     }
 

@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase {
         return instance;
     }
 
-    private ClimberIO ClimberIO;
+    private ClimberIO climberIO;
     private ClimberIOInputsAutoLogged ClimberIOInputs = new ClimberIOInputsAutoLogged();
 
     private Rotation2d setpoint = new Rotation2d();
@@ -31,31 +31,31 @@ public class Climber extends SubsystemBase {
         switch (Constants.currentMode) {
             case COMP:
                 config = ClimberConfigComp.getInstance();
-                ClimberIO = new ClimberIOTalonFX(config);
+                climberIO = new ClimberIOTalonFX(config);
 
                 break;
 
             case PROTO:
                 config = ClimberConfigProto.getInstance();
-                ClimberIO = new ClimberIOTalonFX(config);
+                climberIO = new ClimberIOTalonFX(config);
 
                 break;
 
             case SIM:
                 config = ClimberConfigSim.getInstance();
-                ClimberIO = new ClimberIOSim(config);
+                climberIO = new ClimberIOSim(config);
 
                 break;
 
             case REPLAY:
                 config = ClimberConfigComp.getInstance();
-                ClimberIO = new ClimberIO() {};
+                climberIO = new ClimberIO() {};
 
                 break;
 
             default:
                 config = ClimberConfigComp.getInstance();
-                ClimberIO = new ClimberIOTalonFX(config);
+                climberIO = new ClimberIOTalonFX(config);
 
                 break;
         }
@@ -63,10 +63,10 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-        ClimberIO.updateInputs(ClimberIOInputs);
+        climberIO.updateInputs(ClimberIOInputs);
         Logger.processInputs("Climber", ClimberIOInputs);
 
-        ClimberIO.setAngle(setpoint);
+        climberIO.setAngle(setpoint);
     }
 
     public void setAngle(Rotation2d angle) {
@@ -75,10 +75,10 @@ public class Climber extends SubsystemBase {
     }
 
     public void setTorqueCurrentFOC(double torque) {
-        ClimberIO.setTorqueCurrentFOC(torque);
+        climberIO.setTorqueCurrentFOC(torque);
     }
 
     public void setVoltage(double voltage) {
-        ClimberIO.setVoltage(voltage);
+        climberIO.setVoltage(voltage);
     }
 }

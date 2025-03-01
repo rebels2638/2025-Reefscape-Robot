@@ -141,7 +141,6 @@ public class RollerIOTalonFX implements RollerIO {
                 ).isOK()
             );
 
-
         inputs.rollerVelocityRadPerSec = rollerVelocityStatusSignal.getValue().in(RadiansPerSecond);
         inputs.inRoller = canRange.getIsDetected(true).getValue().booleanValue();
 

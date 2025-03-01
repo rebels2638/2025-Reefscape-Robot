@@ -23,13 +23,16 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.elevator.ElevatorConfigBase;
 import frc.robot.lib.util.PhoenixUtil;
+import frc.robot.lib.util.Elastic;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
     private TalonFX elevatorMotor1;
@@ -67,6 +70,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     private final double kMAX_HEIGHT_METERS;
     private final double kMIN_HEIGHT_METERS;
+
+    private final Debouncer motor1ConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer motor2ConnectedDebouncer = new Debouncer(0.25);
+
+    private final Elastic.Notification motor1DisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Elevator Motor Disconnected", "Motor1 Disconnected, GOOD LUCK");
+
+    private final Elastic.Notification motor2DisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Elevator Motor Disconnected", "Motor2 Disconnected, GOOD LUCK");
 
     public ElevatorIOTalonFX(ElevatorConfigBase config) {
         kMAX_HEIGHT_METERS = config.getMaxHeightMeters();
@@ -197,29 +209,37 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
-            elevatorAppliedVolts1,
-            elevatorTorqueCurrent1,
-            elevatorAppliedDutyCycle1,
-            elevatorTemperature1,
+        inputs.motor1Connected = 
+            motor1ConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    elevatorAppliedVolts1,
+                    elevatorTorqueCurrent1,
+                    elevatorAppliedDutyCycle1,
+                    elevatorTemperature1,
 
-            elevatorAppliedVolts2,
-            elevatorTorqueCurrent2,
-            elevatorAppliedDutyCycle2,
-            elevatorTemperature2,
+                    elevatorPositionStatusSignal1,
+                    elevatorVelocityStatusSignal1,
 
-            elevatorClosedLoopReference1,
-            elevatorClosedLoopOutput1,
+                    elevatorClosedLoopReference1,
+                    elevatorClosedLoopOutput1
+                ).isOK()
+            );
+            
+        inputs.motor2Connected = 
+            motor2ConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    elevatorAppliedVolts2,
+                    elevatorTorqueCurrent2,
+                    elevatorAppliedDutyCycle2,
+                    elevatorTemperature2,
 
-            elevatorClosedLoopReference2,
-            elevatorClosedLoopOutput2,
+                    elevatorClosedLoopReference2,
+                    elevatorClosedLoopOutput2,
 
-            elevatorPositionStatusSignal1,
-            elevatorVelocityStatusSignal1,
-
-            elevatorPositionStatusSignal2,
-            elevatorVelocityStatusSignal2
-        );
+                    elevatorPositionStatusSignal2,
+                    elevatorVelocityStatusSignal2
+                ).isOK()
+            );
         
         inputs.elevatorHeightMeters = 
             (BaseStatusSignal.getLatencyCompensatedValue(elevatorPositionStatusSignal1, elevatorVelocityStatusSignal1).in(Rotation) + 
@@ -245,6 +265,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         Logger.recordOutput("Elevator/elevatorClosedLoopReference2", elevatorClosedLoopReference2.getValueAsDouble());
         Logger.recordOutput("Elevator/elevatorClosedLoopOutput2", elevatorClosedLoopOutput2.getValueAsDouble());
 
+        if (!inputs.motor1Connected) {
+            Elastic.sendNotification(motor1DisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Elevator Motor Disconnected", false);
+        }
+
+        if (!inputs.motor2Connected) {
+            Elastic.sendNotification(motor2DisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Elevator Motor Disconnected", false);
+        }
     }
 
     @Override

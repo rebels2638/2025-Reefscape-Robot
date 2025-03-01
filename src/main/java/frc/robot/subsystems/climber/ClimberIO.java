@@ -6,12 +6,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public interface ClimberIO {
     @AutoLog
     class ClimberIOInputs {
-        public Rotation2d pivotPositionRad = new Rotation2d();
-        public double pivotVelocityRadPerSec = 0;
+        public Rotation2d climberPosition = new Rotation2d();
+        public double climberVelocityRadPerSec = 0;
 
-        public double pivotCurrentDrawAmps = 0;
-        public double pivotAppliedVolts = 0;
-        public double pivotTemperatureFahrenheit = 0;
+        public double climberCurrentDrawAmps = 0;
+        public double climberAppliedVolts = 0;
+        public double climberTemperatureFahrenheit = 0;
+
+        public boolean climberMotorConnected = true;
     }
 
     public default void updateInputs(ClimberIOInputs inputs) {}

@@ -82,11 +82,11 @@ public class ClimberIOSim implements ClimberIO {
         double dt = Timer.getTimestamp() - prevTimeInputs;
         pivotSim.update(dt);
 
-        inputs.pivotVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
-        inputs.pivotPositionRad = new Rotation2d(pivotSim.getAngleRads());
-        this.currentPositionRad = inputs.pivotPositionRad.getRadians();
+        inputs.climberVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
+        inputs.climberPosition = new Rotation2d(pivotSim.getAngleRads());
+        this.currentPositionRad = inputs.climberPosition.getRadians();
 
-        inputs.pivotAppliedVolts = appliedVolts;
+        inputs.climberAppliedVolts = appliedVolts;
 
         prevTimeInputs = Timer.getTimestamp();
     }

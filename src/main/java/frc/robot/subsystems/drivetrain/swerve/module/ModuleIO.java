@@ -23,6 +23,10 @@ public interface ModuleIO {
         public double steerCurrentDrawAmps = 0;
         public double steerAppliedVolts = 0;
         public double steerTemperatureFahrenheit = 0;
+
+        public boolean driveMotorConnected = true;
+        public boolean steerMotorConnected = true;
+        public boolean steerEncoderConnected = true;
     }
 
     public default void updateInputs(ModuleIOInputs inputs) {}

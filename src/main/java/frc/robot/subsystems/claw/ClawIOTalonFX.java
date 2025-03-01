@@ -14,13 +14,16 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.claw.ClawConfigBase;
 import frc.robot.lib.util.PhoenixUtil;
+import frc.robot.lib.util.Elastic;
 
 public class ClawIOTalonFX implements ClawIO {
     private TalonFX clawMotor;
@@ -34,6 +37,11 @@ public class ClawIOTalonFX implements ClawIO {
 
     private final TorqueCurrentFOC clawTorqueRequest = new TorqueCurrentFOC(0);
     private final VoltageOut clawVoltageRequest = new VoltageOut(0).withEnableFOC(false);
+
+    private final Debouncer motorConnectedDebouncer = new Debouncer(0.25);
+
+    private final Elastic.Notification motorDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Claw Motor Disconnected", "Motor Disconnected, GOOD LUCK");
 
     public ClawIOTalonFX(ClawConfigBase config) {
         // pivot motor
@@ -85,12 +93,15 @@ public class ClawIOTalonFX implements ClawIO {
 
     @Override
     public void updateInputs(ClawIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
-            clawVelocityStatusSignal,
-            clawAppliedVolts,
-            clawTorqueCurrent,
-            clawTemperature
-        );
+        inputs.motorConnected = 
+            motorConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    clawVelocityStatusSignal,
+                    clawAppliedVolts,
+                    clawTorqueCurrent,
+                    clawTemperature
+                ).isOK()
+            );
 
         double clawVel = BaseStatusSignal.getLatencyCompensatedValue(clawVelocityStatusSignal, clawAccelerationStatusSignal).in(RadiansPerSecond);
 
@@ -100,6 +111,10 @@ public class ClawIOTalonFX implements ClawIO {
         inputs.clawAppliedVolts = clawAppliedVolts.getValue().in(Volts);
         inputs.clawTemperatureFahrenheit = clawTemperature.getValue().in(Fahrenheit);
 
+        if (!inputs.motorConnected) {
+            Elastic.sendNotification(motorDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Claw Motor Disconnected", false);
+        }
     }
 
     @Override

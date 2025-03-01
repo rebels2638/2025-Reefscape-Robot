@@ -24,6 +24,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
@@ -33,11 +34,13 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleGeneralConfigBase;
 import frc.robot.constants.swerve.moduleConfigs.SwerveModuleSpecificConfigBase;
 import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 import frc.robot.lib.util.PhoenixUtil;
+import frc.robot.lib.util.Elastic;
 
 public class ModuleIOTalonFX implements ModuleIO {
     private final TalonFX driveMotor;
@@ -67,6 +70,20 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final int moduleID;
 
     private double currentDriveVelo;
+
+    private final Debouncer driveConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer steerConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer steerEncoderConnectedDebouncer = new Debouncer(0.25);
+
+
+    private final Elastic.Notification driveConnectedDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                            "Swerve Drive Motor Disconnected", "Drive Motor Disconnected, GOOD LUCK");
+
+    private final Elastic.Notification steerConnectedDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                            "Swerve Steer Motor Disconnected", "Swerve Motor Disconnected, GOOD LUCK");
+
+    private final Elastic.Notification steerEncoderConnectedDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                            "Swerve Encoder Disconnected", "Swerve Steer CANCODER Disconnected");
 
     public ModuleIOTalonFX(SwerveModuleGeneralConfigBase generalConfig, SwerveModuleSpecificConfigBase specificConfig, int moduleID) {
         this.generalConfig = generalConfig;
@@ -260,6 +277,40 @@ public class ModuleIOTalonFX implements ModuleIO {
             steerEncoderPositionStatusSignal
         );
 
+        inputs.driveMotorConnected = 
+            driveConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    driveAppliedVolts,
+                    driveTorqueCurrent,
+                    driveTemperature
+                ).isOK() &&
+                BaseStatusSignal.isAllGood(
+                    drivePositionStatusSignal,
+                    driveVelocityStatusSignal
+                )
+            );
+
+        inputs.steerMotorConnected = 
+            steerConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    steerAppliedVolts,
+                    steerTorqueCurrent,
+                    steerTemperature
+                ).isOK() &&
+                BaseStatusSignal.isAllGood(
+                    steerPositionStatusSignal,
+                    steerVelocityStatusSignal
+                )
+            );
+
+        inputs.steerEncoderConnected = 
+            steerConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    steerEncoderAbsolutePosition,
+                    steerEncoderPositionStatusSignal
+                ).isOK()
+            );
+
         double drivePosition = BaseStatusSignal
                 .getLatencyCompensatedValue(drivePositionStatusSignal, driveVelocityStatusSignal).in(Rotation);
 
@@ -287,6 +338,20 @@ public class ModuleIOTalonFX implements ModuleIO {
         Logger.recordOutput("SwerveDrive/module" + moduleID + "/driveClosedLoopOutput", driveMotor.getClosedLoopOutput().getValueAsDouble());
 
         currentDriveVelo = inputs.driveVelocityMetersPerSec;
+
+        if (!inputs.driveMotorConnected) {
+            Elastic.sendNotification(driveConnectedDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Swerve Drive Motor Disconnected", false);
+        }
+
+        if (!inputs.steerMotorConnected) {
+            Elastic.sendNotification(steerConnectedDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Swerve Steer Motor Disconnected", false);
+        }
+        if (!inputs.steerEncoderConnected) {
+            Elastic.sendNotification(steerEncoderConnectedDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Steer Encoder Disconnected", false);
+        }
     }
 
     @Override

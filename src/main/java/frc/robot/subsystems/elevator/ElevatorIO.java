@@ -17,6 +17,9 @@ public interface ElevatorIO {
         public double elevatorTorqueCurrent2 = 0;
         public double elevatorAppliedDutyCycle2 = 0;
         public double elevatorTemperatureFahrenheit2 = 0;
+
+        public boolean motor1Connected = true;
+        public boolean motor2Connected = true;
     }
 
     public default void updateInputs(ElevatorIOInputs inputs) {}
