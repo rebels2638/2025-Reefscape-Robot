@@ -33,7 +33,6 @@ public class Elevator extends SubsystemBase {
     };
     
     private height currHeightRequest = height.STOW;
-    private height lastHeightRequest = currHeightRequest;
     private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.38);
 
     private double setpoint = 0;
@@ -85,25 +84,25 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs("Elevator", elevatorIOInputs);
         setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(currHeightRequest));
 
-        if (currHeightRequest == height.STOW && MathUtil.isNear(elevatorIOInputs.elevatorHeightMeters, 0, config.getToleranceMeters())) {
-            setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(lastHeightRequest));
-        }
-
         if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
 
         Logger.recordOutput("Elevator/setpoint", setpoint);
+        Logger.recordOutput("Elevator/setpointModifiable", setpointModifiable);
         Logger.recordOutput("Elevator/setPointQueued", 
             !(setpointModifiable || 
                 (MathUtil.isNear(setpoint, elevatorIOInputs.elevatorVelocityMetersPerSec, 0.2) || 
-                    !MathUtil.isNear(elevatorIOInputs.elevatorVelocityMetersPerSec, 0, 0.3)
+                    !MathUtil.isNear(elevatorIOInputs.elevatorHeightMeters, 0, 0.02)
                 )
             )
         );
     }
 
     public void requestLevel(height level) {
-        if (level != height.STOW) {this.lastHeightRequest = level;}
         this.currHeightRequest = level;
+    }
+
+    public height getRequestedLevel() {
+        return currHeightRequest;
     }
     
     public void setSetpointSettable(boolean settable) {
