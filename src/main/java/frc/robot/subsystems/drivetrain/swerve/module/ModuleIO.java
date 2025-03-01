@@ -12,7 +12,6 @@ public interface ModuleIO {
 
         public double drivePositionMeters = 0;
         public double driveVelocityMetersPerSec = 0;
-        public double driveAccelerationMetersPerSecSec = 0;
 
         public Rotation2d steerPosition = new Rotation2d();
         public double steerVelocityRadPerSec = 0;

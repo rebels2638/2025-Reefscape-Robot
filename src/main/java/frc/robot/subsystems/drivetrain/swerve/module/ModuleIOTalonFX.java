@@ -270,7 +270,6 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         inputs.drivePositionMeters = drivePosition;
         inputs.driveVelocityMetersPerSec = driveVelocityStatusSignal.getValue().in(RotationsPerSecond);
-        inputs.driveAccelerationMetersPerSecSec = driveAccelerationStatusSignal.getValue().in(RotationsPerSecondPerSecond);
 
         inputs.steerPosition = new Rotation2d(
                 Units.rotationsToRadians(steerRotations));

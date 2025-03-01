@@ -130,7 +130,6 @@ public class ModuleIOSim implements ModuleIO {
 
         inputs.driveVelocityMetersPerSec = driveSim.getAngularVelocityRPM() *
                 2 * Math.PI * config.getDriveWheelRadiusMeters();
-        inputs.driveAccelerationMetersPerSecSec = (inputs.driveVelocityMetersPerSec - previousDriveVelo) / dt;
         previousDriveVelo = inputs.driveVelocityMetersPerSec;
 
         inputs.drivePositionMeters += inputs.driveVelocityMetersPerSec * dt;

@@ -37,7 +37,6 @@ public class RobotState {
   public record OdometryObservation(
     SwerveModulePosition[] modulePositions, 
     SwerveModuleState[] moduleStates, 
-    SwerveModuleState[] moduleAccelerations, 
     Rotation3d gyroOrientation,
     Rotation3d gyroRates,
     Translation2d fieldRelativeAccelerationMetersPerSecSec,
@@ -140,8 +139,8 @@ public class RobotState {
     Logger.recordOutput("RobotState/observation/modulePositions", observation.modulePositions());
     Logger.recordOutput("RobotState/observation/moduleStates", observation.moduleStates());
     Logger.recordOutput("RobotState/lastWheelPositions", lastWheelPositions);
-    Logger.recordOutput("RobotState/observation/moduleAccelerations", observation.moduleAccelerations);
 
+    ChassisSpeeds lastFieldRelativeSpeeds = getFieldRelativeSpeeds();
     robotRelativeVelocity = kinematics.toChassisSpeeds(observation.moduleStates);
 
     Twist2d twist = kinematics.toTwist2d(lastWheelPositions, observation.modulePositions());
@@ -168,15 +167,11 @@ public class RobotState {
         lastFieldRelativeAccelerations = observation.fieldRelativeAccelerationMetersPerSecSec;
     }
     else {
-        ChassisSpeeds acelSpeeds = 
-            ChassisSpeeds.fromRobotRelativeSpeeds(
-                kinematics.toChassisSpeeds(observation.moduleAccelerations), 
-                new Rotation2d(lastGyroOrientation.getZ())
-            );
+        ChassisSpeeds fieldRelativeSpeeds = getFieldRelativeSpeeds();
         lastFieldRelativeAccelerations = 
             new Translation2d(
-                acelSpeeds.vxMetersPerSecond,
-                acelSpeeds.vyMetersPerSecond
+                (fieldRelativeSpeeds.vxMetersPerSecond - lastFieldRelativeSpeeds.vxMetersPerSecond) / (Timer.getTimestamp() - lastEstimatedPoseUpdateTime),
+                (fieldRelativeSpeeds.vyMetersPerSecond - lastFieldRelativeSpeeds.vyMetersPerSecond) / (Timer.getTimestamp() - lastEstimatedPoseUpdateTime)
             );
     }
 
