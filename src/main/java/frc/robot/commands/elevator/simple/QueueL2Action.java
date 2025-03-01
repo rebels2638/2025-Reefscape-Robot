@@ -7,8 +7,6 @@ public class QueueL2Action extends Command {
     private final Elevator elevator;
     public QueueL2Action() {
         this.elevator = Elevator.getInstance();
-        
-        addRequirements(elevator);
     }
 
     @Override

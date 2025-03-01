@@ -23,6 +23,9 @@ public class ControllerConstants {
         public static final int BUTTON_LEFT_STICK = 9;
         public static final int BUTTON_RIGHT_STICK = 10;
 
+        public static final int BUTTON_LEFT_TRIGGER = 11;
+        public static final int BUTTON_RIGHT_TRIGGER = 12;
+
         public static final double AXIS_BUTTON_THRESHOLD = .5;
         public static final double JOYSTICK_BUTTON_THRESHOLD = .1;
     }

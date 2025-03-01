@@ -16,7 +16,7 @@ public class XboxController implements Controller {
     private Joystick joystick;
 
     private Trigger aButton, bButton, xButton, yButton, leftMiddleButton, rightMiddleButton, leftBumper, rightBumper,
-            leftStick, rightStick, leftTriggerButton, rightTriggerButton, rightStickYButton, upDpad, downDpad, leftDpad, rightDpad;
+            leftStick, rightStick, rightStickYButton, upDpad, downDpad, leftDpad, rightDpad;
 
     public XboxController(Joystick joystick) {
         this.joystick = joystick;
@@ -163,15 +163,15 @@ public class XboxController implements Controller {
     /**
      * @return the right trigger as a button
      */
-    public Trigger getRightTriggerButton() {
-        return rightTriggerButton;
+    public Trigger getRightTriggerButton(double activation) {
+        return new Trigger(() -> getRightTrigger() >= activation);
     }
 
     /**
      * @return the left trigger as a button
      */
-    public Trigger getLeftTriggerButton() {
-        return leftTriggerButton;
+    public Trigger getLeftTriggerButton(double activation) {
+        return new Trigger(() -> getLeftTrigger() >= activation);
     }
 
     /**

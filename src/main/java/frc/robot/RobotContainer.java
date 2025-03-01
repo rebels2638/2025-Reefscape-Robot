@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,13 +21,14 @@ import frc.robot.lib.input.XboxController;
 import frc.robot.subsystems.claw.Claw;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.Elevator.height;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.*;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinear;
-import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinear;
-import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinear;
+import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
+import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
@@ -37,6 +39,7 @@ import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
 import frc.robot.commands.claw.simple.RunClawEject;
 import frc.robot.commands.elevator.RunElevatorRaw;
+import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL1Action;
 import frc.robot.commands.elevator.simple.QueueL2Action;
 import frc.robot.commands.elevator.simple.QueueL3Action;
@@ -102,10 +105,15 @@ public class RobotContainer {
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftTriggerButton().whileTrue(new AlignToLeftBranchLinear());
-        xboxDriver.getRightTriggerButton().whileTrue(new AlignToRightBranchLinear());
+        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
+        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
         // xboxDriver.getRightBumper().whileFalse()
-        new Trigger(() -> (xboxOperator.getRightTriggerButton().getAsBoolean() && xboxOperator.getLeftTriggerButton().getAsBoolean())).onTrue(new AlignToAlgayLinear());
+        xboxDriver.getYButton().whileTrue(new AlignToAlgayLinear()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
+        // CommandScheduler.getInstance().onCommandInterrupt(
+        //     CommandScheduler.getInstance().isScheduled(new AlignToAlgayLinear(), new AlignToLeftBranchLinearAndScore(), new AlignToRightBranchLinearAndScore()) ?
+            
+        // )
+        new Trigger(() -> (xboxOperator.getRightTriggerButton(0.94).getAsBoolean() && xboxOperator.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinear());
         // xboxDriver.getAButton().onTrue(new Score());
         // xboxDriver.getYButton().whileTrue(new AlignToClosestSourcePathfind(xboxDriver));
 
