@@ -78,8 +78,4 @@ public class Roller extends SubsystemBase {
     public boolean inRoller() {
         return rollerIOInputs.inRoller;
     }
-
-    public boolean isConnected() {
-        return rollerIOInputs.isConnected;
-    }
 }

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
 import frc.robot.lib.input.XboxController;
@@ -112,6 +113,7 @@ public class RobotContainer {
         //     CommandScheduler.getInstance().isScheduled(new AlignToAlgayLinear(), new AlignToLeftBranchLinearAndScore(), new AlignToRightBranchLinearAndScore()) ?
             
         // )
+        new Trigger(() -> (xboxOperator.getRightTriggerButton().getAsBoolean() && xboxOperator.getLeftTriggerButton().getAsBoolean())).onTrue(new AlignToAlgayLinear());
         // xboxDriver.getAButton().onTrue(new Score());
         // xboxDriver.getYButton().whileTrue(new AlignToClosestSourcePathfind(xboxDriver));
 

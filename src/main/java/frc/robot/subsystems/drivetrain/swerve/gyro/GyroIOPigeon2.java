@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,6 +19,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.lib.util.Elastic;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
+import frc.robot.lib.util.PhoenixUtil;
 
 public class GyroIOPigeon2 implements GyroIO {
     private final Pigeon2 gyro;
@@ -40,6 +42,8 @@ public class GyroIOPigeon2 implements GyroIO {
                                 "Gyro Disconnected", "Pigeon2 Disconnected, Gyro may not be functioning");
 
 
+    private final Debouncer connectedDebouncer = new Debouncer(0.25);
+
     public GyroIOPigeon2() {
         odom = Phoenix6Odometry.getInstance();
         gyro = new Pigeon2(13, "drivetrain");
@@ -48,7 +52,8 @@ public class GyroIOPigeon2 implements GyroIO {
         config.MountPose.MountPosePitch = -2.2904083728790283;
         config.MountPose.MountPoseRoll = 0.06304000318050385;
         config.GyroTrim.GyroScalarZ = 0;
-        gyro.getConfigurator().apply(config);
+
+        PhoenixUtil.tryUntilOk(5, () -> gyro.getConfigurator().apply(config, 0.25));
 
         yawSignal = gyro.getYaw().clone();
         yawVelocitySignal = gyro.getAngularVelocityZDevice().clone();
@@ -87,7 +92,10 @@ public class GyroIOPigeon2 implements GyroIO {
 
     @Override
     public synchronized void updateInputs(GyroIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
+        inputs.isConnected = 
+            connectedDebouncer.calculate(
+                BaseStatusSignal.
+                    refreshAll(
                         yawSignal,
                         yawVelocitySignal,
                         rollSignal,
@@ -95,7 +103,10 @@ public class GyroIOPigeon2 implements GyroIO {
                         pitchSignal,
                         pitchVelocitySignal,
                         accelerationXSignal,
-                        accelerationYSignal).isOK();
+                        accelerationYSignal
+                    ).isOK()
+            );
+            
 
         // TODO: CHECK FOR FEILD VS GYRO RELATIVE VALUES
         inputs.orientation = new Rotation3d(
@@ -114,7 +125,6 @@ public class GyroIOPigeon2 implements GyroIO {
             accelerationYSignal.getValue().in(MetersPerSecondPerSecond)
         );
 
-        inputs.isConnected = gyro.isConnected(0.03);
         if (!inputs.isConnected) {
             Elastic.sendNotification(gyroDisconnectAlert.withDisplayMilliseconds(10000));
             DriverStation.reportError("Roller CANRange Disconnected", true);

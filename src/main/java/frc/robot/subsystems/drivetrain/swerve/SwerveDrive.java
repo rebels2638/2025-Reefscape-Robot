@@ -89,7 +89,6 @@ public class SwerveDrive extends SubsystemBase {
         new SwerveModuleState(),
         new SwerveModuleState()
     };
-    private SwerveModuleState[] moduleAccelerations = new SwerveModuleState[4];
 
     private final SwerveSetpointGenerator swerveSetpointGenerator;
     private SwerveSetpoint previousSetpoint = new SwerveSetpoint(
@@ -231,7 +230,6 @@ public class SwerveDrive extends SubsystemBase {
         for (int i = 0; i < 4; i++) {
             modulePositions[i] = new SwerveModulePosition(moduleInputs[i].drivePositionMeters, moduleInputs[i].steerPosition);
             moduleStates[i] = new SwerveModuleState(moduleInputs[i].driveVelocityMetersPerSec, moduleInputs[i].steerPosition);
-            moduleAccelerations[i] = new SwerveModuleState(moduleInputs[i].driveAccelerationMetersPerSecSec, moduleInputs[i].steerPosition);
         }
 
         Logger.recordOutput("SwerveDrive/measuredModuleStates", moduleStates);
@@ -242,7 +240,6 @@ public class SwerveDrive extends SubsystemBase {
                 new RobotState.OdometryObservation(
                     modulePositions.clone(),
                     moduleStates.clone(),
-                    moduleAccelerations.clone(),
                     gyroInputs.isConnected ? 
                         gyroInputs.orientation :
                         null,
@@ -362,5 +359,9 @@ public class SwerveDrive extends SubsystemBase {
     public void disableSlowdownCoeffs() {
         isTranslationSlowdownEnabled = false;
         isRotationSlowdownEnabled = false;
+    }
+
+    public void resetGyro(Rotation2d yaw) {
+        gyroIO.resetGyro(yaw);
     }
 }

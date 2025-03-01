@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -32,7 +33,7 @@ public class RollerIOTalonFX implements RollerIO {
     private final StatusSignal<AngularVelocity> rollerVelocityStatusSignal;
 
     private final StatusSignal<Voltage> rollerAppliedVolts;
-    private final StatusSignal<Current> rollerSupplyCurrent;
+    private final StatusSignal<Current> rollerTorqueCurrent;
     private final StatusSignal<Temperature> rollerTemperature;
 
     private final StatusSignal<Boolean> canRangeIsDetected;
@@ -41,8 +42,14 @@ public class RollerIOTalonFX implements RollerIO {
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0).withEnableFOC(false);
 
     private final Elastic.Notification canRangeDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
-                                "Roller Disconnected", "CANRange Disconnected, Roller may not be functioning");
+                                "Roller CANRange Disconnected", "CANRange Disconnected, Roller may not be functioning");
 
+    private final Elastic.Notification motorDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
+                                "Roller Motor Disconnected", "Motor Disconnected, GOOD LUCK");
+
+    private final Debouncer motorConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer canRangeConnectedDebouncer = new Debouncer(0.25);
+  
     public RollerIOTalonFX(RollerConfigBase config) {
         CANrangeConfiguration canRangeConfiguration = new CANrangeConfiguration();
 
@@ -61,7 +68,7 @@ public class RollerIOTalonFX implements RollerIO {
         canRangeConfiguration.FutureProofConfigs = true;
 
         canRange = new CANrange(config.getCanRangeCanID(), "drivetrain");
-        canRange.getConfigurator().apply(canRangeConfiguration);
+        PhoenixUtil.tryUntilOk( 5, () -> canRange.getConfigurator().apply(canRangeConfiguration, 0.25));
 
         // pivot motor
         TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
@@ -94,7 +101,7 @@ public class RollerIOTalonFX implements RollerIO {
         PhoenixUtil.tryUntilOk(5, () -> rollerMotor.getConfigurator().apply(rollerConfig, 0.25));
 
         rollerAppliedVolts = rollerMotor.getMotorVoltage().clone();
-        rollerSupplyCurrent = rollerMotor.getSupplyCurrent().clone();
+        rollerTorqueCurrent = rollerMotor.getTorqueCurrent().clone();
         rollerTemperature = rollerMotor.getDeviceTemp().clone();
 
         rollerVelocityStatusSignal = rollerMotor.getVelocity().clone();
@@ -106,7 +113,7 @@ public class RollerIOTalonFX implements RollerIO {
                 canRangeIsDetected,
 
                 rollerAppliedVolts,
-                rollerSupplyCurrent,
+                rollerTorqueCurrent,
                 rollerTemperature
         );
 
@@ -116,27 +123,40 @@ public class RollerIOTalonFX implements RollerIO {
 
     @Override
     public void updateInputs(RollerIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
-            rollerVelocityStatusSignal,
-            canRangeIsDetected,
+        inputs.isMotorConnected = 
+            motorConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    rollerVelocityStatusSignal,
 
-            rollerAppliedVolts,
-            rollerSupplyCurrent,
-            rollerTemperature
-        );
+                    rollerAppliedVolts,
+                    rollerTorqueCurrent,
+                    rollerTemperature
+                ).isOK()
+            );
+        
+        inputs.isCanRangeConnected = 
+            canRangeConnectedDebouncer.calculate(
+                BaseStatusSignal.refreshAll(
+                    canRangeIsDetected
+                ).isOK()
+            );
+
 
         inputs.rollerVelocityRadPerSec = rollerVelocityStatusSignal.getValue().in(RadiansPerSecond);
         inputs.inRoller = canRange.getIsDetected(true).getValue().booleanValue();
 
-        inputs.rollerCurrentDrawAmps = rollerSupplyCurrent.getValue().in(Amps);
+        inputs.rollerCurrentDrawAmps = rollerTorqueCurrent.getValue().in(Amps);
         inputs.rollerAppliedVolts = rollerAppliedVolts.getValue().in(Volts);
         inputs.rollerTemperatureFahrenheit = rollerTemperature.getValue().in(Fahrenheit);
 
-        
-
-        if (canRange.isConnected(0.1)) {
+        if (!inputs.isCanRangeConnected) {
             Elastic.sendNotification(canRangeDisconnectAlert.withDisplayMilliseconds(10000));
-            DriverStation.reportError("Roller CANRange Disconnected", true);
+            DriverStation.reportError("Roller CANRange Disconnected", false);
+        }
+
+        if (!inputs.isMotorConnected) {
+            Elastic.sendNotification(motorDisconnectAlert.withDisplayMilliseconds(10000));
+            DriverStation.reportError("Roller Motor Disconnected", false);
         }
     }
 

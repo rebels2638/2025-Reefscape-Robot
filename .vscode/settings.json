@@ -66,6 +66,7 @@
     "Coeff",
     "Coeffs",
     "DEADBAND",
+    "Debouncer",
     "decel",
     "dtheta",
     "feedforward",

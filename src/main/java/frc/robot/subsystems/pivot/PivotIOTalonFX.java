@@ -35,7 +35,7 @@ public class PivotIOTalonFX implements PivotIO {
     private final StatusSignal<AngularVelocity> pivotVelocityStatusSignal;
 
     private final StatusSignal<Voltage> pivotAppliedVolts;
-    private final StatusSignal<Current> pivotSupplyCurrent;
+    private final StatusSignal<Current> pivotTorqueCurrent;
     private final StatusSignal<Temperature> pivotTemperature;
 
     private final MotionMagicExpoTorqueCurrentFOC pivotPositionRequest = 
@@ -97,7 +97,7 @@ public class PivotIOTalonFX implements PivotIO {
         PhoenixUtil.tryUntilOk(5, () -> pivotMotor.getConfigurator().apply(pivotConfig, 0.25));
 
         pivotAppliedVolts = pivotMotor.getMotorVoltage().clone();
-        pivotSupplyCurrent = pivotMotor.getSupplyCurrent().clone();
+        pivotTorqueCurrent = pivotMotor.getTorqueCurrent().clone();
         pivotTemperature = pivotMotor.getDeviceTemp().clone();
 
         pivotPositionStatusSignal = pivotMotor.getPosition().clone();
@@ -106,7 +106,7 @@ public class PivotIOTalonFX implements PivotIO {
         BaseStatusSignal.setUpdateFrequencyForAll(
                 70,
                 pivotAppliedVolts,
-                pivotSupplyCurrent,
+                pivotTorqueCurrent,
                 pivotTemperature,
                 pivotPositionStatusSignal,
                 pivotVelocityStatusSignal
@@ -121,7 +121,7 @@ public class PivotIOTalonFX implements PivotIO {
             pivotPositionStatusSignal,
             pivotVelocityStatusSignal,
             pivotAppliedVolts,
-            pivotSupplyCurrent,
+            pivotTorqueCurrent,
             pivotTemperature
         );
         
@@ -131,7 +131,7 @@ public class PivotIOTalonFX implements PivotIO {
                 Units.rotationsToRadians(pivotRotations));
         inputs.pivotVelocityRadPerSec = pivotVelocityStatusSignal.getValue().in(RadiansPerSecond);
 
-        inputs.pivotCurrentDrawAmps = pivotSupplyCurrent.getValue().in(Amps);
+        inputs.pivotCurrentDrawAmps = pivotTorqueCurrent.getValue().in(Amps);
         inputs.pivotAppliedVolts = pivotAppliedVolts.getValue().in(Volts);
         inputs.pivotTemperatureFahrenheit = pivotTemperature.getValue().in(Fahrenheit);
 
