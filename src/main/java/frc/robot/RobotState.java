@@ -20,6 +20,7 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
+import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
 import java.util.NoSuchElementException;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -212,6 +213,13 @@ public class RobotState {
    * Clear pose buffer
    */
   public void resetPose(Pose2d initialPose) {
+    SwerveDrive.getInstance().resetGyro(initialPose.getRotation());
+    lastGyroOrientation = 
+        new Rotation3d(
+            0,
+            0,
+            initialPose.getRotation().getRadians()
+        );
     swerveDrivePoseEstimator.resetPosition(lastGyroOrientation.toRotation2d(), lastWheelPositions, initialPose);
     poseBuffer.clear();
   }

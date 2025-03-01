@@ -360,4 +360,8 @@ public class SwerveDrive extends SubsystemBase {
         isTranslationSlowdownEnabled = false;
         isRotationSlowdownEnabled = false;
     }
+
+    public void resetGyro(Rotation2d yaw) {
+        gyroIO.resetGyro(yaw);
+    }
 }
