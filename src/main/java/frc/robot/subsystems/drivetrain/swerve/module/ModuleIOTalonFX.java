@@ -366,14 +366,14 @@ public class ModuleIOTalonFX implements ModuleIO {
                 Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
                     generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec() :
                     generalConfig.getDriveMotionMagicVelocityDecelerationMetersPerSecSec()
-            ).
-            withSlot(
-                MathUtil.isNear(driveVelocityStatusSignal.getValue().in(RotationsPerSecond), 0, generalConfig.getDriveMaxWallVeloMetersPerSec()) && 
-                Math.abs(driveTorqueCurrent.getValue().in(Amps)) >= generalConfig.getDriveMinWallCurrent() &&
-                Math.signum(state.speedMetersPerSecond) == Math.signum(Math.abs(driveTorqueCurrent.getValue().in(Amps))) ?
-                    1 : // no acel config to prevent the backlash 
-                    0 // regular w acel
             )
+            // withSlot(
+            //     MathUtil.isNear(driveVelocityStatusSignal.getValue().in(RotationsPerSecond), 0, generalConfig.getDriveMaxWallVeloMetersPerSec()) && 
+            //     Math.abs(driveTorqueCurrent.getValue().in(Amps)) >= generalConfig.getDriveMinWallCurrent() &&
+            //     Math.signum(state.speedMetersPerSecond) == Math.signum(Math.abs(driveTorqueCurrent.getValue().in(Amps))) ?
+            //         1 : // no acel config to prevent the backlash 
+            //         0 // regular w acel
+            // )
         );
         
         steerMotor.setControl(
