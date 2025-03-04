@@ -24,17 +24,17 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveSupplyCurrentLimit() {
-        return 60.0;
+        return 70.0;
     }
 
     @Override
     public double getDriveSupplyCurrentLimitLowerTime() {
-        return 0.5;
+        return 5;
     }
 
     @Override
     public double getDriveSupplyCurrentLimitLowerLimit() {
-        return 20.0;
+        return 65.0;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveKV() {
-        return 2.5;
+        return 1.8;
         // return 0.0;
 
     }
@@ -67,13 +67,13 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
     @Override
     public double getDriveKA() {
         // return 10;
-        return 5;
+        return 9.8;
         // return 0;
     }
 
     @Override
     public double getDriveKP() {
-        return 20;
+        return 70;
         // return 0;
     }
 
@@ -170,7 +170,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKP() {
-        return 1000;
+        return 500;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKD() {
-        return 60;
+        return 30;
     }
 
     @Override

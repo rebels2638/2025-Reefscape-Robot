@@ -66,7 +66,7 @@ public class RobotContainer {
 
     private final SwerveDrive swerveDrive;
     // private final Vision vision;
-    // private final RobotState robotState;
+    private final RobotState robotState;
 
     // private final Pivot pivot;
     // private final Claw claw;
@@ -88,7 +88,7 @@ public class RobotContainer {
 
         swerveDrive = SwerveDrive.getInstance();
         // vision = Vision.getInstance();
-        // robotState = RobotState.getInstance();
+        robotState = RobotState.getInstance();
         // pivot = Pivot.getInstance();
         // claw = Claw.getInstance();
 
@@ -104,7 +104,7 @@ public class RobotContainer {
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
-        // xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
+        xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
         // xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
         // xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
@@ -138,11 +138,13 @@ public class RobotContainer {
         xboxOperator.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
         xboxOperator.getYButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));
         xboxOperator.getXButton().onTrue(new QueueL4Action().andThen(new DequeueElevatorAction()));
-
+        xboxOperator.getRightBumper().onTrue(new IntakeCoral());
+        
+        xboxOperator.getLeftBumper().onTrue(new EjectCoral());
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
 
         // xboxDriver.getLeftBumper().whileTrue(new LinearDriveToPose(() ->
-        // robotState.getClosestLeftBranchPose(), () -> new ChassisSpeeds()));
+        // robotState.getClosestLe`tBranchPose(), () -> new ChassisSpeeds()));
         // xboxDriver.getRightBumper().whileTrue(new LinearDriveToPose(() ->
         // robotState.getClosestRightBranchPose(), () -> new ChassisSpeeds()));
         // xboxDriver.getYButton().whileTrue(new LinearDriveToPose(() ->

@@ -30,6 +30,7 @@ public abstract class ElevatorConfigBase {
     public abstract double getMotionMagicExpoKA();
     public abstract double getMotionMagicExpoKV();
     public abstract double getMotionMagicCruiseVelocityMetersPerSec();
+    public abstract double getMotionMagicJerkMetersPerSecSecSec();
 
     // Neutral mode
     public abstract boolean isNeutralModeBrake();
@@ -45,6 +46,4 @@ public abstract class ElevatorConfigBase {
 
     public abstract double getToleranceMeters();
     public abstract double getToleranceMetersPerSec();
-
-
 }

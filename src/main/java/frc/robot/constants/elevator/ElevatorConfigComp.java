@@ -42,72 +42,78 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 80;
+        return 90;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 80.0;
+        return 90.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -80.0;
+        return -90.0;
     }
 
     // Characterization / Gains
     @Override
     public double getKS() {
-        return 8;
+        return 2; // 
     }
 
     @Override
     public double getKV() {
-        return 0; //6
+        return 0.048; //6
     }
 
     @Override
     public double getKA() {
-        return 0; //2
+        return 1.8; //2
 
     }
 
     @Override
     public double getKP() {
-        return 120;//30
+        return 2000;//30/2000
     }
 
     @Override
     public double getKI() {
         return 0.0;
+
     }
 
     @Override
     public double getKD() {
-        return 30;//30
+        return 15;//30/15
     }
 
     @Override
     public double getKG() {
-        return 18; 
+        return 30; 
 
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 1;
+        return 1.5;
     }
 
     @Override
     public double getMotionMagicExpoKV() {
-        return 10.0;
+        return 3.5;
     }
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 1;
+        return 2;
+    }
+
+    @Override
+    public double getMotionMagicJerkMetersPerSecSecSec() {
+        return 7;
     }
 
     // Neutral mode
@@ -135,7 +141,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getMaxHeightMeters() {
-        return 1.39;
+        return 1.42;
     }
 
     @Override 

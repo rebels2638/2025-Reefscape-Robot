@@ -102,6 +102,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorConfig.MotionMagic.MotionMagicExpo_kA = config.getMotionMagicExpoKA();
         elevatorConfig.MotionMagic.MotionMagicExpo_kV = config.getMotionMagicExpoKV();
         elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = config.getMotionMagicCruiseVelocityMetersPerSec();
+        elevatorConfig.MotionMagic.MotionMagicJerk = config.getMotionMagicJerkMetersPerSecSecSec();
 
         // encoder
         elevatorConfig.ClosedLoopGeneral.ContinuousWrap = false;

@@ -28,34 +28,34 @@ public class RollerConfigComp extends RollerConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 30.0;
+        return 50.0;
     }
 
     @Override
     public double getSupplyCurrentLimitLowerTime() {
-        return 1.0;
+        return 1.5;
     }
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 20.0;
+        return 39.0;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 35.0;
+        return 45.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 40.0;
+        return 45.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -40.0;
+        return -45.0;
     }
 
     // Neutral mode

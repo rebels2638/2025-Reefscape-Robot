@@ -110,6 +110,11 @@ public class ElevatorConfigSim extends ElevatorConfigBase {
         return 1.3;
     }
 
+    @Override
+    public double getMotionMagicJerkMetersPerSecSecSec() {
+        return 0.5;
+    }
+
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {

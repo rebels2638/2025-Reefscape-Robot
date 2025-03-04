@@ -7,12 +7,11 @@ public class RunRollerEject extends Command {
     private final Roller roller = Roller.getInstance();
 
     public RunRollerEject() {
-        addRequirements(roller);
     }
 
     @Override
     public void initialize() {
-        roller.setTorqueCurrentFOC(50);
+        roller.setVoltage(12);
     }
 
     @Override
