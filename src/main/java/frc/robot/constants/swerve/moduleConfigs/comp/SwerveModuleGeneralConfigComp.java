@@ -79,12 +79,12 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveKI() {
-        return 0.0;
+        return 0.5;
     }
 
     @Override
     public double getDriveKD() {
-        return 4.5;
+        return 3.5;
         // return 0;
     }
 
@@ -180,7 +180,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKD() {
-        return 15;
+        return 5.5;
     }
 
     @Override
