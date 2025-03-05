@@ -61,7 +61,7 @@ public class SwerveDrive extends SubsystemBase {
 
     private final PIDController rotationalVelocityFeedbackController;
 
-    private Rotation2d rotationLock;
+    private Rotation2d rotationLock = new Rotation2d();
 
     private ModuleIO[] modules;
 
@@ -341,12 +341,17 @@ public class SwerveDrive extends SubsystemBase {
         driveRobotRelative(speeds);
     }
 
-    public void setRotationLock() {
+    public void setRotationLock(Rotation2d rotation) {
         isRotationLockEnabled = true;
+        rotationLock = rotation;
+        Logger.recordOutput("SwerveDrive/rotationLockEnabled", true);
+
     }
 
     public void disableRotationLock() {
         isRotationLockEnabled = false;
+        Logger.recordOutput("SwerveDrive/rotationLockEnabled", false);
+
     }
 
     public void setSlowdownCoeffs(double transCoeff, double rotCoeff) {

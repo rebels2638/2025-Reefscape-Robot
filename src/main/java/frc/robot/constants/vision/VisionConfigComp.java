@@ -15,13 +15,14 @@ public class VisionConfigComp extends VisionConfigBase {
     @Override
     public String[] getNames() {
         return new String[] {
-            "limelight-front"
+            "limelight-right",
+            "limelight-left"
         };
     }
 
     @Override
     public double getTranslationDevBase() {
-        return 1e-19; // 0.05
+        return 0.05; // 0.05
     }
 
     @Override

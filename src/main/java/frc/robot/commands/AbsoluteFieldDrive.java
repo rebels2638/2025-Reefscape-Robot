@@ -2,9 +2,13 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds; // Class to handle chassis speed calculations.
 import edu.wpi.first.wpilibj2.command.Command; // Base class for commands.
+import frc.robot.RobotState;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
@@ -73,6 +77,13 @@ public class AbsoluteFieldDrive extends Command {
             heading.getAsDouble() * drivetrainConfig.getMaxAngularVelocityRadiansPerSec()
         );
 
+        // if (speeds.omegaRadiansPerSecond == 0) {
+        //     swerve.setRotationLock(new Rotation2d(RobotState.getInstance().getGyroOrientation().getZ()));
+        // }
+        // else {
+        //     swerve.disableRotationLock();
+        // }
+
         swerve.driveFieldRelative(speeds); // Drive the robot using the calculated speeds.
     }
 
@@ -80,6 +91,7 @@ public class AbsoluteFieldDrive extends Command {
     @Override
     public void end(boolean interrupted) {
         // Cleanup or reset logic can be added here if necessary.
+        // swerve.disableRotationLock();
     }
 
     // Returns true when the command should end.

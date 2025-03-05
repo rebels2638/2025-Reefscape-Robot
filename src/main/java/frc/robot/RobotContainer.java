@@ -65,7 +65,7 @@ public class RobotContainer {
     }
 
     private final SwerveDrive swerveDrive;
-    // private final Vision vision;
+    private final Vision vision;
     private final RobotState robotState;
 
     // private final Pivot pivot;
@@ -87,7 +87,7 @@ public class RobotContainer {
         this.xboxDriver = new XboxController(3);
 
         swerveDrive = SwerveDrive.getInstance();
-        // vision = Vision.getInstance();
+        vision = Vision.getInstance();
         robotState = RobotState.getInstance();
         // pivot = Pivot.getInstance();
         // claw = Claw.getInstance();
@@ -106,8 +106,8 @@ public class RobotContainer {
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        // xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
-        // xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
+        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
+        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
         // xboxDriver.getRightBumper().whileFalse()
         // xboxDriver.getYButton().whileTrue(new AlignToAlgayLinear()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
         // CommandScheduler.getInstance().onCommandInterrupt(

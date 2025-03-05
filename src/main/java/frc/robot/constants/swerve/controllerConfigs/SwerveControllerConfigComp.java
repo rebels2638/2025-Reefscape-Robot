@@ -26,7 +26,7 @@ public class SwerveControllerConfigComp extends SwerveControllerConfigBase {
         // These PIDControllers are zeroed out as specified
         this.rotationalVelocityFeedbackController = new PIDController(0, 0, 0);
         this.translationVelocityFeedbackController = new PIDController(0, 0, 0);
-        this.rotationalPositionFeedbackController = new PIDController(0, 0, 0);
+        this.rotationalPositionFeedbackController = new PIDController(2, 0, 0);
 
         // Rotational position max output is half of the max angular velocity
         this.rotationalPositionMaxOutputRadSec = 0.5 * maxAngularVelocityRadiansPerSec;

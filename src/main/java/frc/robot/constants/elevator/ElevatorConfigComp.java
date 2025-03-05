@@ -108,12 +108,12 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getMotionMagicCruiseVelocityMetersPerSec() {
-        return 2;
+        return 2.5;
     }
 
     @Override
     public double getMotionMagicJerkMetersPerSecSecSec() {
-        return 7;
+        return 8;
     }
 
     // Neutral mode
