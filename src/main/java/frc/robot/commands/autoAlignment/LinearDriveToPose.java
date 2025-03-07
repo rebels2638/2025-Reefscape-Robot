@@ -175,13 +175,9 @@ public class LinearDriveToPose extends Command {
         double xTranslationalSetpoint = currentTranslationalSetpoint.position * Math.cos(translationalMotionProfileRotationRad) + initialPose.getX();
         double yTranslationalSetpoint = currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY();
         
-        double xVelocitySetpoint = Math.max(
-            feedforwardVelo.get().vxMetersPerSecond,
-            currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
-        );
+        double xVelocitySetpoint = currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad);
 
         double yVelocitySetpoint = // motion profile trips out when nonzero end vel
-            feedforwardVelo.get().vyMetersPerSecond +
             currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad);
         
 
@@ -192,8 +188,8 @@ public class LinearDriveToPose extends Command {
         double translationalError = Math.hypot(xDist, yDist);
         double calculatedFeedback = translationalFeedbackController.calculate(translationalError, 0);
 
-        calculatedSpeeds.vxMetersPerSecond = calculatedFeedback * Math.cos(angleOfMovement) + xVelocitySetpoint;
-        calculatedSpeeds.vyMetersPerSecond = calculatedFeedback * Math.sin(angleOfMovement) + yVelocitySetpoint;
+        calculatedSpeeds.vxMetersPerSecond = calculatedFeedback * Math.cos(angleOfMovement) + feedforwardVelo.get().vxMetersPerSecond;
+        calculatedSpeeds.vyMetersPerSecond = calculatedFeedback * Math.sin(angleOfMovement) + feedforwardVelo.get().vyMetersPerSecond;
 
         Logger.recordOutput("LinearDriveToPose/xTranslationalSetpoint", xTranslationalSetpoint);
         Logger.recordOutput("LinearDriveToPose/xVelocitySetpoint", xVelocitySetpoint);
@@ -206,10 +202,7 @@ public class LinearDriveToPose extends Command {
                 robotState.getEstimatedPose().getRotation().getRadians(),
                 currentRotationalSetpoint.position
             ) + 
-            Math.max(
-                feedforwardVelo.get().omegaRadiansPerSecond,
-                currentRotationalSetpoint.velocity
-            );
+            feedforwardVelo.get().omegaRadiansPerSecond;
 
         swerveDrive.driveFieldRelative(calculatedSpeeds);
 

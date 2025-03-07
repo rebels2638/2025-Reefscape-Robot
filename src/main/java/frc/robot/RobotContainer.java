@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
 import frc.robot.lib.input.XboxController;
+import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.claw.Claw;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
@@ -106,8 +107,15 @@ public class RobotContainer {
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
-        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
+        xboxDriver.getYButton().whileTrue(
+            new LinearAlign(
+                () -> AlignmentUtil.getClosestLeftBranchPose(),
+                () -> new ChassisSpeeds(),
+                2
+            )
+        );
+        // xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
+        // xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
         // xboxDriver.getRightBumper().whileFalse()
         // xboxDriver.getYButton().whileTrue(new AlignToAlgayLinear()).toggleOnFalse(new SequentialCommandGroup(new QueueStowAction(), new DequeueElevatorAction()));
         // CommandScheduler.getInstance().onCommandInterrupt(
