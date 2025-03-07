@@ -39,6 +39,7 @@ import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
 import frc.robot.commands.claw.simple.RunClawEject;
+import frc.robot.commands.elevator.CancelScore;
 import frc.robot.commands.elevator.RunElevatorRaw;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL1Action;
@@ -103,7 +104,6 @@ public class RobotContainer {
         // autoRunner = AutoRunner.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
-        // elevator.setDefaultCommand(new RunElevatorRaw(xboxOperator));
         // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
