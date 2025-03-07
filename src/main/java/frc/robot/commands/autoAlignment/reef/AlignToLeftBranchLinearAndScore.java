@@ -7,13 +7,16 @@ import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearAlign;
 import frc.robot.commands.complex.superstructure.Score;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
+import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.lib.util.AlignmentUtil;
+
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToLeftBranchLinearAndScore() {
         addCommands(
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                     new isElevatorExtendable(),
+                    new WaitForNonStowState(),
                     new DequeueElevatorAction()
                 ),
                 new LinearAlign(
