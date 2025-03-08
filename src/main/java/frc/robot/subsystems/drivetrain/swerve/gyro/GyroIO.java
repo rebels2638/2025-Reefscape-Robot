@@ -11,8 +11,8 @@ public interface GyroIO {
     @AutoLog
     class GyroIOInputs {
         public boolean isConnected = false;
-        public Rotation3d orientation = new Rotation3d();
-        public Rotation3d rates = new Rotation3d();
+        public Rotation2d[] orientation = new Rotation2d[] {new Rotation2d(), new Rotation2d(), new Rotation2d()};
+        public Rotation2d[] rates = new Rotation2d[] {new Rotation2d(), new Rotation2d(), new Rotation2d()};
         public Translation2d fieldRelativeAccelerationMetersPerSecSec = new Translation2d();
     }
 

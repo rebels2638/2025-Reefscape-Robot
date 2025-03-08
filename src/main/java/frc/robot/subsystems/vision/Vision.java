@@ -112,20 +112,20 @@ public class Vision extends SubsystemBase {
             // update LL helper BEFORE we use it in the io
             LimelightHelpers.SetRobotOrientation( 
                 config.getNames()[i],
-                robotState.getGyroOrientation().getMeasureZ().in(Degrees),
-                robotState.getGyroRates().getMeasureZ().in(Degrees),
+                robotState.getGyroOrientation()[2].getDegrees(),
+                robotState.getGyroRates()[2].getDegrees(),
 
-                robotState.getGyroOrientation().getMeasureY().in(Degrees),
-                robotState.getGyroRates().getMeasureY().in(Degrees),
+                robotState.getGyroOrientation()[1].getDegrees(),
+                robotState.getGyroRates()[1].getDegrees(),
 
-                robotState.getGyroOrientation().getMeasureX().in(Degrees),
-                robotState.getGyroRates().getMeasureX().in(Degrees)
+                robotState.getGyroOrientation()[0].getDegrees(),
+                robotState.getGyroRates()[0].getDegrees()
             );
 
             visionIO[i].updateInputs(visionIOInputs[i]);
             Logger.processInputs("Vision" + config.getNames()[i], visionIOInputs[i]);
             
-            rotationalRateBuffer.addSample(Timer.getTimestamp(), robotState.getGyroRates().toRotation2d());
+            rotationalRateBuffer.addSample(Timer.getTimestamp(), robotState.getGyroRates()[2]);
 
             Optional<Rotation2d> rotationalRate = rotationalRateBuffer.getSample(visionIOInputs[i].timestampSeconds);
             if (Timer.getTimestamp() - visionIOInputs[i].timestampSeconds <= config.getObservationBufferSizeSeconds() && 

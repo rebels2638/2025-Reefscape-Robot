@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -56,7 +58,7 @@ public class GyroIOPigeon2 implements GyroIO {
         PhoenixUtil.tryUntilOk(5, () -> gyro.getConfigurator().apply(config, 0.25));
 
         yawSignal = gyro.getYaw().clone();
-        yawVelocitySignal = gyro.getAngularVelocityZDevice().clone();
+        yawVelocitySignal = gyro.getAngularVelocityZWorld().clone();
 
         rollSignal = gyro.getRoll().clone();
         rollVelocitySignal = gyro.getAngularVelocityXWorld().clone();
@@ -109,16 +111,18 @@ public class GyroIOPigeon2 implements GyroIO {
             
 
         // TODO: CHECK FOR FEILD VS GYRO RELATIVE VALUES
-        inputs.orientation = new Rotation3d(
-            BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).in(Radians),
-            BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).in(Radians),
-            BaseStatusSignal.getLatencyCompensatedValue(yawSignal, yawVelocitySignal).in(Radians)
-        );
-        inputs.rates = new Rotation3d(
-            rollVelocitySignal.getValue().in(RadiansPerSecond),
-            pitchVelocitySignal.getValue().in(RadiansPerSecond),
-            yawVelocitySignal.getValue().in(RadiansPerSecond)
-        );
+        inputs.orientation = new Rotation2d[] {
+            new Rotation2d(BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).in(Radians)),
+            new Rotation2d(BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).in(Radians)),
+            new Rotation2d(BaseStatusSignal.getLatencyCompensatedValue(yawSignal, yawVelocitySignal).in(Radians))
+        };
+        inputs.rates = new Rotation2d[] {
+            new Rotation2d(rollVelocitySignal.getValue().in(RadiansPerSecond)),
+            new Rotation2d(pitchVelocitySignal.getValue().in(RadiansPerSecond)),
+            new Rotation2d(yawVelocitySignal.getValue().in(RadiansPerSecond))
+        };
+
+        Logger.recordOutput("SKIBIDIFUCK", inputs.rates[2]);
 
         inputs.fieldRelativeAccelerationMetersPerSecSec = new Translation2d(
             accelerationXSignal.getValue().in(MetersPerSecondPerSecond), 

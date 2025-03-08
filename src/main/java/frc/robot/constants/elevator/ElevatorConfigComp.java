@@ -113,7 +113,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getMotionMagicJerkMetersPerSecSecSec() {
-        return 40;
+        return 75;
     }
 
     // Neutral mode
@@ -151,7 +151,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getToleranceMeters() {
-        return 0.01;
+        return 0.025;
     }
 
     @Override
