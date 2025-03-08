@@ -71,8 +71,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     private final double kMAX_HEIGHT_METERS;
     private final double kMIN_HEIGHT_METERS;
 
-    private final Debouncer motor1ConnectedDebouncer = new Debouncer(0.25);
-    private final Debouncer motor2ConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer motor1ConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
+    private final Debouncer motor2ConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
     private final Elastic.Notification motor1DisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
                                 "Elevator Motor Disconnected", "Motor1 Disconnected, GOOD LUCK");

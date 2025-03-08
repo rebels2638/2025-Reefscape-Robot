@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.io.ObjectInputFilter.Config;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -15,6 +17,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -38,12 +41,15 @@ public class ClawIOTalonFX implements ClawIO {
     private final TorqueCurrentFOC clawTorqueRequest = new TorqueCurrentFOC(0);
     private final VoltageOut clawVoltageRequest = new VoltageOut(0).withEnableFOC(false);
 
-    private final Debouncer motorConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer motorConnectedDebouncer = new Debouncer(0.25, DebounceType.kBoth);
+    private final Debouncer inClawDebouncer = new Debouncer(0.37, DebounceType.kBoth);
 
     private final Elastic.Notification motorDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
                                 "Claw Motor Disconnected", "Motor Disconnected, GOOD LUCK");
 
+    private final ClawConfigBase config;
     public ClawIOTalonFX(ClawConfigBase config) {
+        this.config = config;
         // pivot motor
         TalonFXConfiguration clawConfig = new TalonFXConfiguration();
 
@@ -110,6 +116,12 @@ public class ClawIOTalonFX implements ClawIO {
         inputs.clawCurrentDrawAmps = clawTorqueCurrent.getValue().in(Amps);
         inputs.clawAppliedVolts = clawAppliedVolts.getValue().in(Volts);
         inputs.clawTemperatureFahrenheit = clawTemperature.getValue().in(Fahrenheit);
+
+        inputs.inClaw = 
+            inClawDebouncer.calculate(
+                inputs.clawCurrentDrawAmps >= config.getMinInClawCurrentActivation() && 
+                Math.abs(inputs.clawVelocityRadPerSec) <= config.getMaxInClawVeloRadSecActivation()
+            );
 
         if (!inputs.motorConnected) {
             Elastic.sendNotification(motorDisconnectAlert.withDisplayMilliseconds(10000));

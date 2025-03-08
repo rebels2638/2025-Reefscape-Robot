@@ -12,12 +12,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.constants.climber.ClimberConfigBase;
-import frc.robot.constants.pivot.PivotConfigBase;
 
 public class ClimberIOSim implements ClimberIO {
-    private DCMotor pivotGearBox = DCMotor.getKrakenX60Foc(1);
+    private DCMotor climberGearBox = DCMotor.getKrakenX60Foc(1);
 
-    private SingleJointedArmSim pivotSim;
+    private SingleJointedArmSim climberSim;
 
     private final PIDController feedbackController;
     private final ArmFeedforward feedforwardController;
@@ -25,9 +24,9 @@ public class ClimberIOSim implements ClimberIO {
     private double prevTimeInputs = 0;
     private double prevTimeState = 0;
 
-    private final double kPIVOT_MOTOR_TO_OUTPUT_SHAFT_RATIO = 20;
+    private final double kclimber_MOTOR_TO_OUTPUT_SHAFT_RATIO = 20;
     private final double kJKG_METERS_SQUARED = 11.34;
-    private final double kPIVOT_LENGTH_METERS = 0.23;
+    private final double kclimber_LENGTH_METERS = 0.23;
     private final double kMIN_ANGLE_RAD;
     private final double kMAX_ANGLE_RAD;
     private final double kSTARTING_ANGLE_RAD = Math.toRadians(0);
@@ -43,14 +42,14 @@ public class ClimberIOSim implements ClimberIO {
         kMIN_ANGLE_RAD = config.getMinAngleRotations() * Math.PI * 2;
         kMAX_ANGLE_RAD = config.getMaxAngleRotations() * Math.PI * 2;
         
-        Logger.recordOutput("Pivot/minAngleRad", kMIN_ANGLE_RAD);
-        Logger.recordOutput("Pivot/maxAngleRad", kMAX_ANGLE_RAD);
+        Logger.recordOutput("Climber/minAngleRad", kMIN_ANGLE_RAD);
+        Logger.recordOutput("Climber/maxAngleRad", kMAX_ANGLE_RAD);
 
-        pivotSim = new SingleJointedArmSim(
-            pivotGearBox,
-            kPIVOT_MOTOR_TO_OUTPUT_SHAFT_RATIO,
+        climberSim = new SingleJointedArmSim(
+            climberGearBox,
+            kclimber_MOTOR_TO_OUTPUT_SHAFT_RATIO,
             kJKG_METERS_SQUARED,
-            kPIVOT_LENGTH_METERS,
+            kclimber_LENGTH_METERS,
             kMIN_ANGLE_RAD,
             kMAX_ANGLE_RAD,
             true,
@@ -74,16 +73,16 @@ public class ClimberIOSim implements ClimberIO {
                 Units.rotationsToRadians(config.getMotionMagicCruiseVelocityRotationsPerSec()),
                 12 / config.getMotionMagicExpoKA() // divide supply voltage to get max acell
         ));
-        currentProfileSetpoint = new State(pivotSim.getAngleRads(), pivotSim.getVelocityRadPerSec());
+        currentProfileSetpoint = new State(climberSim.getAngleRads(), climberSim.getVelocityRadPerSec());
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         double dt = Timer.getTimestamp() - prevTimeInputs;
-        pivotSim.update(dt);
+        climberSim.update(dt);
 
-        inputs.climberVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
-        inputs.climberPosition = new Rotation2d(pivotSim.getAngleRads());
+        inputs.climberVelocityRadPerSec = climberSim.getVelocityRadPerSec();
+        inputs.climberPosition = new Rotation2d(climberSim.getAngleRads());
         this.currentPositionRad = inputs.climberPosition.getRadians();
 
         inputs.climberAppliedVolts = appliedVolts;
@@ -109,7 +108,7 @@ public class ClimberIOSim implements ClimberIO {
             feedbackController.calculate(currentPositionRad, currentProfileSetpoint.position);
         appliedVolts = voltage;
 
-        pivotSim.setInputVoltage(voltage);
+        climberSim.setInputVoltage(voltage);
 
         prevTimeState = Timer.getTimestamp();
     }
@@ -117,7 +116,6 @@ public class ClimberIOSim implements ClimberIO {
     @Override
     public void setTorqueCurrentFOC(double voltage) {
         appliedVolts = voltage;
-        pivotSim.setInputVoltage(voltage);
-
+        climberSim.setInputVoltage(voltage);
     }
 }

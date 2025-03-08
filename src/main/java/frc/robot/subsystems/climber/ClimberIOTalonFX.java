@@ -49,7 +49,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
 
-    private final Debouncer climberConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer climberConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
     private final Elastic.Notification climberDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
         "Climber Motor Disconnected", "Climber Disconnected, GOOD LUCK");
@@ -148,7 +148,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
         if (!inputs.climberMotorConnected) {
             Elastic.sendNotification(climberDisconnectAlert.withDisplayMilliseconds(10000));
-            DriverStation.reportError("climber Motor Disconnected", false);
+            DriverStation.reportError("Climber Motor Disconnected", false);
         }
 
     }
