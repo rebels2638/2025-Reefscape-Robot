@@ -9,7 +9,7 @@ public class StopClaw extends Command{
 
     @Override
     public void initialize() {
-        Claw.getInstance().setTorqueCurrentFOC(0);
+        Claw.getInstance().setVoltage(0);
     }
 
     @Override

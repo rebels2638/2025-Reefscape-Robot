@@ -80,7 +80,7 @@ public class ElevatorConfigComp extends ElevatorConfigBase {
 
     @Override
     public double getKI() {
-        return 0.0;
+        return 50;
 
     }
 

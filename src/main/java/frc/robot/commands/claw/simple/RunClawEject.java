@@ -9,7 +9,7 @@ public class RunClawEject extends Command{
 
     @Override
     public void initialize() {
-        Claw.getInstance().setTorqueCurrentFOC(-7);
+        Claw.getInstance().setVoltage(-12);
     }
 
     @Override

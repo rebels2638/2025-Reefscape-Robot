@@ -60,6 +60,8 @@ public class Pivot extends SubsystemBase {
 
                 break;
         }
+
+        setpoint = Rotation2d.fromRotations(config.getStartingAngleRotations());
     }
 
     @Override

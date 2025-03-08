@@ -14,7 +14,7 @@ public class MovePivotAlgay extends Command {
 
     @Override
     public void initialize() {
-        pivot.setAngle(Rotation2d.fromDegrees(-45));
+        pivot.setAngle(Rotation2d.fromDegrees(-18));
     }
 
     @Override

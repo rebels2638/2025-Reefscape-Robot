@@ -14,7 +14,7 @@ public class MovePivotStow extends Command {
 
     @Override
     public void initialize() {
-        pivot.setAngle(Rotation2d.fromDegrees(150));
+        pivot.setAngle(Rotation2d.fromDegrees(132));
     }
 
     @Override

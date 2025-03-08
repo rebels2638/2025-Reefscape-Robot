@@ -1,5 +1,7 @@
 package frc.robot.constants.pivot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class PivotConfigComp extends PivotConfigBase {
     private static PivotConfigComp instance;
     public static PivotConfigComp getInstance() {
@@ -21,7 +23,7 @@ public class PivotConfigComp extends PivotConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 13.0;
+        return 35.0;
     }
 
     @Override
@@ -31,24 +33,24 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 10.0;
+        return 30.0;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 10.0;
+        return 25.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 10.0;
+        return 25.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -10.0;
+        return -25.0;
     }
 
     // Characterization / Gains
@@ -69,7 +71,7 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getKP() {
-        return 0;
+        return 450;
     }
 
     @Override
@@ -79,23 +81,23 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getKD() {
-        return 0.0;
+        return 50;
     }
 
     @Override
     public double getKG() {
-        return 0; 
+        return 0.0; 
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 0.75;
+        return 8;
     }
 
     @Override
     public double getMotionMagicExpoKV() {
-        return 1.0;
+        return 11;
     }
 
     @Override
@@ -105,7 +107,7 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getToleranceDegrees() {
-        return 1.0;
+        return 4.0;
     }
     
     // Neutral mode
@@ -123,21 +125,21 @@ public class PivotConfigComp extends PivotConfigBase {
     // Gear ratio
     @Override
     public double getMotorToOutputShaftRatio() {
-        return 100.0;
+        return 45.0;
     }
 
     @Override
     public double getMaxAngleRotations() {
-        return 1;
+        return 132.0/360.0;
     }
 
     @Override 
     public double getMinAngleRotations() {
-        return -1;
-    } 
+        return -62.0/360.0;
+    }
 
     @Override 
     public double getStartingAngleRotations() {
-        return -1;
+        return 132.0/360.0;
     } 
 }

@@ -31,24 +31,24 @@ public class ClawConfigComp extends ClawConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 2;
+        return 15;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 10;
+        return 13;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 10;
+        return 40;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -10;
+        return -40;
     }
 
     // Neutral mode
@@ -74,6 +74,6 @@ public class ClawConfigComp extends ClawConfigBase {
 
     @Override
     public boolean getIsMotorInverted() {
-        return true;
+        return false;
     }
 }
