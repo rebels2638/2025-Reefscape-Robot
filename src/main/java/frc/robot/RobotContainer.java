@@ -70,7 +70,7 @@ public class RobotContainer {
     private final Vision vision;
     private final RobotState robotState;
 
-    // private final Pivot pivot;
+    private final Pivot pivot;
     // private final Claw claw;
 
     private final Elevator elevator;
@@ -91,7 +91,7 @@ public class RobotContainer {
         swerveDrive = SwerveDrive.getInstance();
         vision = Vision.getInstance();
         robotState = RobotState.getInstance();
-        // pivot = Pivot.getInstance();
+        pivot = Pivot.getInstance();
         // claw = Claw.getInstance();
 
         roller = Roller.getInstance();
@@ -104,16 +104,8 @@ public class RobotContainer {
         // autoRunner = AutoRunner.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
-        // pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
+        pivot.setDefaultCommand(new RunPivotRaw(xboxOperator));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
-
-        // xboxDriver.getYButton().whileTrue(
-        //     new LinearAlign(
-        //         () -> AlignmentUtil.getClosestLeftBranchPose(),
-        //         () -> new ChassisSpeeds(),
-        //         2
-        //     )
-        // );
 
         xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new CancelScore()); // ScoreLeft
         xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new CancelScore()); // ScoreRight
