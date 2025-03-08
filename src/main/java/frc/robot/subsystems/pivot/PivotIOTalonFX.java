@@ -14,6 +14,7 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
@@ -81,7 +82,8 @@ public class PivotIOTalonFX implements PivotIO {
         // encoder
         pivotConfig.ClosedLoopGeneral.ContinuousWrap = false;
         pivotConfig.Feedback.SensorToMechanismRatio = config.getMotorToOutputShaftRatio();
-
+        pivotConfig.Feedback.FeedbackRotorOffset = config.getStartingAngleRotations();
+        
         // current and torque limiting
         pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         pivotConfig.CurrentLimits.SupplyCurrentLimit = config.getSupplyCurrentLimit();
@@ -98,6 +100,11 @@ public class PivotIOTalonFX implements PivotIO {
             config.isNeutralModeBrake() ? 
                         NeutralModeValue.Brake : 
                         NeutralModeValue.Coast;
+
+        pivotConfig.MotorOutput.Inverted = 
+            config.isInverted() ?
+                InvertedValue.Clockwise_Positive :
+                InvertedValue.CounterClockwise_Positive;
 
         pivotConfig.FutureProofConfigs = true;
 
