@@ -148,7 +148,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
         if (!inputs.climberMotorConnected) {
             Elastic.sendNotification(climberDisconnectAlert.withDisplayMilliseconds(10000));
-            DriverStation.reportError("climber Motor Disconnected", false);
+            DriverStation.reportError("Climber Motor Disconnected", false);
         }
 
     }

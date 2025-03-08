@@ -22,7 +22,7 @@ public class Climber extends SubsystemBase {
     }
 
     private ClimberIO climberIO;
-    private ClimberIOInputsAutoLogged ClimberIOInputs = new ClimberIOInputsAutoLogged();
+    private ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
 
     private Rotation2d setpoint = new Rotation2d();
 
@@ -63,8 +63,8 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-        climberIO.updateInputs(ClimberIOInputs);
-        Logger.processInputs("Climber", ClimberIOInputs);
+        climberIO.updateInputs(climberIOInputs);
+        Logger.processInputs("Climber", climberIOInputs);
 
         climberIO.setAngle(setpoint);
     }
@@ -80,5 +80,9 @@ public class Climber extends SubsystemBase {
 
     public void setVoltage(double voltage) {
         climberIO.setVoltage(voltage);
+    }
+
+    public boolean reachedSetpoint() {
+        return Math.abs(setpoint.minus(climberIOInputs.climberPosition).getDegrees()) <= config.getToleranceDegrees();
     }
 }

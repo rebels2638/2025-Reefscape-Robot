@@ -102,6 +102,11 @@ public class ClimberConfigProto extends ClimberConfigBase {
         return 3.0;
     }
 
+    @Override
+    public double getToleranceDegrees() {
+        return 1.0;
+    }
+
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
