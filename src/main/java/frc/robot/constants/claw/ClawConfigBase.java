@@ -26,5 +26,8 @@ public abstract class ClawConfigBase {
 
     public abstract boolean getIsMotorInverted();
 
+    public abstract double getMinInClawCurrentActivation();
+    public abstract double getMaxInClawVeloRadSecActivation();
+
 
 }

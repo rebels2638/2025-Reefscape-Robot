@@ -50,7 +50,7 @@ public class PivotIOTalonFX implements PivotIO {
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
 
-    private final Debouncer pivotConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer pivotConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
     private final Elastic.Notification pivotDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
         "Pivot Motor Disconnected", "Pivot Disconnected, GOOD LUCK");
@@ -83,7 +83,7 @@ public class PivotIOTalonFX implements PivotIO {
         pivotConfig.ClosedLoopGeneral.ContinuousWrap = false;
         pivotConfig.Feedback.SensorToMechanismRatio = config.getMotorToOutputShaftRatio();
         pivotConfig.Feedback.FeedbackRotorOffset = config.getStartingAngleRotations();
-        
+
         // current and torque limiting
         pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         pivotConfig.CurrentLimits.SupplyCurrentLimit = config.getSupplyCurrentLimit();

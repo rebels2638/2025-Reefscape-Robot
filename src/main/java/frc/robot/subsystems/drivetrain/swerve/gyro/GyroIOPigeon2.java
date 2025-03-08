@@ -44,7 +44,7 @@ public class GyroIOPigeon2 implements GyroIO {
                                 "Gyro Disconnected", "Pigeon2 Disconnected, Gyro may not be functioning");
 
 
-    private final Debouncer connectedDebouncer = new Debouncer(0.25);
+    private final Debouncer connectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
     public GyroIOPigeon2() {
         odom = Phoenix6Odometry.getInstance();

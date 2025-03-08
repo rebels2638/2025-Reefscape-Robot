@@ -71,9 +71,9 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     private double currentDriveVelo;
 
-    private final Debouncer driveConnectedDebouncer = new Debouncer(0.25);
-    private final Debouncer steerConnectedDebouncer = new Debouncer(0.25);
-    private final Debouncer steerEncoderConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer driveConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
+    private final Debouncer steerConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
+    private final Debouncer steerEncoderConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
 
     private final Elastic.Notification driveConnectedDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
