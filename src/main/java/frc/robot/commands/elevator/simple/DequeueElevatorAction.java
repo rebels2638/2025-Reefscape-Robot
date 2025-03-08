@@ -18,16 +18,12 @@ public class DequeueElevatorAction extends Command {
 
     @Override
     public boolean isFinished() {
-        if (elevator.reachedSetpoint()) {
-            elevator.setSetpointSettable(false);
-        }
-        
         return elevator.reachedSetpoint();
     }
 
 
     @Override
     public void end(boolean interrupted) {
-
+        elevator.setSetpointSettable(false);
     }
 }

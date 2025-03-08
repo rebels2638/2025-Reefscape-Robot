@@ -12,6 +12,7 @@ public interface ClawIO {
         public double clawTemperatureFahrenheit = 0;
 
         public boolean motorConnected = true;
+        public boolean inClaw = false;
     }
 
     public default void updateInputs(ClawIOInputs inputs) {}

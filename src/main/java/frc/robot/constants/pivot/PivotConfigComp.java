@@ -114,6 +114,12 @@ public class PivotConfigComp extends PivotConfigBase {
         return true;
     }
 
+    @Override
+    public boolean isInverted() {
+        return true;
+    }
+
+
     // Gear ratio
     @Override
     public double getMotorToOutputShaftRatio() {
@@ -128,5 +134,10 @@ public class PivotConfigComp extends PivotConfigBase {
     @Override 
     public double getMinAngleRotations() {
         return -1;
-    }
+    } 
+
+    @Override 
+    public double getStartingAngleRotations() {
+        return -1;
+    } 
 }

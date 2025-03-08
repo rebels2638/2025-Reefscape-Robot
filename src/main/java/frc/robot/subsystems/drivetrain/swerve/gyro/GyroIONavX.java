@@ -24,17 +24,17 @@ public class GyroIONavX implements GyroIO {
     public synchronized void updateInputs(GyroIOInputs inputs) {
         inputs.isConnected = gyro.isConnected();
         if (inputs.isConnected) {
-            inputs.orientation = new Rotation3d(
-                Math.toRadians(-gyro.getRoll()) + yawOffset.getRadians(),
-                Math.toRadians(-gyro.getPitch()),
-                Math.toRadians(-gyro.getYaw())
-            );
+            inputs.orientation = new Rotation2d[] {
+                new Rotation2d(Math.toRadians(-gyro.getRoll()) + yawOffset.getRadians()),
+                new Rotation2d(Math.toRadians(-gyro.getPitch())),
+                new Rotation2d(Math.toRadians(-gyro.getYaw()))
+            };
 
-            inputs.rates = new Rotation3d(
-                0,
-                0,
-                Math.toRadians(-gyro.getRate())
-            );
+            inputs.rates = new Rotation2d[] {
+                new Rotation2d(0),
+                new Rotation2d(0),
+                new Rotation2d(-gyro.getRate())
+            };
 
             inputs.fieldRelativeAccelerationMetersPerSecSec = new Translation2d(
                 gyro.getWorldLinearAccelX(),

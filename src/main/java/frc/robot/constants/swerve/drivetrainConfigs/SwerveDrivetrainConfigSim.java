@@ -155,4 +155,24 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     public Translation2d getAlgayOffsetFromRobotCenter() {
         return new Translation2d(0, 0);
     }
+
+    @Override
+    public double getMaxAligmentTranslationVeloMetersPerSec() {
+        return 3;
+    }
+
+    @Override
+    public double getMaxAligmentRotationVeloRadPerSec() {
+        return 3.7;
+    }
+
+    @Override
+    public double getMaxAligmentTranslationalAcelMetersPerSecPerSec() {
+        return 3.5;
+    }
+
+    @Override
+    public double getMaxAligmentRotationAcelRadPerSecPerSec() {
+        return 10;
+    }
 }

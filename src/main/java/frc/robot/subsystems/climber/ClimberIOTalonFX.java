@@ -49,7 +49,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     private final double kMAX_ANGLE_ROTATIONS;
     private final double kMIN_ANGLE_ROTATIONS;
 
-    private final Debouncer climberConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer climberConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
     private final Elastic.Notification climberDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
         "Climber Motor Disconnected", "Climber Disconnected, GOOD LUCK");

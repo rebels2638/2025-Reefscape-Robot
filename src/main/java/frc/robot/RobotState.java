@@ -38,8 +38,8 @@ public class RobotState {
   public record OdometryObservation(
     SwerveModulePosition[] modulePositions, 
     SwerveModuleState[] moduleStates, 
-    Rotation3d gyroOrientation,
-    Rotation3d gyroRates,
+    Rotation2d[] gyroOrientation,
+    Rotation2d[] gyroRates,
     Translation2d fieldRelativeAccelerationMetersPerSecSec,
     double timestamp) {}
     
@@ -64,8 +64,8 @@ public class RobotState {
         new SwerveModulePosition()
     };
 
-  private Rotation3d lastGyroOrientation = new Rotation3d();
-  private Rotation3d lastGyroRates = new Rotation3d();
+  private Rotation2d[] lastGyroOrientation = new Rotation2d[] {new Rotation2d(), new Rotation2d(), new Rotation2d()};
+  private Rotation2d[] lastGyroRates = new Rotation2d[] {new Rotation2d(), new Rotation2d(), new Rotation2d()};
   private Translation2d lastFieldRelativeAccelerations = new Translation2d();
 
   private ChassisSpeeds robotRelativeVelocity = new ChassisSpeeds();
@@ -116,7 +116,7 @@ public class RobotState {
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(
         kinematics,
-        lastGyroOrientation.toRotation2d(), 
+        lastGyroOrientation[2], 
         lastWheelPositions, 
         new Pose2d(),
         VecBuilder.fill(
@@ -157,8 +157,16 @@ public class RobotState {
         Logger.recordOutput("RobotState/isUsingTwistAngle", false);
     }
     else {
-        lastGyroOrientation = new Rotation3d(0, 0, lastGyroOrientation.getZ() + twist.dtheta);
-        lastGyroRates = new Rotation3d(0, 0, robotRelativeVelocity.omegaRadiansPerSecond);
+        lastGyroOrientation = new Rotation2d[] {
+          new Rotation2d(0), 
+          new Rotation2d(0), 
+          new Rotation2d(lastGyroOrientation[2].getRadians() + twist.dtheta)
+        };
+        lastGyroRates = new Rotation2d[] {
+          new Rotation2d(0), 
+          new Rotation2d(0), 
+          new Rotation2d(robotRelativeVelocity.omegaRadiansPerSecond)
+        };
 
         Logger.recordOutput("RobotState/dtheta", twist.dtheta);
         Logger.recordOutput("RobotState/isUsingTwistAngle", true);
@@ -181,7 +189,7 @@ public class RobotState {
     Logger.recordOutput("RobotState/lastFieldRelativeAccelerations", lastFieldRelativeAccelerations);
 
     // Add twist to odometry pose
-    swerveDrivePoseEstimator.updateWithTime(observation.timestamp, lastGyroOrientation.toRotation2d(), lastWheelPositions);
+    swerveDrivePoseEstimator.updateWithTime(observation.timestamp, lastGyroOrientation[2], lastWheelPositions);
     lastEstimatedPoseUpdateTime = Timer.getTimestamp();
 
     // Add pose to buffer at timestamp
@@ -214,13 +222,13 @@ public class RobotState {
    */
   public void resetPose(Pose2d initialPose) {
     SwerveDrive.getInstance().resetGyro(initialPose.getRotation());
-    lastGyroOrientation = 
-        new Rotation3d(
-            0,
-            0,
-            initialPose.getRotation().getRadians()
-        );
-    swerveDrivePoseEstimator.resetPosition(lastGyroOrientation.toRotation2d(), lastWheelPositions, initialPose);
+    lastGyroOrientation = new Rotation2d[] {
+      new Rotation2d(0), 
+      new Rotation2d(0), 
+      new Rotation2d(initialPose.getRotation().getRadians())
+    };
+    
+    swerveDrivePoseEstimator.resetPosition(lastGyroOrientation[2], lastWheelPositions, initialPose);
     poseBuffer.clear();
   }
 
@@ -233,18 +241,18 @@ public class RobotState {
     return swerveDrivePoseEstimator.getEstimatedPosition();
   }
 
-  public Rotation3d getGyroOrientation() {
-    Rotation3d rotationWithYaw = // we want to use the yaw updated by pose estimator during gyro zeroing
-        new Rotation3d(
-            lastGyroOrientation.getX(), 
-            lastGyroOrientation.getY(), 
-            getEstimatedPose().getRotation().getRadians()
-        );
+  public Rotation2d[] getGyroOrientation() {
+    Rotation2d[] rotationWithYaw = // we want to use the yaw updated by pose estimator during gyro zeroing
+        new Rotation2d[] {
+            lastGyroOrientation[0], 
+            lastGyroOrientation[1], 
+            getEstimatedPose().getRotation()
+        };
     return rotationWithYaw;
   }
 
   @AutoLogOutput(key = "RobotState/lastGyroRates")
-  public Rotation3d getGyroRates() {
+  public Rotation2d[] getGyroRates() {
     return lastGyroRates;
   }
   
@@ -255,7 +263,7 @@ public class RobotState {
 
   @AutoLogOutput(key = "RobotState/fieldRelativeSpeeds")
   public ChassisSpeeds getFieldRelativeSpeeds() { 
-    return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, lastGyroOrientation.toRotation2d());
+    return ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, lastGyroOrientation[2]);
   }
   @AutoLogOutput(key = "RobotState/fieldRelativeAccelerations")
   public Translation2d getFieldRelativeAccelerations() {

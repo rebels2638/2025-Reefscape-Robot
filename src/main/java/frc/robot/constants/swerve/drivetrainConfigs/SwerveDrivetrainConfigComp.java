@@ -106,7 +106,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(4, 0.0, 0);
+        PIDController p = new PIDController(1.9, 0.03, 0);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -114,7 +114,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(0, 0, 0.0);
+        PIDController p = new PIDController(2, 0.02, 0);
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -123,12 +123,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.02;
+        return 0.03;
     }
 
     @Override
     public double getAutoAlignTranslationVeloTolerance() {
-        return 0.04;
+        return 0.07;
     }
 
     @Override
@@ -148,11 +148,32 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getBranchOffsetFromRobotCenter() {
-        return new Translation2d(0,0.0); // increasing the y value will move the robot to the left of the branch
+        return new Translation2d(-0.015,0.0); // increasing the y value will move the robot to the left of the branch
     }
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
         return new Translation2d(0, 0);
     }
+
+    @Override
+    public double getMaxAligmentTranslationVeloMetersPerSec() {
+        return 2;
+    }
+
+    @Override
+    public double getMaxAligmentRotationVeloRadPerSec() {
+        return 3.7;
+    }
+
+    @Override
+    public double getMaxAligmentTranslationalAcelMetersPerSecPerSec() {
+        return 2;
+    }
+
+    @Override
+    public double getMaxAligmentRotationAcelRadPerSecPerSec() {
+        return 10;
+    }
+
 }

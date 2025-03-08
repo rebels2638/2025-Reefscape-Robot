@@ -76,4 +76,14 @@ public class ClawConfigComp extends ClawConfigBase {
     public boolean getIsMotorInverted() {
         return true;
     }
+    
+    @Override
+    public double getMinInClawCurrentActivation() {
+        return 5;
+    }
+
+    @Override
+    public double getMaxInClawVeloRadSecActivation() {
+        return 0.1;
+    }
 }

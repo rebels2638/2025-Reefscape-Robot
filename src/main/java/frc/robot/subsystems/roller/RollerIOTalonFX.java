@@ -47,8 +47,8 @@ public class RollerIOTalonFX implements RollerIO {
     private final Elastic.Notification motorDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
                                 "Roller Motor Disconnected", "Motor Disconnected, GOOD LUCK");
 
-    private final Debouncer motorConnectedDebouncer = new Debouncer(0.25);
-    private final Debouncer canRangeConnectedDebouncer = new Debouncer(0.25);
+    private final Debouncer motorConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
+    private final Debouncer canRangeConnectedDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
   
     public RollerIOTalonFX(RollerConfigBase config) {
         CANrangeConfiguration canRangeConfiguration = new CANrangeConfiguration();

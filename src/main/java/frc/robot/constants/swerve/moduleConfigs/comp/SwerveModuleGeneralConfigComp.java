@@ -100,7 +100,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveMotionMagicVelocityJerkMetersPerSecSecSec() {
-        return 40.0;
+        return 60.0;
     }
 
     @Override
@@ -120,12 +120,12 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveWheelRadiusMeters() {
-        return 0.04861;
+        return 0.04856143856;
     }
 
     @Override
     public double getSteerSupplyCurrentLimit() {
-        return 30.0;
+        return 60.0;
     }
 
     @Override
@@ -135,22 +135,22 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerSupplyCurrentLimitLowerLimit() {
-        return 30.0;
+        return 50.0;
     }
 
     @Override
     public double getSteerStatorCurrentLimit() {
-        return 40.0;
+        return 45.0;
     }
 
     @Override
     public double getSteerPeakForwardTorqueCurrent() {
-        return 40.0;
+        return 45.0;
     }
 
     @Override
     public double getSteerPeakReverseTorqueCurrent() {
-        return -40.0;
+        return -45.0;
     }
 
     @Override
@@ -180,22 +180,22 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getSteerKD() {
-        return 5.5;
+        return 10.5;
     }
 
     @Override
     public double getSteerMotionMagicExpoKA() {
-        return 0.36;
+        return 0.2;
     }
 
     @Override
     public double getSteerMotionMagicExpoKV() {
-        return 2.6;
+        return 2;
     }
 
     @Override
     public double getSteerMotionMagicCruiseVelocityRotationsPerSec() {
-        return 6;
+        return 12;
     }
 
     @Override

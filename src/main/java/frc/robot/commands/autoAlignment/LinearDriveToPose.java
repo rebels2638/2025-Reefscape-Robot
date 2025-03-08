@@ -81,8 +81,8 @@ public class LinearDriveToPose extends Command {
 
         this.translationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
-                drivetrainConfig.getMaxTranslationalVelocityMetersPerSec(),
-                drivetrainConfig.getMaxTranslationalAccelerationMetersPerSecSec()
+                drivetrainConfig.getMaxAligmentTranslationVeloMetersPerSec(),
+                drivetrainConfig.getMaxAligmentTranslationalAcelMetersPerSecPerSec()
             )
         );
 
@@ -90,8 +90,8 @@ public class LinearDriveToPose extends Command {
 
         this.rotationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
-                drivetrainConfig.getMaxAngularVelocityRadiansPerSec(),
-                drivetrainConfig.getMaxAngularAccelerationRadiansPerSecSec()
+                drivetrainConfig.getMaxAligmentRotationVeloRadPerSec(),
+                drivetrainConfig.getMaxAligmentRotationAcelRadPerSecPerSec()
             )
         );
 
@@ -175,9 +175,13 @@ public class LinearDriveToPose extends Command {
         double xTranslationalSetpoint = currentTranslationalSetpoint.position * Math.cos(translationalMotionProfileRotationRad) + initialPose.getX();
         double yTranslationalSetpoint = currentTranslationalSetpoint.position * Math.sin(translationalMotionProfileRotationRad) + initialPose.getY();
         
-        double xVelocitySetpoint = currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad);
+        double xVelocitySetpoint = Math.max(
+            feedforwardVelo.get().vxMetersPerSecond,
+            currentTranslationalSetpoint.velocity * Math.cos(translationalMotionProfileRotationRad)
+        );
 
         double yVelocitySetpoint = // motion profile trips out when nonzero end vel
+            feedforwardVelo.get().vyMetersPerSecond +
             currentTranslationalSetpoint.velocity * Math.sin(translationalMotionProfileRotationRad);
         
 
@@ -188,8 +192,8 @@ public class LinearDriveToPose extends Command {
         double translationalError = Math.hypot(xDist, yDist);
         double calculatedFeedback = translationalFeedbackController.calculate(translationalError, 0);
 
-        calculatedSpeeds.vxMetersPerSecond = calculatedFeedback * Math.cos(angleOfMovement) + feedforwardVelo.get().vxMetersPerSecond;
-        calculatedSpeeds.vyMetersPerSecond = calculatedFeedback * Math.sin(angleOfMovement) + feedforwardVelo.get().vyMetersPerSecond;
+        calculatedSpeeds.vxMetersPerSecond = calculatedFeedback * Math.cos(angleOfMovement) + xVelocitySetpoint;
+        calculatedSpeeds.vyMetersPerSecond = calculatedFeedback * Math.sin(angleOfMovement) + yVelocitySetpoint;
 
         Logger.recordOutput("LinearDriveToPose/xTranslationalSetpoint", xTranslationalSetpoint);
         Logger.recordOutput("LinearDriveToPose/xVelocitySetpoint", xVelocitySetpoint);
@@ -197,12 +201,17 @@ public class LinearDriveToPose extends Command {
         Logger.recordOutput("LinearDriveToPose/yTranslationalSetpoint", yTranslationalSetpoint);
         Logger.recordOutput("LinearDriveToPose/yVelocitySetpoint", yVelocitySetpoint);
 
+        Logger.recordOutput("LinearDriveToPose/currentRotationalSetpointPosition", currentRotationalSetpoint.position);
+
         calculatedSpeeds.omegaRadiansPerSecond = 
             rotationalFeedbackController.calculate(
                 robotState.getEstimatedPose().getRotation().getRadians(),
                 currentRotationalSetpoint.position
             ) + 
-            feedforwardVelo.get().omegaRadiansPerSecond;
+            Math.max(
+                feedforwardVelo.get().omegaRadiansPerSecond,
+                currentRotationalSetpoint.velocity
+            );
 
         swerveDrive.driveFieldRelative(calculatedSpeeds);
 
