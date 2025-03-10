@@ -28,6 +28,11 @@ public class VisionConfigProto extends VisionConfigBase {
     public double getTranslationDevRotationExpoDenominator() {
         return 16;
     }
+    
+    @Override
+    public double getTranslationDevRotationExpo() {
+        return 6;
+    }
 
     @Override
     public double getTranslationDevTaScaler() {

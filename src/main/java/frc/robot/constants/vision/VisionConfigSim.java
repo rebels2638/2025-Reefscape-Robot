@@ -28,6 +28,11 @@ public class VisionConfigSim extends VisionConfigBase {
     }
 
     @Override
+    public double getTranslationDevRotationExpo() {
+        return 6;
+    }
+
+    @Override
     public double getTranslationDevTaScaler() {
         return 0;
     }

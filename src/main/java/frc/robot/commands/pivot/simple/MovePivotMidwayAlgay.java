@@ -4,9 +4,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.pivot.Pivot;
 
-public class MovePivotAlgay extends Command {
+public class MovePivotMidwayAlgay extends Command {
     private final Pivot pivot;
-    public MovePivotAlgay() {
+    public MovePivotMidwayAlgay() {
         this.pivot = Pivot.getInstance();
         
         addRequirements(pivot);

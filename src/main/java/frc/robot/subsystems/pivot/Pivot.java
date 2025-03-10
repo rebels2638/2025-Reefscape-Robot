@@ -23,7 +23,7 @@ public class Pivot extends SubsystemBase {
     private PivotIO pivotIO;
     private PivotIOInputsAutoLogged pivotIOInputs = new PivotIOInputsAutoLogged();
 
-    private Rotation2d setpoint = new Rotation2d();
+    private Rotation2d setpoint = Rotation2d.fromDegrees(90);
 
     private final PivotConfigBase config;
 

@@ -15,16 +15,14 @@ import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotMidwayAlgay;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.subsystems.claw.Claw;
 
 public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
     public AlignToAlgayLinearAndRemove() {
         addCommands(
-            new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
-                () -> AlignmentUtil.getClosestAlgayPose().getTranslation().getDistance( // check for the correct max distance from target
-                RobotState.getInstance().getEstimatedPose().getTranslation()) <= 2
-            ),
             new ParallelCommandGroup(
                 new MovePivotAlgay(),
                 new RunClawIntake(),
@@ -38,7 +36,6 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     () -> new ChassisSpeeds(),
                     2
                 )
-                
             ),
             new LinearAlign(
                 () -> AlignmentUtil.getClosestAlgayPose(),
@@ -52,8 +49,9 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     () -> new ChassisSpeeds(),
                     2
                 ),
-                new MovePivotStow()
+                new MovePivotMidwayAlgay()
             ),
+            new MovePivotStow(),
             new QueueStowAction(),
             new DequeueElevatorAction()
         );
