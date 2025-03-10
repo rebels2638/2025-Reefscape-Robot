@@ -1,7 +1,5 @@
 package frc.robot.commands.autoAlignment.reef;
 
-import java.util.concurrent.locks.Condition;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -14,6 +12,7 @@ import frc.robot.commands.complex.superstructure.Score;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.subsystems.roller.Roller;
 
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToLeftBranchLinearAndScore() {
@@ -24,7 +23,11 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                         new SequentialCommandGroup(
                             new isElevatorExtendable(),
                             new WaitForNonStowState(),
-                            new DequeueElevatorAction()
+                            new ConditionalCommand(
+                                new DequeueElevatorAction(), 
+                                new InstantCommand(), 
+                                () -> Roller.getInstance().inRoller()
+                            )
                         ),
                         new LinearAlign(
                             () -> AlignmentUtil.getClosestLeftBranchPose(),
