@@ -53,4 +53,6 @@ public abstract class SwerveDrivetrainConfigBase {
 
     public abstract double getMaxAlignmentTranslationalAcelMetersPerSecPerSec();
     public abstract double getMaxAlignmentRotationAcelRadPerSecPerSec();
+
+    public abstract double getAlgayRecessPoseOffset();
 }

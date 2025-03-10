@@ -36,7 +36,7 @@ public class PathfindThenAlign extends Command {
                     shouldReplan
                 ), // drive to the closest algay pose
                 new ConditionalCommand(
-                    new LinearDriveToPose(() -> AlignmentUtil.offsetPoseToPreAlignment(goalPoseSupplier.get()), () -> goalEndSpeeds.get()), // drive to a intermediate pose 
+                    new LinearDriveToPose(() -> AlignmentUtil.offsetCoralPoseToPreAlignment(goalPoseSupplier.get()), () -> goalEndSpeeds.get()), // drive to a intermediate pose 
                     new InstantCommand(), // let the robot drive regularly
                     () -> Math.abs(RobotState.getInstance().getEstimatedPose().getRotation().minus(goalPoseSupplier.get().getRotation()).getDegrees()) > 45 // check if rotating will first increase the bumper profile while driving to the goal
                 ),

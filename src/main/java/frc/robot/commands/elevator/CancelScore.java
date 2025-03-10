@@ -9,10 +9,10 @@ import frc.robot.commands.roller.simple.StopRoller;
 public class CancelScore extends SequentialCommandGroup {
     public CancelScore() {
         addCommands(
+            new MovePivotStow(),
             new QueueStowAction(),
             new DequeueElevatorAction(),
-            new StopRoller(),
-            new MovePivotStow()
+            new StopRoller()
         );
     }
     

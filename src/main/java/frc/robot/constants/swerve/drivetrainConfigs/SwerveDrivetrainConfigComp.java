@@ -176,4 +176,9 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
         return 10;
     }
 
+    @Override
+    public double getAlgayRecessPoseOffset() {
+        return 0.3;
+    }
+
 }

@@ -175,4 +175,9 @@ public class SwerveDrivetrainConfigProto extends SwerveDrivetrainConfigBase {
     public double getMaxAlignmentRotationAcelRadPerSecPerSec() {
         return 10;
     }
+
+    @Override
+    public double getAlgayRecessPoseOffset() {
+        return 0.3;
+    }
 }

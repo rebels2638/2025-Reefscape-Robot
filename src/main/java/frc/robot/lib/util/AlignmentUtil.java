@@ -258,10 +258,14 @@ public class AlignmentUtil {
         }
     }
 
-    public static Pose2d offsetPoseToPreAlignment(Pose2d pose) {
+    public static Pose2d offsetCoralPoseToPreAlignment(Pose2d pose) {
+        return offsetPoseToPreAlignment(pose, config.getBumperLengthMeters() / 2 * Math.sqrt(2));
+    }
+
+    public static Pose2d offsetPoseToPreAlignment(Pose2d pose, double distance) {
         return pose.transformBy(
                 new Transform2d(
-                        -config.getBumperLengthMeters() / 2 * Math.sqrt(2), // this is the bumper radius
+                        -distance, // this is the bumper radius
                         0,
                         new Rotation2d(0)));
     }
@@ -329,6 +333,10 @@ public class AlignmentUtil {
 
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
+    }
+
+    public static Pose2d getClosestAlgayRecessedPose() {
+        return offsetPoseToPreAlignment(getClosestAlgayPose(), config.getAlgayRecessPoseOffset());
     }
 
     public static Axis getBargeAxis() {
