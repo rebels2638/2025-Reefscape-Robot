@@ -12,6 +12,7 @@ import frc.robot.commands.complex.superstructure.Score;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.subsystems.roller.Roller;
 
 public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToRightBranchLinearAndScore() {
@@ -22,7 +23,11 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                         new SequentialCommandGroup(
                             new isElevatorExtendable(),
                             new WaitForNonStowState(),
-                            new DequeueElevatorAction()
+                            new ConditionalCommand(
+                                new DequeueElevatorAction(), 
+                                new InstantCommand(), 
+                                () -> Roller.getInstance().inRoller()
+                            )
                         ),
                         new LinearAlign(
                             () -> AlignmentUtil.getClosestRightBranchPose(),

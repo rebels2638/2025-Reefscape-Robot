@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -140,6 +141,7 @@ public class AlignmentUtil {
 
     private static Axis rightSourceAxis = new Axis(0.0, 0.0);
     private static Axis leftSourceAxis = new Axis(0.0, 0.0);
+    private static Axis bargeAxis = new Axis(0.0, 0.0);
 
     static {
         switch (Constants.currentMode) {
@@ -216,6 +218,7 @@ public class AlignmentUtil {
 
             rightSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false));
             leftSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true));
+            bargeAxis = flipAxis(offsetAxis(AlignmentConstants.kBARGE_AXIS, false)); // TODO: correctness?
         } 
 
         else {
@@ -251,6 +254,7 @@ public class AlignmentUtil {
 
             rightSourceAxis = offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false);
             leftSourceAxis = offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true);
+            bargeAxis = offsetAxis(AlignmentConstants.kBARGE_AXIS, false);
         }
     }
 
@@ -327,6 +331,10 @@ public class AlignmentUtil {
         return nearest;
     }
 
+    public static Axis getBargeAxis() {
+        return bargeAxis;
+    }
+
     public static Pose2d getClosestLeftBranchPose() { // relative to blue driver station
         Pose2d current = RobotState.getInstance().getEstimatedPose();
         Pose2d nearest = leftBranchCandidates.get(getClosestReefFace(current, leftBranchCandidates));
@@ -343,9 +351,11 @@ public class AlignmentUtil {
         return nearest;
     }
 
-    public static Pose2d decideScoringTarget() {
+    public static Pose2d getClosestBargePose() {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();
-        return curr.nearest(Arrays.asList(AlignmentUtil.getClosestLeftBranchPose(), AlignmentUtil.getClosestRightBranchPose()));
+        double rot = curr.getRotation().getDegrees() < 0 ? curr.getRotation().getDegrees() + 360 : curr.getRotation().getDegrees();
+        Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(curr.getTranslation()), new Rotation2d(180-rot < 90 ? 180 : 0));
+        return nearest;
     }
 
     public static Pose2d getClosestSourcePose() { 

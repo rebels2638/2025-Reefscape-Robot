@@ -71,4 +71,8 @@ public class Claw extends SubsystemBase {
     public void setVoltage(double voltage) {
         clawIO.setVoltage(voltage);
     }
+
+    public boolean inClaw() {
+        return clawIOInputs.inClaw;
+    }
 }
