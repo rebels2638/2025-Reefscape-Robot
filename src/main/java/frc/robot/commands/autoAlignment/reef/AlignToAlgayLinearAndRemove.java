@@ -48,7 +48,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
             new HoldAlgayClaw(),
             new ParallelCommandGroup(
                 new LinearAlign(
-                    () -> AlignmentUtil.getClosestAlgayPose(),
+                    () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                     () -> new ChassisSpeeds(),
                     2
                 ),
