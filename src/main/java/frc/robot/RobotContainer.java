@@ -34,7 +34,6 @@ import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndScor
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
-import frc.robot.commands.complex.superstructure.Score;
 import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
