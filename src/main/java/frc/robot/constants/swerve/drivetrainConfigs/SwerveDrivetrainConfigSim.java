@@ -157,22 +157,22 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     }
 
     @Override
-    public double getMaxAligmentTranslationVeloMetersPerSec() {
+    public double getMaxAlignmentTranslationVeloMetersPerSec() {
         return 3;
     }
 
     @Override
-    public double getMaxAligmentRotationVeloRadPerSec() {
+    public double getMaxAlignmentRotationVeloRadPerSec() {
         return 3.7;
     }
 
     @Override
-    public double getMaxAligmentTranslationalAcelMetersPerSecPerSec() {
+    public double getMaxAlignmentTranslationalAcelMetersPerSecPerSec() {
         return 3.5;
     }
 
     @Override
-    public double getMaxAligmentRotationAcelRadPerSecPerSec() {
+    public double getMaxAlignmentRotationAcelRadPerSecPerSec() {
         return 10;
     }
 }

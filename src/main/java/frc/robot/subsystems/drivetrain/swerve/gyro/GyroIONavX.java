@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain.swerve.gyro;
 
 import com.studica.frc.AHRS;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,9 +26,9 @@ public class GyroIONavX implements GyroIO {
         inputs.isConnected = gyro.isConnected();
         if (inputs.isConnected) {
             inputs.orientation = new Rotation2d[] {
-                new Rotation2d(Math.toRadians(-gyro.getRoll()) + yawOffset.getRadians()),
-                new Rotation2d(Math.toRadians(-gyro.getPitch())),
-                new Rotation2d(Math.toRadians(-gyro.getYaw()))
+                new Rotation2d(MathUtil.angleModulus(Math.toRadians(-gyro.getRoll()) + yawOffset.getRadians())),
+                new Rotation2d(MathUtil.angleModulus(Math.toRadians(-gyro.getPitch()))),
+                new Rotation2d(MathUtil.angleModulus(Math.toRadians(-gyro.getYaw())))
             };
 
             inputs.rates = new Rotation2d[] {

@@ -11,6 +11,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -112,9 +113,9 @@ public class GyroIOPigeon2 implements GyroIO {
 
         // TODO: CHECK FOR FEILD VS GYRO RELATIVE VALUES
         inputs.orientation = new Rotation2d[] {
-            new Rotation2d(BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).in(Radians)),
-            new Rotation2d(BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).in(Radians)),
-            new Rotation2d(BaseStatusSignal.getLatencyCompensatedValue(yawSignal, yawVelocitySignal).in(Radians))
+            new Rotation2d(MathUtil.angleModulus(BaseStatusSignal.getLatencyCompensatedValue(rollSignal, rollVelocitySignal).in(Radians))),
+            new Rotation2d(MathUtil.angleModulus(BaseStatusSignal.getLatencyCompensatedValue(pitchSignal, pitchVelocitySignal).in(Radians))),
+            new Rotation2d(MathUtil.angleModulus(BaseStatusSignal.getLatencyCompensatedValue(yawSignal, yawVelocitySignal).in(Radians)))
         };
         inputs.rates = new Rotation2d[] {
             new Rotation2d(rollVelocitySignal.getValue().in(RadiansPerSecond)),
