@@ -109,19 +109,6 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         for (int i = 0; i < config.getNames().length; i++) {
-            // update LL helper BEFORE we use it in the io
-            LimelightHelpers.SetRobotOrientation( 
-                config.getNames()[i],
-                robotState.getGyroOrientation()[2].getDegrees(),
-                robotState.getGyroRates()[2].getDegrees(),
-
-                robotState.getGyroOrientation()[1].getDegrees(),
-                robotState.getGyroRates()[1].getDegrees(),
-
-                robotState.getGyroOrientation()[0].getDegrees(),
-                robotState.getGyroRates()[0].getDegrees()
-            );
-
             visionIO[i].updateInputs(visionIOInputs[i]);
             Logger.processInputs("Vision" + config.getNames()[i], visionIOInputs[i]);
             

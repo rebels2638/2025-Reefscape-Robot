@@ -22,6 +22,7 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -72,6 +73,8 @@ public class RobotState {
 
   private final SwerveDrivetrainConfigBase drivetrainConfig;
   private final RobotStateConfigBase robotStateConfig;
+
+  private final ArrayList<Runnable> onOdometryUpdateRunnables = new ArrayList<Runnable>();
 
   private RobotState() {
     switch (Constants.currentMode) {
@@ -154,7 +157,7 @@ public class RobotState {
         lastGyroOrientation = observation.gyroOrientation();
         lastGyroRates = observation.gyroRates();
         robotRelativeVelocity.omegaRadiansPerSecond = lastGyroRates[2].getRadians();
-        
+
         Logger.recordOutput("RobotState/isUsingTwistAngle", false);
     }
     else {
@@ -195,6 +198,10 @@ public class RobotState {
 
     // Add pose to buffer at timestamp
     poseBuffer.addSample(lastEstimatedPoseUpdateTime, swerveDrivePoseEstimator.getEstimatedPosition()); 
+
+    for (Runnable runnable : onOdometryUpdateRunnables) {
+        runnable.run();
+    }
   }
 
   public void addVisionObservation(VisionObservation observation) {
@@ -215,6 +222,10 @@ public class RobotState {
 
     swerveDrivePoseEstimator.addVisionMeasurement(observation.visionPose, observation.timestamp, observation.stdDevs);
     lastEstimatedPoseUpdateTime = Timer.getTimestamp();
+  }
+
+  public void registerRunnableOnOdometryUpdate(Runnable runnable) {
+    onOdometryUpdateRunnables.add(runnable);
   }
 
   /**

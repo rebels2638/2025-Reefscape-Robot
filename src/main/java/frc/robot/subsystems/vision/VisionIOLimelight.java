@@ -1,10 +1,8 @@
 package frc.robot.subsystems.vision;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.RobotState;
 import frc.robot.lib.util.LimelightHelpers;
 
 public class VisionIOLimelight implements VisionIO {
@@ -13,6 +11,23 @@ public class VisionIOLimelight implements VisionIO {
 
     public VisionIOLimelight(String name) {
         this.name = name;
+
+        RobotState.getInstance().registerRunnableOnOdometryUpdate(
+            () -> {
+                // update limelight orientation as soon as possible
+                LimelightHelpers.SetRobotOrientation( 
+                    name,
+                    RobotState.getInstance().getGyroOrientation()[2].getDegrees(),
+                    RobotState.getInstance().getGyroRates()[2].getDegrees(),
+
+                    RobotState.getInstance().getGyroOrientation()[1].getDegrees(),
+                    RobotState.getInstance().getGyroRates()[1].getDegrees(),
+
+                    RobotState.getInstance().getGyroOrientation()[0].getDegrees(),
+                    RobotState.getInstance().getGyroRates()[0].getDegrees()
+                );
+            }
+        );
     }
 
     public void updateInputs(VisionIOInputs inputs) {
