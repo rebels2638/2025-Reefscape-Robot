@@ -48,9 +48,9 @@ public abstract class SwerveDrivetrainConfigBase {
     public abstract Translation2d getBranchOffsetFromRobotCenter();
     public abstract Translation2d getAlgayOffsetFromRobotCenter();
 
-    public abstract double getMaxAligmentTranslationVeloMetersPerSec();
-    public abstract double getMaxAligmentRotationVeloRadPerSec();
+    public abstract double getMaxAlignmentTranslationVeloMetersPerSec();
+    public abstract double getMaxAlignmentRotationVeloRadPerSec();
 
-    public abstract double getMaxAligmentTranslationalAcelMetersPerSecPerSec();
-    public abstract double getMaxAligmentRotationAcelRadPerSecPerSec();
+    public abstract double getMaxAlignmentTranslationalAcelMetersPerSecPerSec();
+    public abstract double getMaxAlignmentRotationAcelRadPerSecPerSec();
 }

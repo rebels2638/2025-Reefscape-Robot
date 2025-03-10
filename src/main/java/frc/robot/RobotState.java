@@ -153,7 +153,8 @@ public class RobotState {
     if (observation.gyroOrientation != null) {
         lastGyroOrientation = observation.gyroOrientation();
         lastGyroRates = observation.gyroRates();
-
+        robotRelativeVelocity.omegaRadiansPerSecond = lastGyroRates[2].getRadians();
+        
         Logger.recordOutput("RobotState/isUsingTwistAngle", false);
     }
     else {
