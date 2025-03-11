@@ -48,22 +48,22 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getFrontLeftPositionMeters() {
-        return new Translation2d(0.23, 0.23);
+        return new Translation2d(0.24, 0.24);
     }
 
     @Override
     public Translation2d getFrontRightPositionMeters() {
-        return new Translation2d(0.23, -0.23);
+        return new Translation2d(0.24, -0.24);
     }
 
     @Override
     public Translation2d getBackLeftPositionMeters() {
-        return new Translation2d(-0.23, 0.23);
+        return new Translation2d(-0.24, 0.24);
     }
 
     @Override
     public Translation2d getBackRightPositionMeters() {
-        return new Translation2d(-0.23, -0.23);
+        return new Translation2d(-0.24, -0.24);
     }
 
     @Override
