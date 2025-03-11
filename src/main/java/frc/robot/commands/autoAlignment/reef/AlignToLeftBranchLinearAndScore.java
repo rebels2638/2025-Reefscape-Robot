@@ -17,11 +17,6 @@ import frc.robot.subsystems.roller.Roller;
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToLeftBranchLinearAndScore() {
         addCommands(
-            new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
-                () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
-                RobotState.getInstance().getEstimatedPose().getTranslation()) <= 2 &&
-                Roller.getInstance().inRoller()
-            ),
             new SequentialCommandGroup(
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(

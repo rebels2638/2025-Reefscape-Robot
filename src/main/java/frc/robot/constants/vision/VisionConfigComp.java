@@ -22,17 +22,22 @@ public class VisionConfigComp extends VisionConfigBase {
 
     @Override
     public double getTranslationDevBase() {
-        return 0.05; // 0.05
+        return 0.01; // 0.05
     }
 
     @Override
     public double getTranslationDevRotationExpoDenominator() {
-        return 15;
+        return 60;
+    }
+
+    @Override
+    public double getTranslationDevRotationExpo() {
+        return 6;
     }
 
     @Override
     public double getTranslationDevTaScaler() {
-        return 0.0002;
+        return 1.5e-4;
     }
 
     @Override

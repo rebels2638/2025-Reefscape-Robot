@@ -1,3 +1,4 @@
+
 package frc.robot;
 
 import java.util.jar.Attributes.Name;
@@ -30,7 +31,7 @@ import frc.robot.commands.autoAlignment.*;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
-import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndScore;
+import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
@@ -38,10 +39,12 @@ import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
+import frc.robot.commands.claw.simple.BargeScoringManualShot;
 import frc.robot.commands.claw.simple.DecideBargeScoringFlick;
 import frc.robot.commands.claw.simple.RunClawEject;
-import frc.robot.commands.elevator.CancelScore;
+import frc.robot.commands.elevator.CancelScoreCoral;
 import frc.robot.commands.elevator.RunElevatorRaw;
+import frc.robot.commands.elevator.simple.CancelScoreAlgay;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL1Action;
 import frc.robot.commands.elevator.simple.QueueL2Action;
@@ -72,7 +75,7 @@ public class RobotContainer {
     private final RobotState robotState;
 
     private final Pivot pivot;
-    // private final Claw claw;
+    private final Claw claw;
 
     private final Elevator elevator;
     private final Roller roller;
@@ -93,7 +96,7 @@ public class RobotContainer {
         vision = Vision.getInstance();
         robotState = RobotState.getInstance();
         pivot = Pivot.getInstance();
-        // claw = Claw.getInstance();
+        claw = Claw.getInstance();
 
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
@@ -105,12 +108,13 @@ public class RobotContainer {
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new CancelScore()); // ScoreLeft
-        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new CancelScore()); // ScoreRight
-        new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove()).toggleOnFalse(new CancelScore()); // DescoreAlgay
-        xboxDriver.getRightBumper().onTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
-        // xboxDriver.getYButton().onTrue(); // AutoAlignToProcessorAndScore
-        xboxDriver.getLeftStick().whileTrue(new AlignToClosestSourceLinearAndScore()).toggleOnFalse(new StopRoller()); // AutoAlignToSourceAndIntake
+        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
+        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
+        new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove()).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
+        xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
+        xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
+        xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
+        // xboxDriver.getLeftBumper().onTrue(new AlignToProcessorAndScore()).toggleOnFalse(new MovePivotStow()); // processor
         // new Trigger(() -> (xboxDriver.getRightBumper().getAsBoolean() && xboxDriver.getLeftBumper().getAsBoolean())).onTrue(); // AutoAlignToTargetCageAndClimb
 
         xboxOperator.getAButton().onTrue(new QueueStowAction());

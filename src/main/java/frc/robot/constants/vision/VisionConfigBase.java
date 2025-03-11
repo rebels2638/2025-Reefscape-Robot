@@ -5,6 +5,8 @@ public abstract class VisionConfigBase {
 
     public abstract double getTranslationDevBase();
     public abstract double getTranslationDevRotationExpoDenominator();
+    public abstract double getTranslationDevRotationExpo();
+
     public abstract double getTranslationDevTaScaler();
 
     public abstract double getObservationBufferSizeSeconds();
