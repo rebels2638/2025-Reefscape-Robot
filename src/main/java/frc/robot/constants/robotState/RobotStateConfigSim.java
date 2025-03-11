@@ -36,4 +36,9 @@ public class RobotStateConfigSim extends RobotStateConfigBase {
     public double getMaxRotationalVelocityRadPerSecPerSec() {
         return 2 * Math.PI * 0.5;
     }
+
+    @Override
+    public int getMinLocalVisionObservationCount() {
+        return -1;
+    }
 }

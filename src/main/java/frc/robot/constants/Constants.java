@@ -4,8 +4,13 @@
 
 package frc.robot.constants;
 
+import java.util.ArrayList;
+
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.lib.util.AlignmentUtil.Axis;
 
@@ -82,6 +87,43 @@ public final class Constants {
         }
     }
 
+    public static final class VisionConstants {
+        public static final int[] kALL_TAG_IDS = new int[22];
+        static {
+            for (int i = 1; i <= 22; i++) {
+                kALL_TAG_IDS[i-1] = i;
+            }
+        }
+
+        public static final int[] kREEF_TAG_IDS = { // in order of the alignment center faces
+            18,
+            22,
+            17,
+            21,
+            19,
+            20,
+
+            7,
+            9,
+            8,
+            10,
+            6,
+            11
+        };
+
+        public static final Translation2d[] kREEF_TAG_POSES = new Translation2d[12];
+        static {
+            for (int i = 0; i < 6; i++) {
+                kREEF_TAG_POSES[i] = AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation();
+            }
+            for (int i = 6; i < 12; i++) {
+                kREEF_TAG_POSES[i] = FlippingUtil.flipFieldPosition(AlignmentConstants.kREEF_CENTER_FACES[i-6].getTranslation());
+            }
+        }
+
+        private VisionConstants() {}
+    }
+
     public static final class AlignmentConstants {
         // these assume the robot's volume is zero. does not take into account frame
         public static final double kINTER_BRANCH_DIST_METER = 0.34;
@@ -90,8 +132,8 @@ public final class Constants {
                                                                     // order
         static {
             // Initialize faces
+            // bottom
             kREEF_CENTER_FACES[0] =
-                    // bottom
                     new Pose2d(
                             3.642,
                             4.024,

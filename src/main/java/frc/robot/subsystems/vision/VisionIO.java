@@ -1,8 +1,12 @@
 package frc.robot.subsystems.vision;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.RobotState.VisionObservationScale;
 
 public interface VisionIO {
     @AutoLog
@@ -15,7 +19,9 @@ public interface VisionIO {
         public double ty = 0;
         public double ta = 0;
 
+        public VisionObservationScale scale = VisionObservationScale.GLOBAL;
     }
 
     public default void updateInputs(VisionIOInputs inputs) {}
+    public default void includeTagIDs(Optional<int[]> inclusions) {}
 }

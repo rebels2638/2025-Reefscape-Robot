@@ -2,18 +2,23 @@ package frc.robot.subsystems.vision;
 
 import static edu.wpi.first.units.Units.Degrees;
 
+import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionObservation;
+import frc.robot.RobotState.VisionObservationScale;
 import frc.robot.constants.*;
+import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.vision.VisionConfigBase;
 import frc.robot.constants.vision.VisionConfigComp;
 import frc.robot.constants.vision.VisionConfigProto;
@@ -36,6 +41,10 @@ public class Vision extends SubsystemBase {
     private final RobotState robotState = RobotState.getInstance();
 
     private final TimeInterpolatableBuffer<Rotation2d> rotationalRateBuffer;
+
+    private VisionObservationScale requestedScale = VisionObservationScale.GLOBAL;
+
+    private int localTagID = 18;
 
     private final VisionConfigBase config;
     private Vision() {
@@ -104,6 +113,9 @@ public class Vision extends SubsystemBase {
         }
 
         rotationalRateBuffer = TimeInterpolatableBuffer.createBuffer(config.getObservationBufferSizeSeconds());
+
+        robotState.registerRunnableOnGlobalVisionEstimateRequest(this::requestGlobalEstimationScale);
+        robotState.registerRunnableOnLocalVisionEstimateRequest(this::requestLocalEstimationScale);
     }
 
     @Override
@@ -138,13 +150,41 @@ public class Vision extends SubsystemBase {
                             translationDev,
                             translationDev,
                             9999999
-                        )
+                        ),
+                        visionIOInputs[i].scale
                     )
                 );
             }
             else {
                 Logger.recordOutput("vision/addingSample", false);
             }
+
+            if (requestedScale == VisionObservationScale.LOCAL && localTagID == visionIOInputs[i].primaryTagId) {
+                visionIO[i].includeTagIDs(Optional.of(new int[] {localTagID}));
+            }
         }
+    }
+
+    public void requestLocalEstimationScale(Translation2d endRobotPose) {
+        int closest = 0;
+        for (int i = 1; i < VisionConstants.kREEF_TAG_POSES.length; i++) {
+            if (VisionConstants.kREEF_TAG_POSES[i].getDistance(endRobotPose) < 
+                VisionConstants.kREEF_TAG_POSES[closest].getDistance(endRobotPose)) {
+                closest = i;
+            }
+        }
+
+        int tagID = VisionConstants.kREEF_TAG_IDS[closest];
+        
+        localTagID = tagID;
+        requestedScale = VisionObservationScale.LOCAL;
+    }
+    
+    public void requestGlobalEstimationScale() {
+        for (int i = 0; i < config.getNames().length; i++) {
+            visionIO[i].includeTagIDs(Optional.empty());
+        }
+
+        requestedScale = VisionObservationScale.GLOBAL;
     }
 }

@@ -1,15 +1,18 @@
 package frc.robot.subsystems.vision;
 
-import org.littletonrobotics.junction.Logger;
+import java.util.Optional;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotState;
+import frc.robot.RobotState.VisionObservationScale;
+import frc.robot.constants.Constants;
 import frc.robot.lib.util.LimelightHelpers;
 
 public class VisionIOLimelight implements VisionIO {
 
     private final String name;
+    private VisionObservationScale scale = VisionObservationScale.GLOBAL;
 
     public VisionIOLimelight(String name) {
         this.name = name;
@@ -45,4 +48,14 @@ public class VisionIOLimelight implements VisionIO {
         inputs.ta = NetworkTableInstance.getDefault().getTable(name).getEntry("ta").getDouble(0);
     }
 
+    public void includeTagIDs(Optional<int[]> tags) {
+        if (tags.isPresent()) {
+            LimelightHelpers.SetFiducialIDFiltersOverride(name, tags.get());
+            scale = VisionObservationScale.LOCAL;
+        }
+        else {
+            LimelightHelpers.SetFiducialIDFiltersOverride(name, Constants.VisionConstants.kALL_TAG_IDS);
+            scale = VisionObservationScale.GLOBAL;
+        }
+    }
 }
