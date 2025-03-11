@@ -23,9 +23,10 @@ import frc.robot.subsystems.roller.Roller;
 public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToRightBranchLinearAndScore(XboxController controller) {
         addCommands(
+            new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(AlignmentUtil.getClosestRightBranchPose().getTranslation())),
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
-                    () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
+                    () -> AlignmentUtil.getClosestRightBranchPose().getTranslation().getDistance( // check for the correct max distance from target
                     RobotState.getInstance().getEstimatedPose().getTranslation()) <= 5 &&
                     Roller.getInstance().inRoller()
                 ),
@@ -39,7 +40,7 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                         new DequeueElevatorAction()
                     ),
                     new LinearAlign(
-                        () -> AlignmentUtil.getClosestLeftBranchPose(),
+                        () -> AlignmentUtil.getClosestRightBranchPose(),
                         () -> new ChassisSpeeds(),
                         5
                     )
@@ -47,7 +48,8 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                 new EjectCoral(),
                 new QueueStowAction(),
                 new DequeueElevatorAction()
-            )
+            ),
+            new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
         );
     }
 }

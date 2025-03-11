@@ -111,9 +111,9 @@ public class RobotContainer {
         xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
         xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
         new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
-        xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
-        xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
-        xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
+        // xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
+        // xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
+        // xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
         // xboxDriver.getLeftBumper().onTrue(new AlignToProcessorAndScore()).toggleOnFalse(new MovePivotStow()); // processor
         // new Trigger(() -> (xboxDriver.getRightBumper().getAsBoolean() && xboxDriver.getLeftBumper().getAsBoolean())).onTrue(); // AutoAlignToTargetCageAndClimb
 
@@ -121,8 +121,8 @@ public class RobotContainer {
         xboxOperator.getBButton().onTrue(new QueueL2Action());
         xboxOperator.getYButton().onTrue(new QueueL3Action());
         xboxOperator.getXButton().onTrue(new QueueL4Action());
-        // xboxOperator.getRightBumper().onTrue(new IntakeCoral());
-        // xboxOperator.getLeftBumper().onTrue(new StopRoller());
+        xboxOperator.getRightBumper().onTrue(new IntakeCoral());
+        xboxOperator.getLeftBumper().onTrue(new StopRoller());
 
         // xboxOperator.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         // xboxOperator.getBButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));

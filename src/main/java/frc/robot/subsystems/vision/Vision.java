@@ -131,10 +131,10 @@ public class Vision extends SubsystemBase {
                 rotationalRate.isPresent() && 
                 visionIOInputs[i].hasValidTargets) {
                 
-                Logger.recordOutput("vision/addingSample", true);
-                Logger.recordOutput("vision/rotationalDevContribution", 
+                Logger.recordOutput("Vision/addingSample", true);
+                Logger.recordOutput("Vision/rotationalDevContribution", 
                 Math.pow(rotationalRate.get().getDegrees() ,2) / config.getTranslationDevRotationExpoDenominator());
-                Logger.recordOutput("vision/taDevContribution", visionIOInputs[i].ta * config.getTranslationDevTaScaler());
+                Logger.recordOutput("Vision/taDevContribution", visionIOInputs[i].ta * config.getTranslationDevTaScaler());
                 
                 double translationDev = 
                     config.getTranslationDevBase() +
@@ -156,7 +156,7 @@ public class Vision extends SubsystemBase {
                 );
             }
             else {
-                Logger.recordOutput("vision/addingSample", false);
+                Logger.recordOutput("Vision/addingSample", false);
             }
 
             if (requestedScale == VisionObservationScale.LOCAL && localTagID == visionIOInputs[i].primaryTagId) {
@@ -177,6 +177,7 @@ public class Vision extends SubsystemBase {
         int tagID = VisionConstants.kREEF_TAG_IDS[closest];
         
         localTagID = tagID;
+        Logger.recordOutput("Vision/localTagID", localTagID);
         requestedScale = VisionObservationScale.LOCAL;
     }
     

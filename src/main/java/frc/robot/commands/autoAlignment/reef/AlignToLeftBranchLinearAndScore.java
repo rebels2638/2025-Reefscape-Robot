@@ -1,6 +1,7 @@
 package frc.robot.commands.autoAlignment.reef;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.roller.Roller;
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToLeftBranchLinearAndScore(XboxController controller) {
         addCommands(
+            new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(AlignmentUtil.getClosestLeftBranchPose().getTranslation())),
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
@@ -44,7 +46,8 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                 new EjectCoral(),
                 new QueueStowAction(),
                 new DequeueElevatorAction()
-            )
+            ),
+            new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
         );
     }
 }

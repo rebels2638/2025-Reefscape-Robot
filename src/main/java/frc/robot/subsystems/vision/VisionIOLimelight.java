@@ -46,6 +46,8 @@ public class VisionIOLimelight implements VisionIO {
         inputs.tx = NetworkTableInstance.getDefault().getTable(name).getEntry("tx").getDouble(0);
         inputs.ty = NetworkTableInstance.getDefault().getTable(name).getEntry("ty").getDouble(0);
         inputs.ta = NetworkTableInstance.getDefault().getTable(name).getEntry("ta").getDouble(0);
+
+        inputs.scale = scale;
     }
 
     public void includeTagIDs(Optional<int[]> tags) {

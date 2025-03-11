@@ -15,22 +15,24 @@ public class DecideBargeScoringFlick extends ConditionalCommand {
     public DecideBargeScoringFlick() {
         super(
             new SequentialCommandGroup(
-                new WaitUntilCommand(
-                    () -> Claw.getInstance().inClaw()
-                ),
+                // new WaitUntilCommand(
+                //     () -> Claw.getInstance().inClaw()
+                // ),
                 new MovePivotStow(),
                 new DequeueElevatorAction(),
                 new MovePivotAlgay(),
+                new RunClawEject(),
                 new QueueStowAction(),
                 new DequeueElevatorAction()
             ), 
             new SequentialCommandGroup(
-                new WaitUntilCommand(
-                    () -> Claw.getInstance().inClaw()
-                ),
+                // new WaitUntilCommand(
+                //     () -> Claw.getInstance().inClaw()
+                // ),
                 new MovePivotAlgay(),
                 new DequeueElevatorAction(),
                 new MovePivotStow(),
+                new RunClawEject(),
                 new QueueStowAction(),
                 new DequeueElevatorAction(),
                 new MovePivotAlgay()

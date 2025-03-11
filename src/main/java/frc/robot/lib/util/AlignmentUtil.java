@@ -363,6 +363,7 @@ public class AlignmentUtil {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();
         double rot = curr.getRotation().getDegrees() < 0 ? curr.getRotation().getDegrees() + 360 : curr.getRotation().getDegrees();
         Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(curr.getTranslation()), new Rotation2d(180-rot < 90 ? 180 : 0));
+        Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
     }
 

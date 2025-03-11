@@ -212,10 +212,10 @@ public final class Constants {
 
         public static final Axis kBARGE_AXIS = 
             new Axis(
-                8.232,
-                4.343,
-                8.232,
-                7.973
+                6.42,
+                2.7,
+                6.42,
+                5.0
             );
         public static final Rotation2d kBARGE_ROTATION = Rotation2d.fromDegrees(0);
 

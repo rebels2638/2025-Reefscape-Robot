@@ -220,6 +220,9 @@ public class RobotState {
         for (Runnable runnable : onOdometryUpdateRunnables) {
             runnable.run();
         }
+
+        Logger.recordOutput("RobotState/vision/localVisionObservationUpdateCount", localVisionObservationUpdateCount);
+        Logger.recordOutput("RobotState/vision/requestedObservationScale", requestedObservationScale);
     }
 
     public void addVisionObservation(VisionObservation observation) {
@@ -267,6 +270,7 @@ public class RobotState {
         }
 
         requestedObservationScale = VisionObservationScale.GLOBAL;
+        localVisionObservationUpdateCount = 0;
     }
 
     public void requestLocalVisionEstimateScale(Translation2d pose) {
@@ -298,6 +302,7 @@ public class RobotState {
         resetPose(new Pose2d(getEstimatedPose().getTranslation(), new Rotation2d()));
     }
 
+    @AutoLogOutput(key = "RobotState/isPoseEstimateValid")
     public boolean isPoseEstimateValid() {
         if (requestedObservationScale == VisionObservationScale.LOCAL) {
             return localVisionObservationUpdateCount >= robotStateConfig.getMinLocalVisionObservationCount();
