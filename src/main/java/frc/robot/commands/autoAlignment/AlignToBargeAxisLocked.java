@@ -15,8 +15,8 @@ public class AlignToBargeAxisLocked extends SequentialCommandGroup{
                 () -> AlignmentUtil.getClosestBargePose().getTranslation().getDistance(
                     RobotState.getInstance().getEstimatedPose().getTranslation()) <= 2
             ),
-            new QueueL4Action()
-            // new LockDriveAxis(controller, AlignmentUtil.getBargeAxis(), AlignmentUtil.getClosestAlgayPose().getRotation())
+            new QueueL4Action(),
+            new LockDriveAxis(controller, AlignmentUtil.getBargeAxis(), AlignmentUtil.getClosestAlgayPose().getRotation())
         );
     }
 }

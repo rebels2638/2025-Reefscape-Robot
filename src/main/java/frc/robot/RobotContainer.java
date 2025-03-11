@@ -108,9 +108,9 @@ public class RobotContainer {
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore()).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
-        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore()).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
-        new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove()).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
+        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
+        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
+        new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
         xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
         xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
         xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
