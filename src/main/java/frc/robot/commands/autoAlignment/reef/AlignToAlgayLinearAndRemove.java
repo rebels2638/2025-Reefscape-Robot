@@ -38,7 +38,6 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     () -> new ChassisSpeeds(),
                     2
                 )
-                
             ),
             new LinearAlign(
                 () -> AlignmentUtil.getClosestAlgayPose(),
