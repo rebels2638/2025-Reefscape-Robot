@@ -74,6 +74,10 @@ public class Climber extends SubsystemBase {
         Logger.recordOutput("Climber/setpoint", angle);
     }
 
+    public Rotation2d getAngle() {
+        return climberIOInputs.climberPosition;
+    }
+
     public void setTorqueCurrentFOC(double torque) {
         climberIO.setTorqueCurrentFOC(torque);
     }

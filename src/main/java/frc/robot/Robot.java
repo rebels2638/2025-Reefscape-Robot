@@ -23,6 +23,7 @@ import frc.robot.commands.autoAlignment.LocalADStarAK;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.Mode;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.lib.util.Elastic;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -148,6 +149,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     AlignmentUtil.loadCandidates(); // called on ds init
+    Elastic.selectTab(0);  // called on ds init, selects teleoperated tab on Elastic
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

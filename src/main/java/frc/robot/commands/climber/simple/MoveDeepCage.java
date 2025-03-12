@@ -14,7 +14,7 @@ public class MoveDeepCage extends Command{
 
     @Override
     public void initialize() {
-        climber.setAngle(Rotation2d.fromDegrees(130));
+        climber.setAngle(Rotation2d.fromDegrees(130.0));
     }
 
     @Override

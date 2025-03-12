@@ -21,6 +21,7 @@ import frc.robot.commands.AutoRunner;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.claw.Claw;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.Elevator.height;
@@ -35,6 +36,8 @@ import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndInta
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
+import frc.robot.commands.climber.simple.MoveClimberStow;
+import frc.robot.commands.climber.simple.MoveDeepCage;
 import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
@@ -76,10 +79,12 @@ public class RobotContainer {
 
     private final Pivot pivot;
     private final Claw claw;
+    private final Climber climber;
 
     private final Elevator elevator;
     private final Roller roller;
-    // private final MechanismVisualizer mechanismVisualizer;
+
+    private final MechanismVisualizer mechanismVisualizer;
 
     // private final AutoRunner autoRunner;
 
@@ -97,17 +102,20 @@ public class RobotContainer {
         robotState = RobotState.getInstance();
         pivot = Pivot.getInstance();
         claw = Claw.getInstance();
+        climber = Climber.getInstance();
 
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
 
-        // mechanismVisualizer = MechanismVisualizer.getInstance();
+        mechanismVisualizer = MechanismVisualizer.getInstance();
         // NamedCommands.registerCommand("Intake", new IntakeCoral());
         // autoRunner = AutoRunner.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
+        // xboxDriver.getBButton().onTrue(new MoveDeepCage());
+        // xboxDriver.getAButton().onTrue(new MoveClimberStow());
         xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
         xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
         new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
