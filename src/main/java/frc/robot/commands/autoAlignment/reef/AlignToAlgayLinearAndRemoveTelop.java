@@ -23,8 +23,8 @@ import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.claw.Claw;
 
-public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
-    public AlignToAlgayLinearAndRemove(XboxController controller) {
+public class AlignToAlgayLinearAndRemoveTelop extends SequentialCommandGroup {
+    public AlignToAlgayLinearAndRemoveTelop(XboxController controller) {
         addCommands(
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
