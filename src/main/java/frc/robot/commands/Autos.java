@@ -33,6 +33,12 @@ public class Autos {
             
         );
 
+    public static final Command test1 = 
+        new SequentialCommandGroup(
+            loadResetPoseCommand("Test1"),
+            loadPathFollowCommand("Test1")
+        );
+
     public static final PathPlannerPath loadPath(String name) {
         try {
             // Load the path you want to follow using its name in the GUI

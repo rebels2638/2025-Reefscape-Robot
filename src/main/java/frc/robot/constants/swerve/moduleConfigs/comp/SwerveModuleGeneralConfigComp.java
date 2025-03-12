@@ -59,7 +59,7 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
 
     @Override
     public double getDriveKV() {
-        return 1.8;
+        return 2;
         // return 0.0;
 
     }
@@ -67,40 +67,40 @@ public class SwerveModuleGeneralConfigComp extends SwerveModuleGeneralConfigBase
     @Override
     public double getDriveKA() {
         // return 10;
-        return 9.8;
+        return 9.8; // 9.8
         // return 0;
     }
 
     @Override
     public double getDriveKP() {
-        return 70;
+        return 70;//70
         // return 0;
     }
 
     @Override
     public double getDriveKI() {
-        return 0.5;
+        return 0; //.5
     }
 
     @Override
     public double getDriveKD() {
-        return 3.5;
+        return 1.5;//1.5
         // return 0;
     }
 
     @Override
     public double getDriveMotionMagicVelocityAccelerationMetersPerSecSec() {
-        return 7;
+        return 12; // go as fast as possible - ok bc of setpoint gen
     }
 
     @Override
     public double getDriveMotionMagicVelocityDecelerationMetersPerSecSec() {
-        return 14;
+        return 12;
     }
 
     @Override
     public double getDriveMotionMagicVelocityJerkMetersPerSecSecSec() {
-        return 60.0;
+        return 280;
     }
 
     @Override

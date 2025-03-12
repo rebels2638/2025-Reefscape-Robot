@@ -98,22 +98,7 @@ public class AutoRunner {
 
         
     public Command getAutonomousCommand() {
-    //     try {
-    //         // Load the path you want to follow using its name in the GUI
-    //         PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("test");
-
-    //         // Create a path following command using AutoBuilder. This will also trigger event markers.
-    //         return new SequentialCommandGroup(
-    //             new InstantCommand(() -> RobotState.getInstance().resetPose(path.getStartingHolonomicPose().get())),
-    //             AutoBuilder.followPath(path)
-    //         );
-
-    //     } catch (Exception e) {
-    //         DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
-    //         return Commands.none();
-    //     }
-  
-        return null;
+        return Autos.test1;
     }
 
     public PathConstraints getPathConstraints() {

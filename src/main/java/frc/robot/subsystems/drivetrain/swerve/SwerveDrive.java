@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain.swerve;
 
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -292,8 +294,10 @@ public class SwerveDrive extends SubsystemBase {
 
         SwerveModuleState[] optimizedSetpoints = previousSetpoint.moduleStates();
         for (int i = 0; i < 4; i++) {
+            Logger.recordOutput("SwerveDrive/module" + i + "/accelerationsMPSSq", previousSetpoint.feedforwards().accelerationsMPSSq()[i]);
+            
             optimizedSetpoints[i].optimize(moduleStates[i].angle);
-            modules[i].setState(optimizedSetpoints[i]); // setTargetState's helper method is kind of funny
+            modules[i].setState(optimizedSetpoints[i], Optional.of(Double.valueOf(previousSetpoint.feedforwards().accelerationsMPSSq()[i]))); // setTargetState's helper method is kind of funny
         }
 
         Logger.recordOutput("SwerveDrive/optimizedModuleStates", optimizedSetpoints);

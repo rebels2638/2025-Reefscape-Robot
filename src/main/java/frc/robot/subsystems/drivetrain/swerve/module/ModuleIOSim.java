@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drivetrain.swerve.module;
 
 import java.io.Console;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -166,7 +167,7 @@ public class ModuleIOSim implements ModuleIO {
     }
 
     @Override
-    public void setState(SwerveModuleState state) {
+    public void setState(SwerveModuleState state, Optional<Double> feedForwardTorqueCurrent) {
         double dt = Timer.getTimestamp() - prevTimeState;
         prevTimeState = Timer.getTimestamp();
 

@@ -69,11 +69,11 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     @Override
     public RobotConfig getRobotConfig() {
         return new RobotConfig(
-            37.88,
-            13.5,
+            52.16,
+            5,
             new ModuleConfig(
                 SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
-                5.4, 
+                4.2, 
                 1.2, 
                 DCMotor.getKrakenX60(1).
                     withReduction(
@@ -91,12 +91,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDConstants getPathplannerDrivePIDConfig() {
-        return new PIDConstants(1,0.04,0.2 ,1);
+        return new PIDConstants(4,0,1.5 ,0);
     }
 
     @Override
     public PIDConstants getPathplannerSteerPIDConfig() {
-        return new PIDConstants(1,0,0,0);
+        return new PIDConstants(0,0,0,0);
     }
 
     @Override
