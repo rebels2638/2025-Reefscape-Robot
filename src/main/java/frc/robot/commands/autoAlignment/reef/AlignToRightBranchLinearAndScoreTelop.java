@@ -20,8 +20,8 @@ import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.roller.Roller;
 
-public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
-    public AlignToRightBranchLinearAndScore(XboxController controller) {
+public class AlignToRightBranchLinearAndScoreTelop extends SequentialCommandGroup {
+    public AlignToRightBranchLinearAndScoreTelop(XboxController controller) {
         addCommands(
             new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(AlignmentUtil.getClosestRightBranchPose().getTranslation())),
             new ParallelDeadlineGroup(
