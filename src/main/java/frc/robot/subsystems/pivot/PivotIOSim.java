@@ -100,7 +100,6 @@ public class PivotIOSim implements PivotIO {
         double dt = Timer.getTimestamp() - prevTimeState;
         prevTimeState = Timer.getTimestamp();
 
-
         currentProfileSetpoint = trapezoidMotionProfile.calculate(
             dt, 
             currentProfileSetpoint,

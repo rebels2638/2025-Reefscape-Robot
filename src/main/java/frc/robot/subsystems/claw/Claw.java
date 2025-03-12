@@ -8,6 +8,7 @@ import frc.robot.constants.claw.ClawConfigBase;
 import frc.robot.constants.claw.ClawConfigComp;
 import frc.robot.constants.claw.ClawConfigProto;
 import frc.robot.constants.claw.ClawConfigSim;
+import frc.robot.constants.pivot.PivotConfigSim;
 
 public class Claw extends SubsystemBase {
     private ClawIO clawIO;
@@ -42,7 +43,7 @@ public class Claw extends SubsystemBase {
 
             case SIM:
                 config = ClawConfigSim.getInstance();
-                // clawIO = new ClawIOSim(config);
+                clawIO = new ClawIOSim(PivotConfigSim.getInstance()); //temporary fix so the clawIO is not null in sim
 
                 break;
 

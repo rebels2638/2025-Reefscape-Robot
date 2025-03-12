@@ -31,12 +31,20 @@ public class MechAElementConstants {
   }
 
   public static class Barge {
-    public static final Translation2d farCage =
+    public static final Translation2d[] cages;
+
+    static {
+        cages = new Translation2d[3];
+        //farCage
+        cages[0] = 
         new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(286.779));
-    public static final Translation2d middleCage =
+        //middleCage
+        cages[1] = 
         new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(242.855));
-    public static final Translation2d closeCage =
+        //closeCage
+        cages[2] = 
         new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(199.947));
+    }
 
     // Measured from floor to bottom of cage
     public static final double deepHeight = Units.inchesToMeters(3.125);

@@ -2,6 +2,7 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,24 +25,24 @@ public class ClimberIOSim implements ClimberIO {
     private double prevTimeInputs = 0;
     private double prevTimeState = 0;
 
-    private final double kclimber_MOTOR_TO_OUTPUT_SHAFT_RATIO = 20;
-    private final double kJKG_METERS_SQUARED = 11.34;
-    private final double kclimber_LENGTH_METERS = 0.23;
+    private final double kclimber_MOTOR_TO_OUTPUT_SHAFT_RATIO = 10;
+    private final double kJKG_METERS_SQUARED = 0.1;
+    private final double kclimber_LENGTH_METERS = 0.222;
     private final double kMIN_ANGLE_RAD;
     private final double kMAX_ANGLE_RAD;
-    private final double kSTARTING_ANGLE_RAD = Math.toRadians(0);
-
+    private final double kSTARTING_ANGLE_RAD;
 
     private final TrapezoidProfile trapezoidMotionProfile;
-    private State currentProfileSetpoint;;
+    private State currentProfileSetpoint;
 
-    private double currentPositionRad = 0;
+    private double previousAngleRad = 0;
     private double appliedVolts = 0;
     
     public ClimberIOSim(ClimberConfigBase config) {
         kMIN_ANGLE_RAD = config.getMinAngleRotations() * Math.PI * 2;
         kMAX_ANGLE_RAD = config.getMaxAngleRotations() * Math.PI * 2;
-        
+        kSTARTING_ANGLE_RAD = Math.toRadians(0);
+
         Logger.recordOutput("Climber/minAngleRad", kMIN_ANGLE_RAD);
         Logger.recordOutput("Climber/maxAngleRad", kMAX_ANGLE_RAD);
 
@@ -62,6 +63,8 @@ public class ClimberIOSim implements ClimberIO {
             config.getKD()
         );
 
+        feedbackController.enableContinuousInput(-Math.PI, Math.PI);
+
         feedforwardController = new ArmFeedforward(
             config.getKS(), 
             config.getKG(), 
@@ -73,27 +76,30 @@ public class ClimberIOSim implements ClimberIO {
                 Units.rotationsToRadians(config.getMotionMagicCruiseVelocityRotationsPerSec()),
                 12 / config.getMotionMagicExpoKA() // divide supply voltage to get max acell
         ));
-        currentProfileSetpoint = new State(climberSim.getAngleRads(), climberSim.getVelocityRadPerSec());
+
+        currentProfileSetpoint = new State(kSTARTING_ANGLE_RAD, 0);
+        previousAngleRad = MathUtil.angleModulus(kSTARTING_ANGLE_RAD);
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         double dt = Timer.getTimestamp() - prevTimeInputs;
+        prevTimeInputs = Timer.getTimestamp();
+
         climberSim.update(dt);
 
         inputs.climberVelocityRadPerSec = climberSim.getVelocityRadPerSec();
-        inputs.climberPosition = new Rotation2d(climberSim.getAngleRads());
-        this.currentPositionRad = inputs.climberPosition.getRadians();
+        inputs.climberPosition = new Rotation2d(MathUtil.angleModulus(climberSim.getAngleRads()));
+        previousAngleRad = inputs.climberPosition.getRadians();
 
         inputs.climberAppliedVolts = appliedVolts;
-
-        prevTimeInputs = Timer.getTimestamp();
     }
 
     @Override
     public void setAngle(Rotation2d angle) {
         double dt = Timer.getTimestamp() - prevTimeState;
-        
+        prevTimeState = Timer.getTimestamp();
+
         currentProfileSetpoint = trapezoidMotionProfile.calculate(
             dt, 
             currentProfileSetpoint,
@@ -102,15 +108,14 @@ public class ClimberIOSim implements ClimberIO {
                 0
             )
         );
+        Logger.recordOutput("Climber/currentProfileSetpoint/position", currentProfileSetpoint.position);
 
         double voltage = 
             feedforwardController.calculate(currentProfileSetpoint.position, currentProfileSetpoint.velocity) +
-            feedbackController.calculate(currentPositionRad, currentProfileSetpoint.position);
+            feedbackController.calculate(previousAngleRad, currentProfileSetpoint.position);
         appliedVolts = voltage;
 
         climberSim.setInputVoltage(voltage);
-
-        prevTimeState = Timer.getTimestamp();
     }
 
     @Override
