@@ -1,5 +1,7 @@
 package frc.robot.commands.autoAlignment;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
@@ -18,5 +20,6 @@ public class AlignToBargeAxisLocked extends SequentialCommandGroup{
             new QueueL4Action(),
             new LockDriveAxis(controller, AlignmentUtil.getBargeAxis(), AlignmentUtil.getClosestBargePose().getRotation())
         );
+        Logger.recordOutput("AlignToBargeAxisLocked", AlignmentUtil.getClosestBargePose());
     }
 }

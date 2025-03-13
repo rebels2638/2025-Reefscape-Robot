@@ -361,8 +361,8 @@ public class AlignmentUtil {
 
     public static Pose2d getClosestBargePose() {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();
-        double rot = curr.getRotation().getDegrees() < 0 ? curr.getRotation().getDegrees() + 360 : curr.getRotation().getDegrees();
-        Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(curr.getTranslation()), new Rotation2d(180-rot < 90 ? 180 : 0));
+        double rot = Math.abs(180-Math.abs(curr.getRotation().getDegrees())) <= 90 ? Math.PI : 0;
+        Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(curr.getTranslation()), new Rotation2d(rot));
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
     }
