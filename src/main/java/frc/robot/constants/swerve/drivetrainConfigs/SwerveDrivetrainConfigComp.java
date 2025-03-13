@@ -91,12 +91,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDConstants getPathplannerDrivePIDConfig() {
-        return new PIDConstants(4,0,1.5 ,0);
+        return new PIDConstants(5,0,0.1 ,0);
     }
 
     @Override
     public PIDConstants getPathplannerSteerPIDConfig() {
-        return new PIDConstants(0,0,0,0);
+        return new PIDConstants(4,0,0.1,0);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(1.9, 0.05, 0);
+        PIDController p = new PIDController(2.5, 1, 0);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -114,7 +114,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(2, 0.02, 0);
+        PIDController p = new PIDController(2, 0.2, 0);
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -123,7 +123,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.02;
+        return 0.015;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignRotationTolerance() {
-        return Math.toRadians(5);
+        return Math.toRadians(3);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     
     @Override
     public double getBumperLengthMeters() {
-        return 0.774;
+        return 0.748;
     }
 
     @Override

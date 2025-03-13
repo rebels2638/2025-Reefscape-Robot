@@ -14,8 +14,8 @@
    "maxTranslationalAcel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"5.4 m / s ^ 2",
-     "val":5.4
+     "exp":"3.5 m / s ^ 2",
+     "val":3.5
     }
    },
    "maxTranslationalVelo":{

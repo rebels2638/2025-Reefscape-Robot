@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
@@ -74,7 +75,7 @@ public class RobotContainer {
     }
 
     private final SwerveDrive swerveDrive;
-    // private final Vision vision;
+    private final Vision vision;
     private final RobotState robotState;
 
     // private final Pivot pivot;
@@ -84,7 +85,7 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Roller roller;
 
-    private final MechanismVisualizer mechanismVisualizer;
+    // private final MechanismVisualizer mechanismVisualizer;
 
     private final AutoRunner autoRunner;
 
@@ -98,7 +99,7 @@ public class RobotContainer {
         this.xboxDriver = new XboxController(3);
 
         swerveDrive = SwerveDrive.getInstance();
-        // vision = Vision.getInstance();
+        vision = Vision.getInstance();
         robotState = RobotState.getInstance();
         // pivot = Pivot.getInstance();
         claw = Claw.getInstance();
@@ -107,15 +108,15 @@ public class RobotContainer {
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
 
-        mechanismVisualizer = MechanismVisualizer.getInstance();
+        // mechanismVisualizer = MechanismVisualizer.getInstance();
         // NamedCommands.registerCommand("Intake", new IntakeCoral());
         autoRunner = AutoRunner.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        // xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScoreTelop(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
-        // xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScoreTelop(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
+        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScoreTelop(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
+        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScoreTelop(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
         // new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemoveTelop(xboxDriver)).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
         // xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
         // xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
@@ -123,12 +124,12 @@ public class RobotContainer {
         // xboxDriver.getLeftBumper().onTrue(new AlignToProcessorAndScore()).toggleOnFalse(new MovePivotStow()); // processor
         // new Trigger(() -> (xboxDriver.getRightBumper().getAsBoolean() && xboxDriver.getLeftBumper().getAsBoolean())).onTrue(); // AutoAlignToTargetCageAndClimb
 
-        // xboxOperator.getAButton().onTrue(new QueueStowAction());
-        // xboxOperator.getBButton().onTrue(new QueueL2Action());
-        // xboxOperator.getYButton().onTrue(new QueueL3Action());
-        // xboxOperator.getXButton().onTrue(new QueueL4Action());
-        // xboxOperator.getRightBumper().onTrue(new IntakeCoral());
-        // xboxOperator.getLeftBumper().onTrue(new StopRoller());
+        xboxOperator.getAButton().onTrue(new QueueStowAction());
+        xboxOperator.getBButton().onTrue(new QueueL2Action());
+        xboxOperator.getYButton().onTrue(new QueueL3Action());
+        xboxOperator.getXButton().onTrue(new QueueL4Action());
+        xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+        xboxOperator.getLeftBumper().onTrue(new StopRoller());
 
         // xboxOperator.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         // xboxOperator.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));

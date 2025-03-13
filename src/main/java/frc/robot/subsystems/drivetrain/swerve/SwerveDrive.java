@@ -313,6 +313,8 @@ public class SwerveDrive extends SubsystemBase {
             MathUtil.clamp(1 - Math.pow(height / 1.42, 3), 0.6, 1)
         );
 
+        Logger.recordOutput("SwerveDrive/translationCoefficient", translationCoefficient);
+        Logger.recordOutput("SwerveDrive/rotationCoefficient", rotationCoefficient);
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {
