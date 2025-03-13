@@ -18,9 +18,9 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"middleStart.x", "val":7.248941898345947}, "y":{"exp":"middleStart.y", "val":4.026000022888184}, "heading":{"exp":"middleStart.heading", "val":3.141592653589793}, "intervals":51, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"5.688724040985107 m", "val":5.688724040985107}, "y":{"exp":"0.2609995901584625 m", "val":0.2609995901584625}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":29, "split":false, "fixTranslation":false, "fixHeading":false, "overrideIntervals":false},
-    {"x":{"exp":"3.2965550422668457 m", "val":3.2965550422668457}, "y":{"exp":"2.786066770553589 m", "val":2.786066770553589}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":16, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"middleStart.x", "val":7.248941898345947}, "y":{"exp":"middleStart.y", "val":4.026000022888184}, "heading":{"exp":"middleStart.heading", "val":3.141592653589793}, "intervals":74, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"5.688724040985107 m", "val":5.688724040985107}, "y":{"exp":"0.2609995901584625 m", "val":0.2609995901584625}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":51, "split":false, "fixTranslation":false, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"3.2965550422668457 m", "val":3.2965550422668457}, "y":{"exp":"2.786066770553589 m", "val":2.786066770553589}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":28, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"bottomRB.x", "val":3.244719982147217}, "y":{"exp":"bottomRB.y", "val":3.8588991165161137}, "heading":{"exp":"bottomRB.heading", "val":0.0}, "intervals":35, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

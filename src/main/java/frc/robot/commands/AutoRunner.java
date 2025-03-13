@@ -98,7 +98,7 @@ public class AutoRunner {
 
         
     public Command getAutonomousCommand() {
-        return Autos.test1;
+        return Autos.start_right_2xL4;
     }
 
     public PathConstraints getPathConstraints() {

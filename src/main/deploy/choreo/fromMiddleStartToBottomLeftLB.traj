@@ -18,9 +18,9 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"middleStart.x", "val":7.248941898345947}, "y":{"exp":"middleStart.y", "val":4.026000022888184}, "heading":{"exp":"middleStart.heading", "val":3.141592653589793}, "intervals":48, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"7.049431324005127 m", "val":7.049431324005127}, "y":{"exp":"7.025511741638184 m", "val":7.025511741638184}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":27, "split":false, "fixTranslation":false, "fixHeading":false, "overrideIntervals":false},
-    {"x":{"exp":"4.528568744659424 m", "val":4.528568744659424}, "y":{"exp":"5.468622207641602 m", "val":5.468622207641602}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":20, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"middleStart.x", "val":7.248941898345947}, "y":{"exp":"middleStart.y", "val":4.026000022888184}, "heading":{"exp":"middleStart.heading", "val":3.141592653589793}, "intervals":67, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"7.049431324005127 m", "val":7.049431324005127}, "y":{"exp":"7.025511741638184 m", "val":7.025511741638184}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":47, "split":false, "fixTranslation":false, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"4.528568744659424 m", "val":4.528568744659424}, "y":{"exp":"5.468622207641602 m", "val":5.468622207641602}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":29, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"bottomLeftLB.x", "val":4.012263298034668}, "y":{"exp":"bottomLeftLB.y", "val":5.183183670043945}, "heading":{"exp":"bottomLeftLB.heading", "val":-1.0471975511965976}, "intervals":44, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
