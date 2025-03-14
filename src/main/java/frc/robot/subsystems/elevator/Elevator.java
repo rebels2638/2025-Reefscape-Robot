@@ -24,16 +24,25 @@ public class Elevator extends SubsystemBase {
         return instance;
     }
 
-    public static enum height {
-        STOW,
-        L1,
-        L2,
-        L3,
-        L4
-    };
+    public enum Height {
+        STOW(0.0),
+        L1(0.1),
+        L2(0.34),
+        L3(0.77),
+        L4(1.42);
     
-    private height currHeightRequest = height.STOW;
-    private List<Double> extensionHeights = Arrays.asList(0.0, 0.1, 0.34, 0.77, 1.42);
+        private final double extensionHeight;
+    
+        Height(double extensionHeight) {
+            this.extensionHeight = extensionHeight;
+        }
+    
+        public double getExtensionHeight() {
+            return extensionHeight;
+        }
+    }
+    
+    private Height currHeightRequest = Height.STOW;
 
     private double setpoint = 0;
     private boolean setpointModifiable = false;
@@ -82,7 +91,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         elevatorIO.updateInputs(elevatorIOInputs);
         Logger.processInputs("Elevator", elevatorIOInputs);
-        setpoint = extensionHeights.get(Arrays.asList(height.values()).indexOf(currHeightRequest));
+        setpoint = currHeightRequest.getExtensionHeight();
 
         if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
 
@@ -97,13 +106,13 @@ public class Elevator extends SubsystemBase {
         );
     }
 
-    public void requestLevel(height level) {
+    public void requestLevel(Height level) {
         if (!setpointModifiable) {
             this.currHeightRequest = level;
         }
     }
 
-    public height getRequestedLevel() {
+    public Height getRequestedLevel() {
         return currHeightRequest;
     }
     
