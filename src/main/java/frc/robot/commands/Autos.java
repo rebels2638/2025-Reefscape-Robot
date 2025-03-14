@@ -36,9 +36,9 @@ import frc.robot.subsystems.roller.Roller;
 public class Autos {
     public static final Command start_right_2xL4 = 
         new SequentialCommandGroup(
-            resetPose("fromProcessorStartToTopRightRB"),
-            cycleCoral("fromProcessorStartToTopRightRB", "fromTopRightRBToRightSourceTop", Height.L4, Branch.RIGHT),
-            cycleCoral("fromRightSourceTopToBottomRightRB", null, Height.L4, Branch.RIGHT)
+            resetPose("PS_TR_RB"),
+            cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L4, Branch.RIGHT),
+            cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
         );
     
     public enum Branch {
