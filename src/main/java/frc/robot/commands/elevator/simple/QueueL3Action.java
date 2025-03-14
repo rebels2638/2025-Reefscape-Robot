@@ -11,7 +11,7 @@ public class QueueL3Action extends Command {
 
     @Override
     public void initialize() {
-        elevator.requestLevel(Elevator.height.L3);
+        elevator.requestLevel(Elevator.Height.L3);
     }
 
     @Override
