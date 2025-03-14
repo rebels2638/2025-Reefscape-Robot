@@ -7,8 +7,8 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.lib.util.AlignmentUtil;
 
-public class WaitUntillAlignAuto extends WaitUntilCommand {
-    public WaitUntillAlignAuto(Translation2d pathEndPose) {
+public class WaitUntilAlignAuto extends WaitUntilCommand {
+    public WaitUntilAlignAuto(Translation2d pathEndPose) {
         super( 
             () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
             pathEndPose) <= 2 &&

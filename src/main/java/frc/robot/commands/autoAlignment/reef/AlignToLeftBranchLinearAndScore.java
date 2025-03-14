@@ -18,8 +18,8 @@ import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
 
-public class AlignToLeftBranchLinearAndScoreTelop extends SequentialCommandGroup {
-    public AlignToLeftBranchLinearAndScoreTelop(XboxController controller) {
+public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
+    public AlignToLeftBranchLinearAndScore(XboxController controller) {
         addCommands(
             new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(AlignmentUtil.getClosestLeftBranchPose().getTranslation())),
             new ParallelDeadlineGroup(
