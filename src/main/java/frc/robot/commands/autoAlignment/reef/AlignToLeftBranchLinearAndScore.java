@@ -14,6 +14,7 @@ import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.commands.roller.EjectCoral;
+import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.roller.Roller;
@@ -28,7 +29,8 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                     RobotState.getInstance().getEstimatedPose().getTranslation()) <= 5 &&
                     Roller.getInstance().inRoller()
                 ),
-                new AbsoluteFieldDrive(controller)
+                new AbsoluteFieldDrive(controller),
+                new IntakeCoral()
             ),
             new SequentialCommandGroup(
                 new ParallelCommandGroup(
