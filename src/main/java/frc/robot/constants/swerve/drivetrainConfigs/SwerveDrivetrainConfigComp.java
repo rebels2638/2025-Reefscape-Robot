@@ -106,7 +106,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(2.5, 1, 0);
+        PIDController p = new PIDController(2.5, 1.5, 0);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -114,7 +114,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(2, 0.2, 0);
+        PIDController p = new PIDController(2, 0.35, 0);
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -143,7 +143,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     
     @Override
     public double getBumperLengthMeters() {
-        return 0.748;
+        return 0.79;
     }
 
     @Override
@@ -168,7 +168,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getMaxAlignmentTranslationalAcelMetersPerSecPerSec() {
-        return 2;
+        return 3;
     }
 
     @Override

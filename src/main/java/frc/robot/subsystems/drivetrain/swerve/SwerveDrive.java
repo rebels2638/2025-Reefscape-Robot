@@ -315,6 +315,7 @@ public class SwerveDrive extends SubsystemBase {
 
         Logger.recordOutput("SwerveDrive/translationCoefficient", translationCoefficient);
         Logger.recordOutput("SwerveDrive/rotationCoefficient", rotationCoefficient);
+        Logger.recordOutput("SwerveDrive/CurrentCommand", this.getCurrentCommand() == null ? "" : this.getCurrentCommand().toString());
     }
 
     private ChassisSpeeds compensateRobotRelativeSpeeds(ChassisSpeeds speeds) {

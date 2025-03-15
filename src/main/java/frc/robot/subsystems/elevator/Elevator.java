@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public enum Height {
-        STOW(0.0),
+        STOW(0.01),
         L1(0.1),
         L2(0.34),
         L3(0.77),
@@ -104,6 +104,7 @@ public class Elevator extends SubsystemBase {
                 )
             )
         );
+        Logger.recordOutput("Elevator/CurrentCommand", this.getCurrentCommand() == null ? "" : this.getCurrentCommand().toString());
     }
 
     public void requestLevel(Height level) {

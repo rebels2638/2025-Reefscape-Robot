@@ -76,7 +76,7 @@ public class RobotContainer {
     private final Vision vision;
     private final RobotState robotState;
 
-    // private final Pivot pivot;
+    private final Pivot pivot;
     private final Claw claw;
     private final Climber climber;
 
@@ -99,7 +99,7 @@ public class RobotContainer {
         swerveDrive = SwerveDrive.getInstance();
         vision = Vision.getInstance();
         robotState = RobotState.getInstance();
-        // pivot = Pivot.getInstance();
+        pivot = Pivot.getInstance();
         claw = Claw.getInstance();
         climber = Climber.getInstance();
 

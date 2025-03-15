@@ -1,10 +1,12 @@
 package frc.robot.commands.autoAlignment.reef;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
@@ -17,6 +19,8 @@ import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.roller.Roller;
 
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
@@ -44,6 +48,11 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                         () -> new ChassisSpeeds(),
                         5
                     )
+                ),
+                new ConditionalCommand(
+                    new WaitCommand(0.7),
+                    new InstantCommand(),
+                    () -> Elevator.getInstance().getRequestedLevel() == Height.L4
                 ),
                 new EjectCoral(),
                 new QueueStowAction(),
