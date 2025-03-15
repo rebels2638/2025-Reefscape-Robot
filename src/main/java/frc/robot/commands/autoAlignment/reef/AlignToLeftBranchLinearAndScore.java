@@ -36,28 +36,26 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                 new AbsoluteFieldDrive(controller),
                 new IntakeCoral()
             ),
-            new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                    new SequentialCommandGroup(
-                        new isElevatorExtendable(),
-                        new WaitForNonStowState(),
-                        new DequeueElevatorAction()
-                    ),
-                    new LinearAlign(
-                        () -> AlignmentUtil.getClosestLeftBranchPose(),
-                        () -> new ChassisSpeeds(),
-                        5
-                    )
+            new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                    new isElevatorExtendable(),
+                    new WaitForNonStowState(),
+                    new DequeueElevatorAction()
                 ),
-                new ConditionalCommand(
-                    new WaitCommand(0.7),
-                    new InstantCommand(),
-                    () -> Elevator.getInstance().getRequestedLevel() == Height.L4
-                ),
-                new EjectCoral(),
-                new QueueStowAction(),
-                new DequeueElevatorAction()
+                new LinearAlign(
+                    () -> AlignmentUtil.getClosestLeftBranchPose(),
+                    () -> new ChassisSpeeds(),
+                    5
+                )
             ),
+            new ConditionalCommand(
+                new WaitCommand(0.7),
+                new InstantCommand(),
+                () -> Elevator.getInstance().getRequestedLevel() == Height.L4
+            ),
+            new EjectCoral(),
+            new QueueStowAction(),
+            new DequeueElevatorAction(),
             new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
         );
     }
