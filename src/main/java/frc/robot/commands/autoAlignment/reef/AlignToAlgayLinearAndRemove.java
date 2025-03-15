@@ -1,8 +1,6 @@
 package frc.robot.commands.autoAlignment.reef;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -11,7 +9,7 @@ import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearAlign;
-import frc.robot.commands.claw.simple.HoldAlgayClaw;
+import frc.robot.commands.claw.simple.InClaw;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
@@ -48,12 +46,14 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     5
                 )
             ),
-            new LinearAlign(
-                () -> AlignmentUtil.getClosestAlgayPose(),
-                () -> new ChassisSpeeds(),
-                5
-            ),
-            new HoldAlgayClaw(),
+            new ParallelDeadlineGroup(
+                new InClaw(),
+                new LinearAlign(
+                    () -> AlignmentUtil.getClosestAlgayPose(),
+                    () -> new ChassisSpeeds(),
+                    5
+                )
+            ), 
             new ParallelCommandGroup(
                 new LinearAlign(
                     () -> AlignmentUtil.getClosestAlgayRecessedPose(),

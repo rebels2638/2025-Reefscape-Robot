@@ -1,5 +1,7 @@
 package frc.robot.constants.claw;
 
+import com.ctre.phoenix6.signals.UpdateModeValue;
+
 public class ClawConfigComp extends ClawConfigBase {
     private static ClawConfigComp instance;
     public static ClawConfigComp getInstance() {
@@ -14,7 +16,12 @@ public class ClawConfigComp extends ClawConfigBase {
     
     // CANID
     @Override
-    public int getCanID() {
+    public int getMotorCanID() {
+        return 18;
+    }
+
+    @Override
+    public int getCanRangeCanID() {
         return 18;
     }
 
@@ -58,32 +65,53 @@ public class ClawConfigComp extends ClawConfigBase {
     }
 
     @Override
-    public double getHighPassFilterTimeConstant() {
-        return 0.1;
-    }
-
-    @Override
-    public double getHighPassFilterUpperTrip() {
-        return 10;
-    }
-
-    @Override
-    public double getHighPassFilterLowerTrip() {
-        return 10;
-    }
-
-    @Override
-    public boolean getIsMotorInverted() {
+    public boolean isInverted() {
         return false;
     }
-    
+
+    // CANrange configuration fields
     @Override
-    public double getMinInClawCurrentActivation() {
-        return 5;
+    public double getFOVCenterX() {
+        return 0;
     }
 
     @Override
-    public double getMaxInClawVeloRadSecActivation() {
-        return 0.1;
+    public double getFOVCenterY() {
+        return 0;
+    }
+
+    @Override
+    public double getFOVRangeX() {
+        return 6.75;
+    }
+
+    @Override
+    public double getFOVRangeY() {
+        return 6.75;
+    }
+
+    @Override
+    public double getMinSignalStrengthForValidMeasurement() {
+        return 2000;
+    }
+
+    @Override
+    public double getProximityHysteresis() {
+        return 0.01;
+    }
+
+    @Override
+    public double getProximityThreshold() {
+        return 0.10;
+    }
+
+    @Override
+    public double getToFUpdateFrequency() {
+        return 50;
+    }
+
+    @Override
+    public UpdateModeValue getToFUpdateMode() {
+        return UpdateModeValue.ShortRange100Hz;
     }
 }

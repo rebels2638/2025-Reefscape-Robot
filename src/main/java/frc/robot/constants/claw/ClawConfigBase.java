@@ -1,9 +1,12 @@
 package frc.robot.constants.claw;
 
+import com.ctre.phoenix6.signals.UpdateModeValue;
+
 public abstract class ClawConfigBase {
     // CAN ID
-    public abstract int getCanID();
-
+    public abstract int getMotorCanID();
+    public abstract int getCanRangeCanID();
+    
     // Supply current limits
     public abstract double getSupplyCurrentLimit();
     public abstract double getSupplyCurrentLimitLowerTime();
@@ -18,16 +21,19 @@ public abstract class ClawConfigBase {
 
     // Neutral mode
     public abstract boolean isNeutralModeBrake();
+    public abstract boolean isInverted();
 
-    // filtering
-    public abstract double getHighPassFilterTimeConstant();
-    public abstract double getHighPassFilterUpperTrip();
-    public abstract double getHighPassFilterLowerTrip();
+    // CANrange configuration fields
+    public abstract double getFOVCenterX();
+    public abstract double getFOVCenterY();
+    public abstract double getFOVRangeX();
+    public abstract double getFOVRangeY();
 
-    public abstract boolean getIsMotorInverted();
+    public abstract double getMinSignalStrengthForValidMeasurement();
+    public abstract double getProximityHysteresis();
+    public abstract double getProximityThreshold();
 
-    public abstract double getMinInClawCurrentActivation();
-    public abstract double getMaxInClawVeloRadSecActivation();
-
+    public abstract double getToFUpdateFrequency();
+    public abstract UpdateModeValue getToFUpdateMode();
 
 }

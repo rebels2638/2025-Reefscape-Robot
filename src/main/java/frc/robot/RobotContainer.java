@@ -45,6 +45,7 @@ import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
 import frc.robot.commands.claw.simple.BargeScoringManualShot;
 import frc.robot.commands.claw.simple.DecideBargeScoringFlick;
+import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.claw.simple.RunClawEject;
 import frc.robot.commands.elevator.CancelScoreCoral;
 import frc.robot.commands.elevator.RunElevatorRaw;
@@ -120,6 +121,8 @@ public class RobotContainer {
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
+        claw.setDefaultCommand(new HoldAlgayClaw());
+
         new Trigger(
             () -> (
                 leftAlignDebouncer.calculate(
@@ -160,7 +163,6 @@ public class RobotContainer {
         xboxOperator.getYButton().onTrue(new QueueL3Action());
         xboxOperator.getXButton().onTrue(new QueueL4Action());
         xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-        xboxOperator.getLeftBumper().onTrue(new StopRoller());
 
         // xboxOperator.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         // xboxOperator.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));

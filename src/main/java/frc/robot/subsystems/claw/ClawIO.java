@@ -11,7 +11,8 @@ public interface ClawIO {
         public double clawAppliedVolts = 0;
         public double clawTemperatureFahrenheit = 0;
 
-        public boolean motorConnected = true;
+        public boolean isMotorConnected = true;
+        public boolean isCanRangeConnected = true;
         public boolean inClaw = false;
     }
 

@@ -1,5 +1,7 @@
 package frc.robot.constants.claw;
 
+import com.ctre.phoenix6.signals.UpdateModeValue;
+
 public class ClawConfigSim extends ClawConfigBase {
     private static ClawConfigSim instance;
     public static ClawConfigSim getInstance() {
@@ -14,8 +16,13 @@ public class ClawConfigSim extends ClawConfigBase {
 
     // CANID
     @Override
-    public int getCanID() {
+    public int getMotorCanID() {
         return 1;
+    }
+
+    @Override
+    public int getCanRangeCanID() {
+        return 18;
     }
 
     // Supply current limits
@@ -58,32 +65,53 @@ public class ClawConfigSim extends ClawConfigBase {
     }
 
     @Override
-    public double getHighPassFilterTimeConstant() {
-        return 0.1;
+    public boolean isInverted() {
+        return false;
+    }
+
+    // CANrange configuration fields
+    @Override
+    public double getFOVCenterX() {
+        return 0;
     }
 
     @Override
-    public double getHighPassFilterUpperTrip() {
-        return 10;
+    public double getFOVCenterY() {
+        return 0;
     }
 
     @Override
-    public double getHighPassFilterLowerTrip() {
-        return 10;
+    public double getFOVRangeX() {
+        return 6.75;
     }
 
     @Override
-    public boolean getIsMotorInverted() {
-        return true;
-    }
-    
-    @Override
-    public double getMinInClawCurrentActivation() {
-        return 5;
+    public double getFOVRangeY() {
+        return 6.75;
     }
 
     @Override
-    public double getMaxInClawVeloRadSecActivation() {
-        return 0.1;
+    public double getMinSignalStrengthForValidMeasurement() {
+        return 2000;
+    }
+
+    @Override
+    public double getProximityHysteresis() {
+        return 0.01;
+    }
+
+    @Override
+    public double getProximityThreshold() {
+        return 0.10;
+    }
+
+    @Override
+    public double getToFUpdateFrequency() {
+        return 50;
+    }
+
+    @Override
+    public UpdateModeValue getToFUpdateMode() {
+        return UpdateModeValue.ShortRange100Hz;
     }
 }
