@@ -118,7 +118,7 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public boolean isInverted() {
-        return true;
+        return false;
     }
 
 
@@ -130,16 +130,16 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getMaxAngleRotations() {
-        return 132.0/360.0;
+        return 125.0/360.0;
     }
 
     @Override 
     public double getMinAngleRotations() {
-        return -62.0/360.0;
+        return -46.00/360.0;
     }
 
     @Override 
     public double getStartingAngleRotations() {
-        return 132.0/360.0;
+        return getMaxAngleRotations();
     } 
 }

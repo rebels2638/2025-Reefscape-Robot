@@ -66,7 +66,7 @@ public class RollerConfigComp extends RollerConfigBase {
 
     @Override
     public boolean isInverted() {
-        return true;
+        return false;
     }
     
     // CANrange configuration fields

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
@@ -19,6 +20,8 @@ import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.roller.Roller;
 
 public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
@@ -34,23 +37,26 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                 new AbsoluteFieldDrive(controller),
                 new IntakeCoral()
             ),
-            new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                    new SequentialCommandGroup(
-                        new isElevatorExtendable(),
-                        new WaitForNonStowState(),
-                        new DequeueElevatorAction()
-                    ),
-                    new LinearAlign(
-                        () -> AlignmentUtil.getClosestRightBranchPose(),
-                        () -> new ChassisSpeeds(),
-                        5
-                    )
+            new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                    new isElevatorExtendable(),
+                    new WaitForNonStowState(),
+                    new DequeueElevatorAction()
                 ),
-                new EjectCoral(),
-                new QueueStowAction(),
-                new DequeueElevatorAction()
+                new LinearAlign(
+                    () -> AlignmentUtil.getClosestRightBranchPose(),
+                    () -> new ChassisSpeeds(),
+                    5
+                )
             ),
+            new ConditionalCommand(
+                new WaitCommand(0.7),
+                new InstantCommand(),
+                () -> Elevator.getInstance().getRequestedLevel() == Height.L4
+            ),
+            new EjectCoral(),
+            new QueueStowAction(),
+            new DequeueElevatorAction(),
             new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
         );
     }
