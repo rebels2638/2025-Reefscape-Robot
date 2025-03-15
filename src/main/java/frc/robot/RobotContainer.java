@@ -34,6 +34,7 @@ import frc.robot.commands.autoAlignment.*;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
+import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
@@ -43,7 +44,6 @@ import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
 import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
-import frc.robot.commands.claw.simple.BargeScoringManualShot;
 import frc.robot.commands.claw.simple.DecideBargeScoringFlick;
 import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.claw.simple.RunClawEject;
@@ -108,20 +108,14 @@ public class RobotContainer {
         pivot = Pivot.getInstance();
         claw = Claw.getInstance();
         climber = Climber.getInstance();
-
         roller = Roller.getInstance();
         elevator = Elevator.getInstance();
-
         mechanismVisualizer = MechanismVisualizer.getInstance();
-
         autoRunner = AutoRunner.getInstance();
 
         Pneumatics.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
-        xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
-
-        claw.setDefaultCommand(new HoldAlgayClaw());
 
         new Trigger(
             () -> (
@@ -130,7 +124,6 @@ public class RobotContainer {
                 )
             )
         ).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).onFalse(new CancelScoreCoral());
-        
 
         new Trigger(
             () -> (
@@ -144,19 +137,35 @@ public class RobotContainer {
             () -> (
                 xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && 
                 xboxDriver.getLeftTriggerButton(0.94).getAsBoolean()
-            )).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
+            )
+        ).whileTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
 
-        // xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
-        // xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
-        // xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
-        // xboxDriver.getLeftBumper().onTrue(new AlignToProcessorAndScore()).toggleOnFalse(new MovePivotStow()); // processor
-        // new Trigger(() -> (xboxDriver.getRightBumper().getAsBoolean() && xboxDriver.getLeftBumper().getAsBoolean())).onTrue(); // AutoAlignToTargetCageAndClimb
+        // new Trigger(
+        //     () -> (
+        //         xboxDriver.getRightBumper().getAsBoolean()
+        //     )
+        // ).whileTrue(new InstantCommand()); // climb
 
-        xboxTester.getBButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushFunnel()));
-        xboxTester.getAButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullFunnel()));
+        // new Trigger(
+        //     () -> (
+        //         xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
+        //     )
+        // ).whileTrue(new AlignToClosestBargePoint(xboxDriver)).onFalse(new DecideBargeScoringFlick());
+        
+        // new Trigger(
+        //     () -> (
+        //         xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
+        //     )
+        // ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
 
-        xboxTester.getXButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushRatchet()));
-        xboxTester.getYButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullRatchet()));
+        // new Trigger(
+        //     () -> (
+        //         xboxDriver.getBButton().getAsBoolean() &&
+        //         xboxDriver.getYButton().getAsBoolean()
+        //     )
+        // ).whileTrue(new InstantCommand()); // Processor
+
+        xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
         xboxOperator.getAButton().onTrue(new QueueStowAction());
         xboxOperator.getBButton().onTrue(new QueueL2Action());
@@ -164,11 +173,10 @@ public class RobotContainer {
         xboxOperator.getXButton().onTrue(new QueueL4Action());
         xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-        // xboxOperator.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
-        // xboxOperator.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
-        // xboxOperator.getYButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));
-        // xboxOperator.getXButton().onTrue(new QueueL4Action().andThen(new DequeueElevatorAction()));
-        // xboxOperator.getLeftBumper().onTrue(new MovePivotAlgay());
+        // xboxTester.getBButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushFunnel()));
+        // xboxTester.getAButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullFunnel()));
+        // xboxTester.getXButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushRatchet()));
+        // xboxTester.getYButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullRatchet()));
 
     }
 

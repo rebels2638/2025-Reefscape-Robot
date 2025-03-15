@@ -49,7 +49,7 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                 )
             ),
             new ConditionalCommand(
-                new WaitCommand(0.7),
+                new WaitCommand(0.5),
                 new InstantCommand(),
                 () -> Elevator.getInstance().getRequestedLevel() == Height.L4
             ),

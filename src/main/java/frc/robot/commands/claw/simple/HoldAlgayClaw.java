@@ -7,6 +7,7 @@ public class HoldAlgayClaw extends Command{
     private final Claw claw;
     public HoldAlgayClaw() {
         claw = Claw.getInstance();
+        addRequirements(claw);
     }
 
     @Override

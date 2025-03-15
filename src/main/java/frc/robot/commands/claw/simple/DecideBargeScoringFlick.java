@@ -17,9 +17,6 @@ public class DecideBargeScoringFlick extends ConditionalCommand {
     public DecideBargeScoringFlick() {
         super(
             new SequentialCommandGroup(
-                // new WaitUntilCommand(
-                //     () -> Claw.getInstance().inClaw()
-                // ),
                 new MovePivotStow(),
                 new DequeueElevatorAction(),
                 new MovePivotAlgay(),
@@ -29,9 +26,6 @@ public class DecideBargeScoringFlick extends ConditionalCommand {
                 new DequeueElevatorAction()
             ), 
             new SequentialCommandGroup(
-                // new WaitUntilCommand(
-                //     () -> Claw.getInstance().inClaw()
-                // ),
                 new MovePivotMidwayAlgay(),
                 new DequeueElevatorAction(),
                 new MovePivotStow(),
@@ -39,7 +33,7 @@ public class DecideBargeScoringFlick extends ConditionalCommand {
                 new QueueStowAction(),
                 new DequeueElevatorAction()
             ), 
-            () -> MathUtil.isNear(0, RobotState.getInstance().getEstimatedPose().getRotation().getDegrees(), 3)
+            () -> MathUtil.isNear(0, RobotState.getInstance().getEstimatedPose().getRotation().getDegrees(), 3) //&& Claw.getInstance().inClaw()
         ); 
     }
 }

@@ -22,7 +22,7 @@ public class ClawConfigComp extends ClawConfigBase {
 
     @Override
     public int getCanRangeCanID() {
-        return 18;
+        return 21;
     }
 
     // Supply current limits

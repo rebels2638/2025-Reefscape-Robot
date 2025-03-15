@@ -10,6 +10,7 @@ import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearAlign;
 import frc.robot.commands.claw.simple.InClaw;
+import frc.robot.commands.claw.simple.RunClawHold;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
@@ -54,6 +55,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     5
                 )
             ), 
+            new RunClawHold(),
             new ParallelCommandGroup(
                 new LinearAlign(
                     () -> AlignmentUtil.getClosestAlgayRecessedPose(),
