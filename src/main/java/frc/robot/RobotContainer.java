@@ -27,6 +27,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pneumatics.Pneumatics;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.*;
@@ -114,6 +115,8 @@ public class RobotContainer {
 
         autoRunner = AutoRunner.getInstance();
 
+        Pneumatics.getInstance();
+
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
@@ -145,6 +148,12 @@ public class RobotContainer {
         // xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
         // xboxDriver.getLeftBumper().onTrue(new AlignToProcessorAndScore()).toggleOnFalse(new MovePivotStow()); // processor
         // new Trigger(() -> (xboxDriver.getRightBumper().getAsBoolean() && xboxDriver.getLeftBumper().getAsBoolean())).onTrue(); // AutoAlignToTargetCageAndClimb
+
+        xboxTester.getBButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushFunnel()));
+        xboxTester.getAButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullFunnel()));
+
+        xboxTester.getXButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushRatchet()));
+        xboxTester.getYButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullRatchet()));
 
         xboxOperator.getAButton().onTrue(new QueueStowAction());
         xboxOperator.getBButton().onTrue(new QueueL2Action());
