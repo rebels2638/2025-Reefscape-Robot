@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -91,6 +92,9 @@ public class RobotContainer {
     private final XboxController xboxDriver;
     private final XboxController xboxOperator;
 
+    private final Debouncer leftAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
+    private final Debouncer rightAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
+
     private RobotContainer() {
         this.xboxTester = new XboxController(1);
         this.xboxOperator = new XboxController(2);
@@ -113,9 +117,29 @@ public class RobotContainer {
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
-        xboxDriver.getLeftTriggerButton(0.94).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreLeft
-        xboxDriver.getRightTriggerButton(0.94).whileTrue(new AlignToRightBranchLinearAndScore(xboxDriver)).toggleOnFalse(new CancelScoreCoral()); // ScoreRight
-        new Trigger(() -> (xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && xboxDriver.getLeftTriggerButton(0.94).getAsBoolean())).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).toggleOnFalse(new CancelScoreAlgay()); // DescoreAlgay
+        new Trigger(
+            () -> (
+                leftAlignDebouncer.calculate(
+                    xboxDriver.getLeftTriggerButton(0.94).getAsBoolean() && !xboxDriver.getRightTriggerButton(0.94).getAsBoolean()
+                )
+            )
+        ).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).onFalse(new CancelScoreCoral());
+        
+
+        new Trigger(
+            () -> (
+                rightAlignDebouncer.calculate(
+                    xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && !xboxDriver.getLeftTriggerButton(0.94).getAsBoolean()
+                )
+            )
+        ).whileTrue(new AlignToRightBranchLinearAndScore(xboxDriver)).onFalse(new CancelScoreCoral());
+
+        new Trigger(
+            () -> (
+                xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && 
+                xboxDriver.getLeftTriggerButton(0.94).getAsBoolean()
+            )).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
+
         // xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
         // xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
         // xboxDriver.getRightBumper().whileTrue(new AlignToClosestSourceLinearAndIntake()).toggleOnFalse(new StopRoller());
@@ -126,7 +150,7 @@ public class RobotContainer {
         xboxOperator.getBButton().onTrue(new QueueL2Action());
         xboxOperator.getYButton().onTrue(new QueueL3Action());
         xboxOperator.getXButton().onTrue(new QueueL4Action());
-        xboxOperator.getRightBumper().onTrue(new IntakeCoral());
+        xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
         xboxOperator.getLeftBumper().onTrue(new StopRoller());
 
         // xboxOperator.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));

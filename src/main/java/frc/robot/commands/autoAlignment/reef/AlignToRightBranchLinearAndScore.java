@@ -34,8 +34,7 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                     RobotState.getInstance().getEstimatedPose().getTranslation()) <= 5 &&
                     Roller.getInstance().inRoller()
                 ),
-                new AbsoluteFieldDrive(controller),
-                new IntakeCoral()
+                new AbsoluteFieldDrive(controller)
             ),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
