@@ -64,4 +64,8 @@ public class Pneumatics extends SubsystemBase {
     public void pushRatchet() {
         pneumaticsIO.pushRatchet();
     }
+
+    public boolean getRatchetState() {
+        return pneumaticsIOInputs.isRatchetPulled;
+    }
 }
