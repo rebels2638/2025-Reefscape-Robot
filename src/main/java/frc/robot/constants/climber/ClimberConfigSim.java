@@ -79,38 +79,43 @@ public class ClimberConfigSim extends ClimberConfigBase {
 
     @Override
     public double getKD() {
-        return 0.0;
+        return 1;
     }
 
     @Override
     public double getKG() {
-        return 0; 
+        return 0.85; 
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 11;
+        return 1f;
     }
 
     @Override
     public double getMotionMagicExpoKV() {
-        return 10.0;
+        return 1;
     }
 
     @Override
     public double getMotionMagicCruiseVelocityRotationsPerSec() {
-        return 0.75;
+        return 1;
     }
 
     @Override
     public double getToleranceDegrees() {
-        return 1.0;
+        return 1;
     }
 
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
+        return true;
+    }
+
+    @Override
+    public boolean isInverted() {
         return true;
     }
 
@@ -129,4 +134,9 @@ public class ClimberConfigSim extends ClimberConfigBase {
     public double getMinAngleRotations() {
         return -0.25;
     }
+
+    @Override 
+    public double getStartingAngleRotations() {
+        return -1;
+    } 
 }

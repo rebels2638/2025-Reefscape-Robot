@@ -43,8 +43,8 @@ public class ClimberIOSim implements ClimberIO {
         kMAX_ANGLE_RAD = config.getMaxAngleRotations() * Math.PI * 2;
         kSTARTING_ANGLE_RAD = Math.toRadians(0);
 
-        Logger.recordOutput("Climber/minAngleRad", kMIN_ANGLE_RAD);
-        Logger.recordOutput("Climber/maxAngleRad", kMAX_ANGLE_RAD);
+        Logger.recordOutput("climber/minAngleRad", kMIN_ANGLE_RAD);
+        Logger.recordOutput("climber/maxAngleRad", kMAX_ANGLE_RAD);
 
         climberSim = new SingleJointedArmSim(
             climberGearBox,
@@ -108,7 +108,7 @@ public class ClimberIOSim implements ClimberIO {
                 0
             )
         );
-        Logger.recordOutput("Climber/currentProfileSetpoint/position", currentProfileSetpoint.position);
+        Logger.recordOutput("climber/currentProfileSetpoint/position", currentProfileSetpoint.position);
 
         double voltage = 
             feedforwardController.calculate(currentProfileSetpoint.position, currentProfileSetpoint.velocity) +
@@ -122,5 +122,6 @@ public class ClimberIOSim implements ClimberIO {
     public void setTorqueCurrentFOC(double voltage) {
         appliedVolts = voltage;
         climberSim.setInputVoltage(voltage);
+
     }
 }

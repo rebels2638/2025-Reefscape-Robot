@@ -31,9 +31,11 @@ public abstract class ClimberConfigBase {
     public abstract double getMotionMagicCruiseVelocityRotationsPerSec();
 
     public abstract double getToleranceDegrees();
-
+    
     // Neutral mode
     public abstract boolean isNeutralModeBrake();
+    public abstract boolean isInverted();
+
 
     // Gear ratio
     public abstract double getMotorToOutputShaftRatio();
@@ -41,4 +43,5 @@ public abstract class ClimberConfigBase {
     // limits
     public abstract double getMaxAngleRotations();
     public abstract double getMinAngleRotations();
+    public abstract double getStartingAngleRotations();
 }

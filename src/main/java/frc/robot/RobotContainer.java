@@ -38,10 +38,6 @@ import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.commands.climber.simple.MoveClimberStow;
 import frc.robot.commands.climber.simple.MoveDeepCage;
-import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
-import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
-import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
-import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
 import frc.robot.commands.claw.simple.BargeScoringManualShot;
 import frc.robot.commands.claw.simple.DecideBargeScoringFlick;
 import frc.robot.commands.claw.simple.RunClawEject;
@@ -59,6 +55,7 @@ import frc.robot.commands.pivot.simple.MovePivotAlgay;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.roller.*;
 import frc.robot.commands.roller.simple.*;
+import frc.robot.commands.complex.FloorEjectAlgay;
 
 import frc.robot.constants.Constants.AlignmentConstants;
 
@@ -124,7 +121,6 @@ public class RobotContainer {
                 )
             )
         ).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).onFalse(new CancelScoreCoral());
-        
 
         new Trigger(
             () -> (
@@ -138,7 +134,8 @@ public class RobotContainer {
             () -> (
                 xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && 
                 xboxDriver.getLeftTriggerButton(0.94).getAsBoolean()
-            )).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
+            )
+        ).onTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
 
         // xboxDriver.getBButton().whileTrue(new AlignToBargeAxisLocked(xboxDriver)).toggleOnFalse(new DecideBargeScoringFlick()); // BargeAxisLockAndScoreOnRelease
         // xboxDriver.getYButton().onTrue(new BargeScoringManualShot()).toggleOnFalse(new CancelScoreAlgay());
@@ -152,7 +149,9 @@ public class RobotContainer {
         xboxOperator.getXButton().onTrue(new QueueL4Action());
         xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
         xboxOperator.getLeftBumper().onTrue(new StopRoller());
+        xboxOperator.getRightTriggerButton(0.94).onTrue(new FloorEjectAlgay()).onFalse(new CancelScoreAlgay());
 
+    
         // xboxOperator.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         // xboxOperator.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
         // xboxOperator.getYButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));
