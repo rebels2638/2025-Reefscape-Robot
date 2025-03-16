@@ -1,10 +1,11 @@
-package frc.robot.commands.claw.simple;
+package frc.robot.commands.claw;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.claw.simple.RunClawEject;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;

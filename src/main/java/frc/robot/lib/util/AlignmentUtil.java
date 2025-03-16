@@ -138,6 +138,7 @@ public class AlignmentUtil {
     private static List<Pose2d> rightBranchCandidates = new ArrayList<>();
     private static List<Pose2d> algayCandidates = new ArrayList<>();
     private static List<Pose2d> sourceCandidates = new ArrayList<>();
+    private static List<Pose2d> cageCandidates = new ArrayList<>();
 
     private static Axis rightSourceAxis = new Axis(0.0, 0.0);
     private static Axis leftSourceAxis = new Axis(0.0, 0.0);
@@ -175,11 +176,6 @@ public class AlignmentUtil {
     }
 
     public static void loadCandidates() { // this has to be called on telop / auto init in order to ensure ds is connected
-        leftBranchCandidates = new ArrayList<>();
-        rightBranchCandidates = new ArrayList<>();
-        algayCandidates = new ArrayList<>();
-        sourceCandidates = new ArrayList<>();
-
         if (Constants.shouldFlipPath()) {
             for (int i = 0; i < 6; i++) {
                 leftBranchCandidates.add(FlippingUtil
@@ -216,6 +212,18 @@ public class AlignmentUtil {
                 );
             }
 
+            for (int i = 3; i < 6; i++) {
+                cageCandidates.add(
+                    AlignmentConstants.kCAGE_CENTERS[i].transformBy(
+                        new Transform2d(
+                            -bumperOffset,
+                            0,
+                            new Rotation2d(0)
+                        )
+                    )
+                );
+            }
+
             rightSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false));
             leftSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true));
             bargeAxis = flipAxis(offsetAxis(AlignmentConstants.kBARGE_AXIS, false)); // TODO: correctness?
@@ -243,6 +251,18 @@ public class AlignmentUtil {
             for (Pose2d element : AlignmentConstants.kSOURCE_CENTER_FACES) {
                 sourceCandidates.add(
                     element.transformBy(
+                        new Transform2d(
+                            bumperOffset,
+                            0,
+                            new Rotation2d(0)
+                        )
+                    )
+                );
+            }
+
+            for (int i = 0; i < 3; i++) {
+                cageCandidates.add(
+                    AlignmentConstants.kCAGE_CENTERS[i].transformBy(
                         new Transform2d(
                             bumperOffset,
                             0,
@@ -381,6 +401,17 @@ public class AlignmentUtil {
 
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
+    }
+
+    public static Pose2d getClosestCagePose() {
+        Pose2d current = RobotState.getInstance().getEstimatedPose();
+        Pose2d nearest = current.nearest(cageCandidates);
+        Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
+        return nearest;
+    }
+
+    public static Pose2d getClosestCagePoseRecessed() {
+        return offsetPoseToPreAlignment(getClosestCagePose(), config.getAlgayRecessPoseOffset());
     }
 
     public static Axis flipAxis(Axis axis) {

@@ -11,6 +11,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.lib.util.AlignmentUtil.Axis;
 
@@ -208,6 +209,16 @@ public final class Constants {
                 7.126,
                 Rotation2d.fromDegrees(-54)
             );
+        }
+
+        public static final Pose2d[] kCAGE_CENTERS = new Pose2d[6];
+        static {
+            kCAGE_CENTERS[0] = new Pose2d(8.774, 7.284, new Rotation2d(0));
+            kCAGE_CENTERS[1] = new Pose2d(8.774, 6.169, new Rotation2d(0));
+            kCAGE_CENTERS[2] = new Pose2d(8.774, 5.079, new Rotation2d(0));
+            kCAGE_CENTERS[3] = new Pose2d(8.774, 3.000, new Rotation2d(0));
+            kCAGE_CENTERS[4] = new Pose2d(8.774, 1.885, new Rotation2d(0));
+            kCAGE_CENTERS[5] = new Pose2d(8.774, 0.770, new Rotation2d(0));
         }
 
         public static final Axis kBARGE_AXIS = 

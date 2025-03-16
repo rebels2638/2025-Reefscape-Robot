@@ -1,4 +1,4 @@
-package frc.robot.commands.autoAlignment;
+package frc.robot.commands.autoAlignment.barge;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
+import frc.robot.commands.autoAlignment.LinearAlign;
 import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;

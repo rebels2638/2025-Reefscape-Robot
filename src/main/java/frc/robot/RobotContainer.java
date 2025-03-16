@@ -1,8 +1,6 @@
 
 package frc.robot;
 
-import java.util.jar.Attributes.Name;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -30,36 +28,20 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pneumatics.Pneumatics;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.commands.autoAlignment.*;
+import frc.robot.commands.autoAlignment.barge.AlignToCageAndClimb;
+import frc.robot.commands.autoAlignment.barge.AlignToClosestBargePoint;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
-import frc.robot.commands.autoAlignment.source.AlignToClosestSourcePathfind;
-import frc.robot.commands.claw.simple.RunClawIntake;
-import frc.robot.commands.claw.simple.StopClaw;
-import frc.robot.commands.climber.simple.MoveClimberStow;
-import frc.robot.commands.climber.simple.MoveDeepCage;
-import frc.robot.commands.complex.superstructure.ScoreL1Superstructure;
-import frc.robot.commands.complex.superstructure.ScoreL2Superstructure;
-import frc.robot.commands.complex.superstructure.ScoreL3Superstructure;
-import frc.robot.commands.complex.superstructure.ScoreL4Superstructure;
-import frc.robot.commands.claw.simple.DecideBargeScoringFlick;
-import frc.robot.commands.claw.simple.HoldAlgayClaw;
-import frc.robot.commands.claw.simple.RunClawEject;
+import frc.robot.commands.claw.DecideBargeScoringFlick;
+import frc.robot.commands.elevator.CancelScoreAlgay;
 import frc.robot.commands.elevator.CancelScoreCoral;
-import frc.robot.commands.elevator.RunElevatorRaw;
-import frc.robot.commands.elevator.simple.CancelScoreAlgay;
-import frc.robot.commands.elevator.simple.DequeueElevatorAction;
-import frc.robot.commands.elevator.simple.QueueL1Action;
 import frc.robot.commands.elevator.simple.QueueL2Action;
 import frc.robot.commands.elevator.simple.QueueL3Action;
 import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.commands.elevator.simple.QueueStowAction;
-import frc.robot.commands.pivot.RunPivotRaw;
-import frc.robot.commands.pivot.simple.MovePivotAlgay;
-import frc.robot.commands.pivot.simple.MovePivotStow;
-import frc.robot.commands.roller.*;
+import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.commands.roller.simple.*;
 
 import frc.robot.constants.Constants.AlignmentConstants;
@@ -112,7 +94,6 @@ public class RobotContainer {
         elevator = Elevator.getInstance();
         mechanismVisualizer = MechanismVisualizer.getInstance();
         autoRunner = AutoRunner.getInstance();
-
         Pneumatics.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
@@ -140,23 +121,24 @@ public class RobotContainer {
             )
         ).whileTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
 
-        // new Trigger(
-        //     () -> (
-        //         xboxDriver.getRightBumper().getAsBoolean()
-        //     )
-        // ).whileTrue(new InstantCommand()); // climb
+        new Trigger(
+            () -> (
+                xboxDriver.getRightBumper().getAsBoolean() &&
+                !xboxDriver.getLeftBumper().getAsBoolean()
+            )
+        ).whileTrue(new AlignToCageAndClimb(xboxDriver)).onFalse(new InstantCommand()); // climb TODO: reset condition and implement an "already at pose" check inside command
 
-        // new Trigger(
-        //     () -> (
-        //         xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
-        //     )
-        // ).whileTrue(new AlignToClosestBargePoint(xboxDriver)).onFalse(new DecideBargeScoringFlick());
+        new Trigger(
+            () -> (
+                xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
+            )
+        ).whileTrue(new AlignToClosestBargePoint(xboxDriver)).onFalse(new DecideBargeScoringFlick());
         
-        // new Trigger(
-        //     () -> (
-        //         xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
-        //     )
-        // ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
+        new Trigger(
+            () -> (
+                xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
+            )
+        ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
 
         // new Trigger(
         //     () -> (
