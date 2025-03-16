@@ -104,12 +104,17 @@ public class ClimberConfigProto extends ClimberConfigBase {
 
     @Override
     public double getToleranceDegrees() {
-        return 1.0;
+        return 1;
     }
 
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
+        return true;
+    }
+
+    @Override
+    public boolean isInverted() {
         return true;
     }
 
@@ -128,4 +133,9 @@ public class ClimberConfigProto extends ClimberConfigBase {
     public double getMinAngleRotations() {
         return -1;
     }
+
+    @Override 
+    public double getStartingAngleRotations() {
+        return -1;
+    } 
 }

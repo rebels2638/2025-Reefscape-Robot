@@ -1,5 +1,7 @@
 package frc.robot.constants.climber;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class ClimberConfigComp extends ClimberConfigBase {
     private static ClimberConfigComp instance;
     public static ClimberConfigComp getInstance() {
@@ -21,7 +23,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 13.0;
+        return 35.0;
     }
 
     @Override
@@ -31,40 +33,40 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 10.0;
+        return 30.0;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 10.0;
+        return 20.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 10.0;
+        return 20.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -10.0;
+        return -20.0;
     }
 
     // Characterization / Gains
     @Override
     public double getKS() {
-        return 0.5;
+        return 0;
     }
 
     @Override
     public double getKV() {
-        return 1.25;
+        return 0;
     }
 
     @Override
     public double getKA() {
-        return 0.06;
+        return 0.0;
     }
 
     @Override
@@ -79,54 +81,65 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getKD() {
-        return 0.0;
+        return 0;
     }
 
     @Override
     public double getKG() {
-        return 9.81; 
+        return 0.0; 
     }
 
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 0.75;
+        return 8;
     }
 
     @Override
     public double getMotionMagicExpoKV() {
-        return 1.0;
+        return 11;
     }
 
     @Override
     public double getMotionMagicCruiseVelocityRotationsPerSec() {
-        return 3.0;
+        return 0.25;
     }
 
     @Override
     public double getToleranceDegrees() {
-        return 1.0;
+        return 4.0;
     }
-
+    
     // Neutral mode
     @Override
     public boolean isNeutralModeBrake() {
         return true;
     }
 
+    @Override
+    public boolean isInverted() {
+        return false;
+    }
+
+
     // Gear ratio
     @Override
     public double getMotorToOutputShaftRatio() {
-        return 100.0;
+        return 500.0;
     }
 
     @Override
     public double getMaxAngleRotations() {
-        return 1;
+        return 220/360.0;
     }
 
     @Override 
     public double getMinAngleRotations() {
-        return -1;
+        return -15.00/360.0;
     }
+
+    @Override 
+    public double getStartingAngleRotations() {
+        return getMaxAngleRotations();
+    } 
 }

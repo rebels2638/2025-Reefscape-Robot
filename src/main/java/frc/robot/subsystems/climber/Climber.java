@@ -11,7 +11,6 @@ import frc.robot.constants.climber.ClimberConfigProto;
 import frc.robot.constants.climber.ClimberConfigSim;
 
 public class Climber extends SubsystemBase {
-    private final ClimberConfigBase config;
     private static Climber instance = null;
     public static Climber getInstance() {
         if (instance == null) {
@@ -24,9 +23,11 @@ public class Climber extends SubsystemBase {
     private ClimberIO climberIO;
     private ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
 
-    private Rotation2d setpoint = new Rotation2d();
+    private Rotation2d setpoint = Rotation2d.fromDegrees(90);
 
-    public Climber() {
+    private final ClimberConfigBase config;
+
+    private Climber() {
         // IO
         switch (Constants.currentMode) {
             case COMP:
@@ -59,23 +60,21 @@ public class Climber extends SubsystemBase {
 
                 break;
         }
+
+        setpoint = Rotation2d.fromRotations(config.getStartingAngleRotations());
     }
 
     @Override
     public void periodic() {
         climberIO.updateInputs(climberIOInputs);
-        Logger.processInputs("Climber", climberIOInputs);
+        Logger.processInputs("climber", climberIOInputs);
 
         climberIO.setAngle(setpoint);
     }
 
     public void setAngle(Rotation2d angle) {
         setpoint = angle;
-        Logger.recordOutput("Climber/setpoint", angle);
-    }
-
-    public Rotation2d getAngle() {
-        return climberIOInputs.climberPosition;
+        Logger.recordOutput("climber/setpoint", angle);
     }
 
     public void setTorqueCurrentFOC(double torque) {
@@ -88,5 +87,9 @@ public class Climber extends SubsystemBase {
 
     public boolean reachedSetpoint() {
         return Math.abs(setpoint.minus(climberIOInputs.climberPosition).getDegrees()) <= config.getToleranceDegrees();
+    }
+
+    public Rotation2d getAngle() {
+        return climberIOInputs.climberPosition;
     }
 }
