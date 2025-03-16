@@ -3,6 +3,7 @@ package frc.robot.subsystems.pivot;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.pivot.PivotConfigBase;
@@ -62,6 +63,7 @@ public class Pivot extends SubsystemBase {
         }
 
         setpoint = Rotation2d.fromRotations(config.getStartingAngleRotations());
+        CommandScheduler.getInstance().registerSubsystem(this);
     }
 
     @Override

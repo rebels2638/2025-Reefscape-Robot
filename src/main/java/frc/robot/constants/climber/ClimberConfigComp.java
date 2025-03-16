@@ -71,7 +71,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getKP() {
-        return 0.1;
+        return 4000;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getKD() {
-        return 0;
+        return 220;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
     // Motion magic parameters
     @Override
     public double getMotionMagicExpoKA() {
-        return 8;
+        return 12;
     }
 
     @Override
@@ -125,7 +125,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
     // Gear ratio
     @Override
     public double getMotorToOutputShaftRatio() {
-        return 500.0;
+        return 1500;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override 
     public double getMinAngleRotations() {
-        return -15.00/360.0;
+        return -80.00/360.0;
     }
 
     @Override 

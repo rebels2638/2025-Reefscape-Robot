@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.autoAlignment.LinearAlign;
+import frc.robot.commands.autoAlignment.LinearAlignFace;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
@@ -42,7 +42,7 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                     new WaitForNonStowState(),
                     new DequeueElevatorAction()
                 ),
-                new LinearAlign(
+                new LinearAlignFace(
                     () -> AlignmentUtil.getClosestRightBranchPose(),
                     () -> new ChassisSpeeds(),
                     5

@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.climber.ClimberConfigBase;
@@ -23,7 +24,7 @@ public class Climber extends SubsystemBase {
     private ClimberIO climberIO;
     private ClimberIOInputsAutoLogged climberIOInputs = new ClimberIOInputsAutoLogged();
 
-    private Rotation2d setpoint = Rotation2d.fromDegrees(90);
+    private Rotation2d setpoint = Rotation2d.fromDegrees(205);
 
     private final ClimberConfigBase config;
 
@@ -62,6 +63,8 @@ public class Climber extends SubsystemBase {
         }
 
         setpoint = Rotation2d.fromRotations(config.getStartingAngleRotations());
+
+        CommandScheduler.getInstance().registerSubsystem(this);
     }
 
     @Override

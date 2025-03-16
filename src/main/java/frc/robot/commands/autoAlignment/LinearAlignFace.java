@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.lib.util.AlignmentUtil;
 
-public class LinearAlign extends ConditionalCommand {
-    public LinearAlign(Supplier<Pose2d> goalPoseSupplier, Supplier<ChassisSpeeds> chassisSpeedsSupplier, double maxDistance) {
+public class LinearAlignFace extends ConditionalCommand {
+    public LinearAlignFace(Supplier<Pose2d> goalPoseSupplier, Supplier<ChassisSpeeds> chassisSpeedsSupplier, double maxDistance) {
         super(
             new SequentialCommandGroup ( // align
                 // drive to the closest algay pose

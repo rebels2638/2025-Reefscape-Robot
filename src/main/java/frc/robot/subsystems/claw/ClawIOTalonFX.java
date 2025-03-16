@@ -67,7 +67,7 @@ public class ClawIOTalonFX implements ClawIO {
 
         canRangeConfiguration.FutureProofConfigs = true;
 
-        canRange = new CANrange(config.getCanRangeCanID());
+        canRange = new CANrange(config.getCanRangeCanID(), "drivetrain");
         PhoenixUtil.tryUntilOk( 5, () -> canRange.getConfigurator().apply(canRangeConfiguration, 0.25));
 
         // pivot motor

@@ -14,7 +14,7 @@ public class MoveClimberStow extends Command {
 
     @Override
     public void initialize() {
-        climber.setAngle(Rotation2d.fromDegrees(215));
+        climber.setAngle(Rotation2d.fromDegrees(138));
     }
 
     @Override

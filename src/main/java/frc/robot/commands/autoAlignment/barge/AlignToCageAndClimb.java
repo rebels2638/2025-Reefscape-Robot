@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.DropFunnel;
-import frc.robot.commands.autoAlignment.LinearAlign;
+import frc.robot.commands.autoAlignment.LinearAlignFace;
 import frc.robot.commands.climber.simple.EnableOppositeRotation;
 import frc.robot.commands.climber.simple.MoveClimberStow;
 import frc.robot.commands.climber.simple.MoveDeepCage;
@@ -26,27 +26,27 @@ public class AlignToCageAndClimb extends SequentialCommandGroup{
     public AlignToCageAndClimb(XboxController controller) {
         addCommands(
             new QueueL2Action(),
-            new ConditionalCommand( // move out when the ratchet is pulled
-                new EnableOppositeRotation(), 
-                new InstantCommand(), 
-                () -> !Pneumatics.getInstance().getRatchetState()
-            ),
+            // new ConditionalCommand( // move out when the ratchet is pulled
+            //     new EnableOppositeRotation(), 
+            //     new InstantCommand(), 
+            //     () -> !Pneumatics.getInstance().getRatchetState()
+            // ),
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestCagePose().getTranslation().getDistance( // check for the correct max distance from target
-                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 2
+                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 0.7
                 ),
                 new AbsoluteFieldDrive(controller)
             ),
             new ParallelCommandGroup(
-                new LinearAlign(
+                new LinearAlignFace(
                     () -> AlignmentUtil.getClosestCagePoseRecessed(),
                     () -> new ChassisSpeeds(),
-                    3
+                    1
                 ),
                 new MoveDeepCage()
             ),
-            new LinearAlign(
+            new LinearAlignFace(
                 () -> AlignmentUtil.getClosestCagePose(),
                 () -> new ChassisSpeeds(),
                 2

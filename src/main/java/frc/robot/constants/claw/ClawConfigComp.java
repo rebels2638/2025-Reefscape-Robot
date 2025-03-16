@@ -28,7 +28,7 @@ public class ClawConfigComp extends ClawConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 15.0;
+        return 30.0;
     }
 
     @Override
@@ -38,24 +38,24 @@ public class ClawConfigComp extends ClawConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 15;
+        return 27;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 13;
+        return 20;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 40;
+        return 20;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -40;
+        return -20;
     }
 
     // Neutral mode
@@ -92,17 +92,17 @@ public class ClawConfigComp extends ClawConfigBase {
 
     @Override
     public double getMinSignalStrengthForValidMeasurement() {
-        return 2000;
+        return 1900;
     }
 
     @Override
     public double getProximityHysteresis() {
-        return 0.01;
+        return 0.005;
     }
 
     @Override
     public double getProximityThreshold() {
-        return 0.10;
+        return 0.13;
     }
 
     @Override

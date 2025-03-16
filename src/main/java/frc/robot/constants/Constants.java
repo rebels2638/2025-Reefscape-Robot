@@ -28,7 +28,7 @@ import frc.robot.lib.util.AlignmentUtil.Axis;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
+    public static final Mode currentMode = Mode.COMP; // TODO: change this if sim
     // public static final boolean isSYSID = true; // TODO: change this if sysid
 
     public static enum Mode {
@@ -223,10 +223,10 @@ public final class Constants {
 
         public static final Axis kBARGE_AXIS = 
             new Axis(
-                6.42,
-                2.7,
-                6.42,
-                10.0
+                8.18,
+                4.77,
+                8.18,
+                7.5 
             );
         public static final Rotation2d kBARGE_ROTATION = Rotation2d.fromDegrees(0);
 

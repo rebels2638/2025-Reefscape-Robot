@@ -29,13 +29,15 @@ import frc.robot.subsystems.pneumatics.Pneumatics;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.barge.AlignToCageAndClimb;
-import frc.robot.commands.autoAlignment.barge.AlignToClosestBargePoint;
+import frc.robot.commands.autoAlignment.barge.AlignToClosestBargePointAndScore;
+import frc.robot.commands.autoAlignment.barge.ClimbSequence;
+import frc.robot.commands.autoAlignment.barge.PrepareForClimbSequence;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
 import frc.robot.commands.claw.DecideBargeScoringFlick;
-import frc.robot.commands.climber.simple.ResetClimb;
+import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.elevator.CancelScoreAlgay;
 import frc.robot.commands.elevator.CancelScoreCoral;
 import frc.robot.commands.elevator.simple.QueueL2Action;
@@ -81,6 +83,8 @@ public class RobotContainer {
     private final Debouncer leftAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
     private final Debouncer rightAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
 
+    private final Debouncer climbDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kBoth);
+
     private RobotContainer() {
         this.xboxTester = new XboxController(1);
         this.xboxOperator = new XboxController(2);
@@ -99,7 +103,7 @@ public class RobotContainer {
         Pneumatics.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
-
+        claw.setDefaultCommand(new HoldAlgayClaw());
         new Trigger(
             () -> (
                 leftAlignDebouncer.calculate(
@@ -125,22 +129,24 @@ public class RobotContainer {
 
         new Trigger(
             () -> (
-                xboxDriver.getRightBumper().getAsBoolean() &&
-                !xboxDriver.getLeftBumper().getAsBoolean()
+                climbDebouncer.calculate(
+                    xboxDriver.getRightBumper().getAsBoolean() &&
+                    xboxDriver.getLeftBumper().getAsBoolean() 
+                )
             )
-        ).whileTrue(new AlignToCageAndClimb(xboxDriver)).onFalse(new ResetClimb());
+        ).whileTrue(new PrepareForClimbSequence()).onFalse(new ClimbSequence());
 
         new Trigger(
             () -> (
                 xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
             )
-        ).whileTrue(new AlignToClosestBargePoint(xboxDriver)).onFalse(new DecideBargeScoringFlick());
+        ).whileTrue(new AlignToClosestBargePointAndScore(xboxDriver)).onFalse(new CancelScoreAlgay());
         
-        new Trigger(
-            () -> (
-                xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
-            )
-        ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
+        // new Trigger(
+        //     () -> (
+        //         xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
+        //     )
+        // ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
 
         // new Trigger(
         //     () -> (
@@ -157,6 +163,12 @@ public class RobotContainer {
         xboxOperator.getXButton().onTrue(new QueueL4Action());
         xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
+        xboxOperator.getLeftBumper().onTrue(
+            new InstantCommand(
+                () -> RobotState.getInstance().resetPose(
+                    new Pose2d(8.786035537719727, 4.756836414337158, new Rotation2d())
+                ))
+            );
         // xboxTester.getBButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushFunnel()));
         // xboxTester.getAButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullFunnel()));
         // xboxTester.getXButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushRatchet()));

@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
 import frc.robot.RobotState.VisionObservation;
@@ -116,6 +117,8 @@ public class Vision extends SubsystemBase {
 
         robotState.registerRunnableOnGlobalVisionEstimateRequest(this::requestGlobalEstimationScale);
         robotState.registerRunnableOnLocalVisionEstimateRequest(this::requestLocalEstimationScale);
+
+        CommandScheduler.getInstance().registerSubsystem(this);
     }
 
     @Override

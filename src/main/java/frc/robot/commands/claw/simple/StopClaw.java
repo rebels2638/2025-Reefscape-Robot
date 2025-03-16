@@ -5,6 +5,7 @@ import frc.robot.subsystems.claw.Claw;
 
 public class StopClaw extends Command{
     public StopClaw() {
+        addRequirements(Claw.getInstance());
     }
 
     @Override
@@ -14,6 +15,6 @@ public class StopClaw extends Command{
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

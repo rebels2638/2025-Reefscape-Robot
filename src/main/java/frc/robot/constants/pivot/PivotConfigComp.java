@@ -71,7 +71,7 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getKP() {
-        return 450;
+        return 1000;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getToleranceDegrees() {
-        return 4.0;
+        return 7.0;
     }
     
     // Neutral mode

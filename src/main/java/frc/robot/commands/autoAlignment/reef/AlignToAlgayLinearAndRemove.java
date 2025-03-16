@@ -4,12 +4,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.autoAlignment.LinearAlign;
+import frc.robot.commands.autoAlignment.LinearAlignFace;
+import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.claw.simple.InClaw;
-import frc.robot.commands.claw.simple.RunClawHold;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
@@ -35,34 +36,32 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
             ),
             new ParallelCommandGroup(
                 new MovePivotAlgay(),
-                new RunClawIntake(),
                 new SequentialCommandGroup(
                     new isElevatorExtendable(),
                     new WaitForNonStowState(),
                     new DequeueElevatorAction()
                 ),
-                new LinearAlign(
+                new LinearAlignFace(
                     () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                     () -> new ChassisSpeeds(),
                     5
                 )
             ),
             new ParallelDeadlineGroup(
-                new InClaw(),
-                new LinearAlign(
-                    () -> AlignmentUtil.getClosestAlgayPose(),
-                    () -> new ChassisSpeeds(),
-                    5
-                )
-            ), 
-            new RunClawHold(),
-            new ParallelCommandGroup(
-                new LinearAlign(
-                    () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                    () -> new ChassisSpeeds(),
-                    5
+                new SequentialCommandGroup(
+                    new LinearAlignFace(
+                        () -> AlignmentUtil.getClosestAlgayPose(),
+                        () -> new ChassisSpeeds(),
+                        5
+                    ),
+                    new WaitCommand(0.5)
                 ),
-                new MovePivotMidwayAlgay()
+                new RunClawIntake()
+            ),         
+            new LinearAlignFace(
+                () -> AlignmentUtil.getClosestAlgayRecessedPose(),
+                () -> new ChassisSpeeds(),
+                5
             ),
             new MovePivotStow(),
             new QueueStowAction(),

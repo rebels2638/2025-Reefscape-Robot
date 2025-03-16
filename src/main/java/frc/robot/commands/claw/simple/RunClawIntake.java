@@ -5,6 +5,7 @@ import frc.robot.subsystems.claw.Claw;
 
 public class RunClawIntake extends Command{
     public RunClawIntake() {
+        addRequirements(Claw.getInstance());
     }
 
     @Override
@@ -14,6 +15,6 @@ public class RunClawIntake extends Command{
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

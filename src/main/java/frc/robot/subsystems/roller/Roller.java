@@ -2,6 +2,7 @@ package frc.robot.subsystems.roller;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.*;
 import frc.robot.constants.roller.RollerConfigBase;
@@ -59,6 +60,8 @@ public class Roller extends SubsystemBase {
 
                 break;
         }
+
+        CommandScheduler.getInstance().registerSubsystem(this);
     }
 
     @Override

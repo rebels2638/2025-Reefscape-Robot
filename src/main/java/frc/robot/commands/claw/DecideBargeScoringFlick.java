@@ -34,7 +34,7 @@ public class DecideBargeScoringFlick extends ConditionalCommand {
                 new QueueStowAction(),
                 new DequeueElevatorAction()
             ), 
-            () -> MathUtil.isNear(0, RobotState.getInstance().getEstimatedPose().getRotation().getDegrees(), 3) //&& Claw.getInstance().inClaw()
+            () -> MathUtil.isNear(0, RobotState.getInstance().getEstimatedPose().getRotation().getDegrees(), 90) //&& Claw.getInstance().inClaw()
         ); 
     }
 }

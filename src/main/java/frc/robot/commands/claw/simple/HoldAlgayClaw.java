@@ -13,7 +13,7 @@ public class HoldAlgayClaw extends Command{
     @Override
     public void execute() {
         if (claw.inClaw()) {
-            claw.setVoltage(3);
+            claw.setVoltage(12);
         }
         else {
             claw.setVoltage(0);

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
-import frc.robot.commands.autoAlignment.LinearAlign;
+import frc.robot.commands.autoAlignment.LinearAlignFace;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL1Action;
 import frc.robot.commands.elevator.simple.QueueL2Action;
@@ -82,7 +82,7 @@ public class Autos {
                         new DequeueElevatorAction()
                     )
                 ),
-                new LinearAlign(
+                new LinearAlignFace(
                     alignmentPoseSupplier(branch),
                     () -> new ChassisSpeeds(),
                     5.0
