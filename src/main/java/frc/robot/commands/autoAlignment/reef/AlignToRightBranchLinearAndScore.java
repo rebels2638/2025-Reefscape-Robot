@@ -10,11 +10,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.isElevatorExtendable;
 import frc.robot.commands.autoAlignment.LinearAlign;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
+import frc.robot.commands.elevator.simple.isElevatorExtendable;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.lib.input.XboxController;
@@ -49,7 +49,7 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                 )
             ),
             new ConditionalCommand(
-                new WaitCommand(0.7),
+                new WaitCommand(0.5),
                 new InstantCommand(),
                 () -> Elevator.getInstance().getRequestedLevel() == Height.L4
             ),

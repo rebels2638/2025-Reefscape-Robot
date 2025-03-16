@@ -8,7 +8,6 @@ public class MoveDeepCage extends Command{
     private final Climber climber;
     public MoveDeepCage() {
         this.climber = Climber.getInstance();
-        
         addRequirements(climber);
     }
 
