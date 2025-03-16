@@ -35,6 +35,7 @@ import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
 import frc.robot.commands.claw.DecideBargeScoringFlick;
+import frc.robot.commands.climber.simple.ResetClimb;
 import frc.robot.commands.elevator.CancelScoreAlgay;
 import frc.robot.commands.elevator.CancelScoreCoral;
 import frc.robot.commands.elevator.simple.QueueL2Action;
@@ -126,7 +127,7 @@ public class RobotContainer {
                 xboxDriver.getRightBumper().getAsBoolean() &&
                 !xboxDriver.getLeftBumper().getAsBoolean()
             )
-        ).whileTrue(new AlignToCageAndClimb(xboxDriver)).onFalse(new InstantCommand()); // climb TODO: reset condition and implement an "already at pose" check inside command
+        ).whileTrue(new AlignToCageAndClimb(xboxDriver)).onFalse(new ResetClimb());
 
         new Trigger(
             () -> (

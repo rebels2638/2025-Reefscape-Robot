@@ -18,6 +18,6 @@ public interface PneumaticsIO {
     public default void pushFunnel() {}    
 
     public default void pullRatchet() {}  
-    public default void pushRatchet() {}  
-  
+    public default void pushRatchet() {}
+    
 }

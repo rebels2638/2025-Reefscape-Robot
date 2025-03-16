@@ -54,6 +54,4 @@ public class PneumaticsIODoubleSolenoid implements PneumaticsIO {
         solenoidRatchet.set(Value.kReverse);
         isRatchetPulled = false;
     }
-
-
 }
