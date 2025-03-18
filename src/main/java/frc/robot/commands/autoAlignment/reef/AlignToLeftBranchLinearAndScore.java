@@ -22,6 +22,7 @@ import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.roller.Roller;
+import frc.robot.commands.pivot.simple.MovePivotStow;
 
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToLeftBranchLinearAndScore(XboxController controller) {
@@ -45,7 +46,8 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                     () -> AlignmentUtil.getClosestLeftBranchPose(),
                     () -> new ChassisSpeeds(),
                     5
-                )
+                ),
+                new MovePivotStow()
             ),
             new ConditionalCommand(
                 new WaitCommand(0.7),
