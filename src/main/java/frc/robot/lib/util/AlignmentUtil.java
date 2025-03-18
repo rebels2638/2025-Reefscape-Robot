@@ -355,8 +355,20 @@ public class AlignmentUtil {
         return nearest;
     }
 
+    public static Pose2d getClosestAlgayPose(Translation2d pose) {
+        Pose2d current = new Pose2d(pose, new Rotation2d());
+        Pose2d nearest = algayCandidates.get(getClosestReefFace(current, algayCandidates));
+
+        Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
+        return nearest;
+    }
+
     public static Pose2d getClosestAlgayRecessedPose() {
         return offsetPoseToPreAlignment(getClosestAlgayPose(), config.getAlgayRecessPoseOffset());
+    }
+
+    public static Pose2d getClosestAlgayRecessedPose(Translation2d pose) {
+        return offsetPoseToPreAlignment(getClosestAlgayPose(pose), config.getAlgayRecessPoseOffset());
     }
 
     public static Axis getBargeAxis() {
@@ -378,6 +390,23 @@ public class AlignmentUtil {
         Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
         return nearest;
     }
+
+    public static Pose2d getClosestLeftBranchPose(Translation2d pose) { // relative to blue driver station
+        Pose2d current = new Pose2d(pose, new Rotation2d());
+        Pose2d nearest = leftBranchCandidates.get(getClosestReefFace(current, leftBranchCandidates));
+
+        Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
+        return nearest;
+    }
+
+    public static Pose2d getClosestRightBranchPose(Translation2d pose) { // relative to blue driver station
+        Pose2d current = new Pose2d(pose, new Rotation2d());
+        Pose2d nearest = rightBranchCandidates.get(getClosestReefFace(current, rightBranchCandidates));
+
+        Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
+        return nearest;
+    }
+
 
     public static Pose2d getClosestBargePose() {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();

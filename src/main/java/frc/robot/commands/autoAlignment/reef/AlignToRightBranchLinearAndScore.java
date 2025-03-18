@@ -23,6 +23,7 @@ import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.roller.Roller;
+import frc.robot.commands.pivot.simple.MovePivotStow;
 
 public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
     public AlignToRightBranchLinearAndScore(XboxController controller) {
@@ -46,7 +47,8 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                     () -> AlignmentUtil.getClosestRightBranchPose(),
                     () -> new ChassisSpeeds(),
                     5
-                )
+                ),
+                new MovePivotStow()
             ),
             new ConditionalCommand(
                 new WaitCommand(0.5),

@@ -1,6 +1,7 @@
 package frc.robot.commands.autoAlignment.reef;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.claw.Claw;
 public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
     public AlignToAlgayLinearAndRemove(XboxController controller) {
         addCommands(
+            new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target

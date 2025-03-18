@@ -17,9 +17,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.autoAlignment.LinearAlignFace;
+import frc.robot.commands.claw.simple.RunClawEject;
+import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL1Action;
 import frc.robot.commands.elevator.simple.QueueL2Action;
@@ -31,7 +34,10 @@ import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.elevator.Elevator.Height;
+import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
+import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotStow;
 
 public class Autos {
     public static final Command start_right_2xL4 = 
@@ -66,24 +72,25 @@ public class Autos {
 
         return 
             new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                    new IntakeCoral(),
-                    new ParallelDeadlineGroup(
+                new ParallelDeadlineGroup(
+                    new ParallelCommandGroup(
                         waitForAlign(toReefPath),
-                        followPath(toReefPath)
+                        new IntakeCoral(),
+                        new SequentialCommandGroup(
+                            waitForQueueLocalEstimate(toReefPath),
+                            new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
+                        ),
+                        new SequentialCommandGroup(
+                            waitForElevatorExtension(toReefPath),
+                            queueElevatorCommand(level),
+                            new DequeueElevatorAction()
+                        ),
+                        new MovePivotStow()
                     ),
-                    new SequentialCommandGroup(
-                        waitForQueueLocalEstimate(toReefPath),
-                        new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
-                    ),
-                    new SequentialCommandGroup(
-                        waitForElevatorExtension(toReefPath),
-                        queueElevatorCommand(level),
-                        new DequeueElevatorAction()
-                    )
+                    followPath(toReefPath)
                 ),
                 new LinearAlignFace(
-                    alignmentPoseSupplier(branch),
+                    branchAlignmentPoseSupplier(branch, getEndPose(toReefPath)),
                     () -> new ChassisSpeeds(),
                     5.0
                 ),
@@ -93,13 +100,87 @@ public class Autos {
             );
     }
 
-    public static final Supplier<Pose2d> alignmentPoseSupplier(Branch branch) {
+    public static final Command cycleAlgay(String toReefPath, String toBargePath, Height level) {
+        Command sourceCommand = 
+            toBargePath != null ? 
+                new SequentialCommandGroup(
+                    new ParallelCommandGroup(
+                        followPath(toBargePath),
+                        new SequentialCommandGroup(
+                            new WaitCommand(1.2),
+                            new MovePivotStow(),
+                            new QueueStowAction(),
+                            new DequeueElevatorAction()
+                        )
+                    ),
+                    new SequentialCommandGroup(
+                        waitForElevatorExtension(toReefPath),
+                        queueElevatorCommand(Height.L4),
+                        new DequeueElevatorAction()
+                    ), 
+                    new ParallelCommandGroup(
+                        new MovePivotAlgay(),
+                        new SequentialCommandGroup(
+                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
+                            new ParallelDeadlineGroup(
+                                new WaitUntilCommand(0.8),
+                                new RunClawEject()
+                            )
+                        )
+                    ),
+                    new MovePivotStow(),
+                    new QueueStowAction(),
+                    new DequeueElevatorAction() 
+                ):
+                new SequentialCommandGroup(
+                    new LinearAlignFace(
+                        () -> AlignmentUtil.getClosestAlgayRecessedPose(getEndPose(toReefPath)),
+                        () -> new ChassisSpeeds(),
+                        5
+                    ),
+                    new MovePivotStow(),
+                    new QueueStowAction(),
+                    new DequeueElevatorAction()
+                );
+
+        return 
+            new SequentialCommandGroup(
+                new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
+                new ParallelDeadlineGroup(
+                    new ParallelCommandGroup(
+                        waitForAlign(toReefPath),
+                        new SequentialCommandGroup(
+                            waitForElevatorExtension(toReefPath),
+                            queueElevatorCommand(level),
+                            new DequeueElevatorAction()
+                        ),
+                        new MovePivotAlgay()
+                    ),
+                    new RunClawIntake(),
+                    followPath(toReefPath)
+                ),
+                new ParallelDeadlineGroup(
+                    new SequentialCommandGroup(
+                        new LinearAlignFace(
+                            () -> AlignmentUtil.getClosestAlgayPose(),
+                            () -> new ChassisSpeeds(),
+                            5
+                        ),
+                        new WaitCommand(0.5)
+                    ),
+                    new RunClawIntake()
+                ),
+                sourceCommand
+            );
+    }
+
+    public static final Supplier<Pose2d> branchAlignmentPoseSupplier(Branch branch, Translation2d pose) {
         switch (branch) {
             case RIGHT:
-                return () -> AlignmentUtil.getClosestRightBranchPose();
+                return () -> AlignmentUtil.getClosestRightBranchPose(pose);
         
             default:
-                return () -> AlignmentUtil.getClosestLeftBranchPose();
+                return () -> AlignmentUtil.getClosestLeftBranchPose(pose);
         }
     }
 
