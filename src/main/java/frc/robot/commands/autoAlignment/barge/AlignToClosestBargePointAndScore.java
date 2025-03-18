@@ -32,13 +32,13 @@ public class AlignToClosestBargePointAndScore extends SequentialCommandGroup{
             new InstantCommand( () -> RobotState.getInstance().requestGlobalVisionEstimateScale() ),
             new ParallelDeadlineGroup(
                 new WaitUntilCommand(
-                () -> AlignmentUtil.getClosestBargePose().getTranslation().getDistance(
-                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 1 &&
-                    Claw.getInstance().inClaw()
+                // () -> AlignmentUtil.getClosestBargePose().getTranslation().getDistance(
+                //     RobotState.getInstance().getEstimatedPose().getTranslation()) <= 1 &&
+                    () -> Claw.getInstance().inClaw()
                 ),
                 new AbsoluteFieldDrive(controller)
             ),
-            new LinearDriveToPose(() -> AlignmentUtil.getClosestBargePose(), () -> new ChassisSpeeds()), // drive to a intermediate pose   
+            // new LinearDriveToPose(() -> AlignmentUtil.getClosestBargePose(), () -> new ChassisSpeeds()), // drive to a intermediate pose   
             new QueueL4Action(),                  
             new SequentialCommandGroup(
                 new MovePivotStow(),

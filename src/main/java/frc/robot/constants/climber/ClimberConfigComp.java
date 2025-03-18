@@ -1,7 +1,6 @@
 package frc.robot.constants.climber;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-
 public class ClimberConfigComp extends ClimberConfigBase {
     private static ClimberConfigComp instance;
     public static ClimberConfigComp getInstance() {
@@ -71,7 +70,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getKP() {
-        return 4000;
+        return 20000;
     }
 
     @Override

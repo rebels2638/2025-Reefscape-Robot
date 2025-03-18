@@ -33,7 +33,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getMaxAngularVelocityRadiansPerSec() {
-        return 3.7;
+        return 6.28; // 3.7
     }
 
     @Override
