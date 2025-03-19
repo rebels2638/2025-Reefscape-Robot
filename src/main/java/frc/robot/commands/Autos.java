@@ -37,6 +37,7 @@ import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
@@ -116,6 +117,11 @@ public class Autos {
                 new LinearDriveToPose(
                     branchAlignmentPoseSupplier(branch, getEndPose(toReefPath)),
                     () -> new ChassisSpeeds()
+                ),
+                new ConditionalCommand(
+                    new WaitCommand(0.5),
+                    new InstantCommand(),
+                    () -> level == Height.L4
                 ),
                 new EjectCoral(),
                 new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
