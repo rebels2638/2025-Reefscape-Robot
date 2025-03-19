@@ -36,6 +36,7 @@ import frc.robot.constants.pivot.PivotConfigBase;
 import frc.robot.lib.util.PhoenixUtil;
 import frc.robot.lib.util.RebelTrapezoidProfile;
 import frc.robot.lib.util.RebelUtil;
+import frc.robot.subsystems.claw.Claw;
 import frc.robot.lib.util.Elastic;
 
 public class PivotIOTalonFX implements PivotIO {
@@ -65,7 +66,9 @@ public class PivotIOTalonFX implements PivotIO {
     private final Elastic.Notification pivotDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
         "Pivot Motor Disconnected", "Pivot Disconnected, GOOD LUCK");
 
-    private final PivotConfigBase config; 
+    private final PivotConfigBase config;
+    private final TalonFXConfiguration pivotConfig;
+
     public PivotIOTalonFX(PivotConfigBase config) {
         this.config = config;
         kMAX_ANGLE_ROTATIONS = config.getMaxAngleRotations();
@@ -73,7 +76,7 @@ public class PivotIOTalonFX implements PivotIO {
         kSTARTING_ANGLE_RAD = config.getStartingAngleRotations() * Math.PI * 2;
 
         // pivot motor
-        TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
+        pivotConfig = new TalonFXConfiguration();
 
         // Motion magic expo
         //fuck
@@ -186,6 +189,12 @@ public class PivotIOTalonFX implements PivotIO {
 
     @Override
     public void setAngle(Rotation2d state) {
+        if (Claw.getInstance().inClaw()) {
+            pivotMotor.getConfigurator().apply(pivotConfig.MotionMagic.withMotionMagicCruiseVelocity(0.3));
+        }
+        else {
+            pivotMotor.getConfigurator().apply(pivotConfig.MotionMagic.withMotionMagicCruiseVelocity(3));
+        }
         pivotMotor.setControl(
             pivotPositionRequest.withPosition(
                 RebelUtil.constrain(

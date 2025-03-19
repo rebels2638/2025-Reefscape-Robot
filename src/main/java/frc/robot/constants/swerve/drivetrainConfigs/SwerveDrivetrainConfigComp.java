@@ -7,6 +7,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
 
 public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
@@ -16,6 +17,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
         if (instance == null) {
             instance = new SwerveDrivetrainConfigComp();
         }
+
         return instance;
     }
 
@@ -91,12 +93,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDConstants getPathplannerDrivePIDConfig() {
-        return new PIDConstants(5,0,0.1 ,0);
+        return new PIDConstants(3,0,0.1 ,0);
     }
 
     @Override
     public PIDConstants getPathplannerSteerPIDConfig() {
-        return new PIDConstants(4,0,0.1,0);
+        return new PIDConstants(4,0,0.03,0);
     }
 
     @Override
@@ -106,7 +108,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(2.5, 1.5, 0);
+        PIDController p = new PIDController(2.5, 0.2, 0);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -114,7 +116,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(2, 0.35, 0);
+        PIDController p = new PIDController(2.5, 0, 0);
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -123,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.015;
+        return 0.025;
     }
 
     @Override
@@ -143,7 +145,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     
     @Override
     public double getBumperLengthMeters() {
-        return 0.79;
+        return 0.75;
     }
 
     @Override
@@ -153,7 +155,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(0, 0.02);
+        return new Translation2d(0.0, 0.02);
     }
 
     @Override

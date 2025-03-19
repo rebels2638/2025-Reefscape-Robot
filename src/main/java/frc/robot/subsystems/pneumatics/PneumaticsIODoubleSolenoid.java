@@ -16,10 +16,10 @@ public class PneumaticsIODoubleSolenoid implements PneumaticsIO {
     private boolean isRatchetPulled = false; 
 
     public PneumaticsIODoubleSolenoid() {
-        this.solenoidFunnel = new DoubleSolenoid(PneumaticsModuleType.REVPH,14,15);
+        this.solenoidFunnel = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,6,7);
         // this.solenoidRatchet = new DoubleSolenoid(PneumaticsModuleType.REVPH,8, 9);
 
-        this.compressor = new Compressor(PneumaticsModuleType.REVPH);
+        this.compressor = new Compressor(PneumaticsModuleType.CTREPCM);
         compressor.enableDigital();
     }
     @Override

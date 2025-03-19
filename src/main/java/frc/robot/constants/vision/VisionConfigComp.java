@@ -22,7 +22,7 @@ public class VisionConfigComp extends VisionConfigBase {
 
     @Override
     public double getTranslationDevBase() {
-        return 0.01; // 0.05
+        return -0.003; // 0.05
     }
 
     @Override
@@ -37,7 +37,7 @@ public class VisionConfigComp extends VisionConfigBase {
 
     @Override
     public double getTranslationDevTaScaler() {
-        return 1.5e-4;
+        return 2.05e-12;
     }
 
     @Override

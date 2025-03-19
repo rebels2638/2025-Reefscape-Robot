@@ -133,18 +133,20 @@ public class Vision extends SubsystemBase {
             if (Timer.getTimestamp() - visionIOInputs[i].timestampSeconds <= config.getObservationBufferSizeSeconds() && 
                 rotationalRate.isPresent() && 
                 visionIOInputs[i].hasValidTargets) {
-                
-                Logger.recordOutput("Vision/addingSample", true);
-                Logger.recordOutput("Vision/rotationalDevContribution", 
-                Math.pow(rotationalRate.get().getDegrees() ,2) / config.getTranslationDevRotationExpoDenominator());
-                Logger.recordOutput("Vision/taDevContribution", visionIOInputs[i].ta * config.getTranslationDevTaScaler());
-                
+            
                 double translationDev = 
                     config.getTranslationDevBase() +
                     Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
                     / config.getTranslationDevRotationExpoDenominator() 
-                    + (100 - visionIOInputs[i].ta) * config.getTranslationDevTaScaler();
+                    + Math.pow((100.0 - visionIOInputs[i].ta), 5) * config.getTranslationDevTaScaler();
         
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "totalDev", translationDev);
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", (100 - visionIOInputs[i].ta) * config.getTranslationDevTaScaler());
+
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "/addingSample", true);
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "/rotationalDevContribution", 
+                Math.pow(rotationalRate.get().getDegrees() ,2) / config.getTranslationDevRotationExpoDenominator());
+                
                 robotState.addVisionObservation(
                     new VisionObservation(
                         visionIOInputs[i].estimatedPose,

@@ -1,6 +1,8 @@
 
 package frc.robot;
 
+import org.ejml.equation.Sequence;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -13,7 +15,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AbsoluteFieldDrive;
@@ -38,15 +44,22 @@ import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
 import frc.robot.commands.claw.DecideBargeScoringFlick;
 import frc.robot.commands.claw.simple.HoldAlgayClaw;
+import frc.robot.commands.claw.simple.InClaw;
+import frc.robot.commands.claw.simple.RunClawEject;
+import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.elevator.CancelScoreAlgay;
 import frc.robot.commands.elevator.CancelScoreCoral;
+import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL2Action;
 import frc.robot.commands.elevator.simple.QueueL3Action;
 import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.commands.elevator.simple.QueueStowAction;
+import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotProcesser;
+import frc.robot.commands.pivot.simple.MovePivotStow;
+import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.commands.roller.simple.*;
-import frc.robot.commands.complex.FloorEjectAlgay;
 
 import frc.robot.constants.Constants.AlignmentConstants;
 
@@ -85,6 +98,8 @@ public class RobotContainer {
 
     private final Debouncer climbDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kBoth);
 
+    private final Command autoCommand;
+
     private RobotContainer() {
         this.xboxTester = new XboxController(1);
         this.xboxOperator = new XboxController(2);
@@ -104,6 +119,7 @@ public class RobotContainer {
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         claw.setDefaultCommand(new HoldAlgayClaw());
+
         new Trigger(
             () -> (
                 leftAlignDebouncer.calculate(
@@ -148,12 +164,20 @@ public class RobotContainer {
         //     )
         // ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
 
-        // new Trigger(
-        //     () -> (
-        //         xboxDriver.getBButton().getAsBoolean() &&
-        //         xboxDriver.getYButton().getAsBoolean()
-        //     )
-        // ).whileTrue(new InstantCommand()); // Processor
+        new Trigger(
+            () -> (
+                xboxDriver.getBButton().getAsBoolean() &&
+                xboxDriver.getYButton().getAsBoolean()
+            )
+        ).whileTrue(
+            new MovePivotProcesser()
+        ).onFalse(
+            new ParallelDeadlineGroup(
+                new WaitCommand(1.3),
+                new RunClawEject()
+            ).andThen(new CancelScoreAlgay())
+        ); // Processor
+
 
         xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
 
@@ -161,22 +185,102 @@ public class RobotContainer {
         xboxOperator.getBButton().onTrue(new QueueL2Action());
         xboxOperator.getYButton().onTrue(new QueueL3Action());
         xboxOperator.getXButton().onTrue(new QueueL4Action());
-        xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
+        xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
         xboxOperator.getLeftBumper().onTrue(
-            new InstantCommand(
-                () -> RobotState.getInstance().resetPose(
-                    new Pose2d(8.786035537719727, 4.756836414337158, new Rotation2d())
-                ))
-            );
+            new SequentialCommandGroup(
+                new EjectCoral(),
+                new WaitCommand(0.5),
+                new QueueStowAction(),
+                new DequeueElevatorAction()
+            )
+        );
+
+        // xboxOperator.getLeftBumper().onTrue(
+        //     new InstantCommand(
+        //         () -> RobotState.getInstance().resetPose(
+        //             new Pose2d(8.786035537719727, 4.756836414337158, new Rotation2d())
+        //         ))
+        //     );
+
+        xboxTester.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
+        xboxTester.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
+        xboxTester.getYButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));
+        xboxTester.getXButton().onTrue(new QueueL4Action().andThen(new DequeueElevatorAction()));
+        
+        xboxTester.getRightBumper().onTrue(new IntakeCoral());
+        xboxTester.getLeftBumper().onTrue(new EjectCoral());
+
+        new Trigger(
+            () -> (
+                xboxTester.getLeftTriggerButton(0.94).getAsBoolean() && !xboxTester.getRightTriggerButton(0.94).getAsBoolean()
+            )
+        ).whileTrue(
+            new MovePivotProcesser()
+        ).onFalse(
+            new ParallelDeadlineGroup(
+                new WaitCommand(1.3),
+                new RunClawEject()
+            ).andThen(new CancelScoreAlgay())
+        );
+
+        new Trigger(
+            () -> (
+                xboxTester.getRightTriggerButton(0.94).getAsBoolean() && !xboxTester.getLeftTriggerButton(0.94).getAsBoolean()
+            )
+        ).whileTrue(
+            new SequentialCommandGroup(
+                new ParallelDeadlineGroup(
+                    new SequentialCommandGroup(
+                        new InClaw(),
+                        new WaitCommand(0.5)
+                    ), 
+                    new MovePivotAlgay(),
+                    new RunClawIntake()
+                ),
+                new MovePivotStow()
+            )
+        ).onFalse(new CancelScoreAlgay());
+
+        new Trigger(
+            () -> (
+                xboxTester.getRightTriggerButton(0.94).getAsBoolean() && 
+                xboxTester.getLeftTriggerButton(0.94).getAsBoolean()
+            )
+        ).whileTrue(
+            new SequentialCommandGroup(
+                new QueueL4Action(),                  
+                new SequentialCommandGroup(
+                    new MovePivotStow(),
+                    new DequeueElevatorAction(),
+                    new ParallelCommandGroup(
+                        new MovePivotAlgay(),
+                        new SequentialCommandGroup(
+                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
+                            new ParallelDeadlineGroup(
+                                new WaitUntilCommand(0.8),
+                                new RunClawEject()
+                            )
+                        )
+                    ),
+                    new MovePivotStow(),
+                    new QueueStowAction(),
+                    new DequeueElevatorAction()
+                )
+            )
+        ).onFalse(new CancelScoreAlgay()); // DescoreAlgay
+
+
         // xboxTester.getBButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushFunnel()));
         // xboxTester.getAButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullFunnel()));
         // xboxTester.getXButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushRatchet()));
         // xboxTester.getYButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullRatchet()));
 
+        autoCommand = autoRunner.getAutonomousCommand();
+        autoRunner.getAutonomousZeroCommand().runsWhenDisabled();
     }
 
     public Command getAutonomousCommand() {
-        return autoRunner.getAutonomousCommand();
+        return autoCommand;
     }
 }

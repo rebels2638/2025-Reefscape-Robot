@@ -13,10 +13,12 @@ public class CancelScoreAlgay extends SequentialCommandGroup {
         addCommands(
             new QueueStowAction(),
             new MovePivotStow(),
-            new ParallelCommandGroup(
-                new DequeueElevatorAction(),
-                new HoldAlgayClaw()
-            )
+            new DequeueElevatorAction()
+
+            // new ParallelCommandGroup(
+            //     new HoldAlgayClaw()
+            //     new DequeueElevatorAction()
+            // )
         );
     }
     

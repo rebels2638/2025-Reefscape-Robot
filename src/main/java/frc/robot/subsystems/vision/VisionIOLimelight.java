@@ -40,7 +40,7 @@ public class VisionIOLimelight implements VisionIO {
         
         inputs.hasValidTargets = mt2 != null && mt2.tagCount > 0;
         inputs.estimatedPose = mt2 != null  ? mt2.pose : inputs.estimatedPose;
-        inputs.timestampSeconds = mt2 != null  ? Timer.getFPGATimestamp() - mt2.latency / 1000.0 : inputs.timestampSeconds;
+        inputs.timestampSeconds = mt2 != null ? mt2.timestampSeconds : inputs.timestampSeconds;
 
         inputs.primaryTagId = (int) NetworkTableInstance.getDefault().getTable(name).getEntry("tid").getDouble(0);
         inputs.tx = NetworkTableInstance.getDefault().getTable(name).getEntry("tx").getDouble(0);

@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Torque;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.autoAlignment.LinearAlignFace;
+import frc.robot.commands.autoAlignment.LinearDriveToPose;
 import frc.robot.commands.claw.simple.RunClawEject;
 import frc.robot.commands.claw.simple.RunClawIntake;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
@@ -29,6 +31,8 @@ import frc.robot.commands.elevator.simple.QueueL2Action;
 import frc.robot.commands.elevator.simple.QueueL3Action;
 import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.commands.elevator.simple.QueueStowAction;
+import frc.robot.commands.elevator.simple.WaitForNonStowState;
+import frc.robot.commands.elevator.simple.isElevatorExtendable;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.constants.Constants;
@@ -46,6 +50,24 @@ public class Autos {
             cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L4, Branch.RIGHT),
             cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
         );
+
+        public static final Command start_midle_1xL4_1xBarge = 
+            new SequentialCommandGroup(
+                resetPose("MS_T_RB"),
+                cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
+                cycleAlgay(null, "T_AG_B", Height.L2)
+            );
+        
+        public static final Command zero_start_midle_1xL4_1xBarge = resetPose("MS_T_RB");
+
+        public static final Command start_midle_1xL4 = 
+            new SequentialCommandGroup(
+                resetPose("MS_T_RB"),
+                cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
+            );
+
+    public static final Command zero_start_midle_1xL4 = resetPose("MS_T_RB");
+
     
     public enum Branch {
         LEFT,
@@ -72,27 +94,28 @@ public class Autos {
 
         return 
             new SequentialCommandGroup(
-                new ParallelDeadlineGroup(
-                    new ParallelCommandGroup(
-                        waitForAlign(toReefPath),
-                        new IntakeCoral(),
-                        new SequentialCommandGroup(
-                            waitForQueueLocalEstimate(toReefPath),
-                            new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
-                        ),
-                        new SequentialCommandGroup(
-                            waitForElevatorExtension(toReefPath),
-                            queueElevatorCommand(level),
-                            new DequeueElevatorAction()
-                        ),
-                        new MovePivotStow()
+                new ParallelCommandGroup(
+                    new IntakeCoral(),
+                    new SequentialCommandGroup(
+                        waitForQueueLocalEstimate(toReefPath),
+                        new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
                     ),
+                    // new SequentialCommandGroup(
+                    //     waitForElevatorExtension(toReefPath),
+                    //     queueElevatorCommand(level),
+                    //     new DequeueElevatorAction()
+                    // ),
+                    // new MovePivotStow(),
+                    
                     followPath(toReefPath)
                 ),
-                new LinearAlignFace(
+                new MovePivotStow(),
+                waitForElevatorExtension(toReefPath),
+                queueElevatorCommand(level),
+                new DequeueElevatorAction(),
+                new LinearDriveToPose(
                     branchAlignmentPoseSupplier(branch, getEndPose(toReefPath)),
-                    () -> new ChassisSpeeds(),
-                    5.0
+                    () -> new ChassisSpeeds()
                 ),
                 new EjectCoral(),
                 new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
@@ -101,27 +124,33 @@ public class Autos {
     }
 
     public static final Command cycleAlgay(String toReefPath, String toBargePath, Height level) {
-        Command sourceCommand = 
+        Command bargeCommand = 
             toBargePath != null ? 
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
                         followPath(toBargePath),
                         new SequentialCommandGroup(
                             new WaitCommand(1.2),
-                            new MovePivotStow(),
-                            new QueueStowAction(),
-                            new DequeueElevatorAction()
+                            new MovePivotStow()
+                        ),
+                        new SequentialCommandGroup(
+                            new ParallelDeadlineGroup(
+                                waitForElevatorExtension(toBargePath),
+                                new SequentialCommandGroup(
+                                    new QueueStowAction(),
+                                    new DequeueElevatorAction()
+                                )
+                            ),
+                            new SequentialCommandGroup(
+                                queueElevatorCommand(Height.L4),
+                                new DequeueElevatorAction()
+                            )
                         )
                     ),
-                    new SequentialCommandGroup(
-                        waitForElevatorExtension(toReefPath),
-                        queueElevatorCommand(Height.L4),
-                        new DequeueElevatorAction()
-                    ), 
                     new ParallelCommandGroup(
                         new MovePivotAlgay(),
                         new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
+                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 90),
                             new ParallelDeadlineGroup(
                                 new WaitUntilCommand(0.8),
                                 new RunClawEject()
@@ -131,10 +160,10 @@ public class Autos {
                     new MovePivotStow(),
                     new QueueStowAction(),
                     new DequeueElevatorAction() 
-                ):
+                ) :
                 new SequentialCommandGroup(
                     new LinearAlignFace(
-                        () -> AlignmentUtil.getClosestAlgayRecessedPose(getEndPose(toReefPath)),
+                        () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                         () -> new ChassisSpeeds(),
                         5
                     ),
@@ -143,34 +172,53 @@ public class Autos {
                     new DequeueElevatorAction()
                 );
 
-        return 
-            new SequentialCommandGroup(
-                new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
-                new ParallelDeadlineGroup(
-                    new ParallelCommandGroup(
-                        waitForAlign(toReefPath),
+        Command reefCommand = 
+            toReefPath != null ?
+                new SequentialCommandGroup(
+                    new ParallelDeadlineGroup(
+                        new SequentialCommandGroup(
+                            followPath(toReefPath),
+                            new WaitCommand(0.5)
+                        ),
                         new SequentialCommandGroup(
                             waitForElevatorExtension(toReefPath),
                             queueElevatorCommand(level),
                             new DequeueElevatorAction()
                         ),
-                        new MovePivotAlgay()
-                    ),
-                    new RunClawIntake(),
-                    followPath(toReefPath)
-                ),
-                new ParallelDeadlineGroup(
-                    new SequentialCommandGroup(
+                        new MovePivotAlgay(),
+                        new RunClawIntake()
+                    )
+                ) :
+                new SequentialCommandGroup(
+                    new ParallelCommandGroup(
+                        new MovePivotAlgay(),
+                        new SequentialCommandGroup(
+                            queueElevatorCommand(level),
+                            new DequeueElevatorAction()
+                        ),
                         new LinearAlignFace(
-                            () -> AlignmentUtil.getClosestAlgayPose(),
+                            () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                             () -> new ChassisSpeeds(),
                             5
-                        ),
-                        new WaitCommand(0.5)
+                        )
                     ),
-                    new RunClawIntake()
-                ),
-                sourceCommand
+                    new ParallelDeadlineGroup(
+                        new SequentialCommandGroup(
+                            new LinearAlignFace(
+                                () -> AlignmentUtil.getClosestAlgayPose(),
+                                () -> new ChassisSpeeds(),
+                                5
+                            ),
+                            new WaitCommand(0.5)
+                        ),
+                        new RunClawIntake() 
+                    )
+                );
+                
+        return 
+            new SequentialCommandGroup(
+                reefCommand,
+                bargeCommand
             );
     }
 
@@ -214,7 +262,7 @@ public class Autos {
         return
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 1.6 &&
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.07 &&
                     RobotState.getInstance().getIsElevatorExtendable() &&
                     Roller.getInstance().inRoller()
             );
@@ -224,7 +272,7 @@ public class Autos {
         return 
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.4 
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.3 
             );
     }
 
