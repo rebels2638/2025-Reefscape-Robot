@@ -52,22 +52,22 @@ public class Autos {
             cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
         );
 
-        public static final Command start_midle_1xL4_1xBarge = 
+        public static final Command start_middle_1xL4_1xBarge = 
             new SequentialCommandGroup(
                 resetPose("MS_T_RB"),
                 cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
                 cycleAlgay(null, "T_AG_B", Height.L2)
             );
         
-        public static final Command zero_start_midle_1xL4_1xBarge = resetPose("MS_T_RB");
+        public static final Command zero_start_middle_1xL4_1xBarge = resetPose("MS_T_RB");
 
-        public static final Command start_midle_1xL4 = 
+        public static final Command start_middle_1xL4 = 
             new SequentialCommandGroup(
                 resetPose("MS_T_RB"),
                 cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
             );
 
-    public static final Command zero_start_midle_1xL4 = resetPose("MS_T_RB");
+    public static final Command zero_start_middle_1xL4 = resetPose("MS_T_RB");
 
     
     public enum Branch {
