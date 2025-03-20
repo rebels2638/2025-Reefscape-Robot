@@ -41,7 +41,6 @@ import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.source.AlignToClosestSourceLinearAndIntake;
-import frc.robot.commands.claw.DecideBargeScoringFlick;
 import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.claw.simple.InClaw;
 import frc.robot.commands.claw.simple.RunClawEject;
@@ -54,6 +53,7 @@ import frc.robot.commands.elevator.simple.QueueL3Action;
 import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotBargeForwards;
 import frc.robot.commands.pivot.simple.MovePivotProcesser;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.roller.EjectCoral;
@@ -252,7 +252,7 @@ public class RobotContainer {
                     new MovePivotStow(),
                     new DequeueElevatorAction(),
                     new ParallelCommandGroup(
-                        new MovePivotAlgay(),
+                        new MovePivotBargeForwards(),
                         new SequentialCommandGroup(
                             new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
                             new ParallelDeadlineGroup(
