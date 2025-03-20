@@ -31,7 +31,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
-                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 5 &&
+                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 2.3 &&
                     !Claw.getInstance().inClaw()
                 ),
                 new AbsoluteFieldDrive(controller)
@@ -46,7 +46,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                 new LinearAlignFace(
                     () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                     () -> new ChassisSpeeds(),
-                    5
+                    2.3
                 )
             ),
             new ParallelDeadlineGroup(
@@ -54,7 +54,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     new LinearAlignFace(
                         () -> AlignmentUtil.getClosestAlgayPose(),
                         () -> new ChassisSpeeds(),
-                        5
+                        2.3
                     ),
                     new WaitCommand(0.5)
                 ),
@@ -63,7 +63,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
             new LinearAlignFace(
                 () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                 () -> new ChassisSpeeds(),
-                5
+                2.3
             ),
             new MovePivotStow(),
             new QueueStowAction(),

@@ -23,11 +23,6 @@ public class AlignToCageAndClimb extends SequentialCommandGroup{
     public AlignToCageAndClimb(XboxController controller) {
         addCommands(
             new QueueL2Action(),
-            // new ConditionalCommand( // move out when the ratchet is pulled
-            //     new EnableOppositeRotation(), 
-            //     new InstantCommand(), 
-            //     () -> !Pneumatics.getInstance().getRatchetState()
-            // ),
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestCagePose().getTranslation().getDistance( // check for the correct max distance from target
