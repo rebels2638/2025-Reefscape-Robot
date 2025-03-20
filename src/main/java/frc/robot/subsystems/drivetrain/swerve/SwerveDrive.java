@@ -8,6 +8,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -41,6 +42,7 @@ import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConf
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
 import frc.robot.lib.util.Elastic;
+import frc.robot.lib.util.LoggedTunableNumber;
 import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
@@ -106,7 +108,7 @@ public class SwerveDrive extends SubsystemBase {
 
     private final SwerveModuleGeneralConfigBase moduleGeneralConfig;
     private final SwerveDrivetrainConfigBase drivetrainConfig;
-    private final SwerveControllerConfigBase controllerConfig; 
+    private final SwerveControllerConfigBase controllerConfig;
 
     @SuppressWarnings("static-access")
     private SwerveDrive() {
@@ -228,6 +230,7 @@ public class SwerveDrive extends SubsystemBase {
         } finally {
             Phoenix6Odometry.getInstance().stateLock.readLock().unlock();
         }
+
         if (odometryTimestamp == 0.0) {
             odometryTimestamp = Timer.getFPGATimestamp();
         }
