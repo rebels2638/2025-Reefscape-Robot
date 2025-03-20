@@ -19,6 +19,8 @@ import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotBargeBackwards;
+import frc.robot.commands.pivot.simple.MovePivotBargeForwards;
 import frc.robot.commands.pivot.simple.MovePivotMidwayAlgay;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.lib.input.XboxController;
@@ -44,7 +46,7 @@ public class AlignToClosestBargePointAndScore extends SequentialCommandGroup{
                 new MovePivotStow(),
                 new DequeueElevatorAction(),
                 new ParallelCommandGroup(
-                    new MovePivotAlgay(),
+                    new MovePivotBargeForwards(),
                     new SequentialCommandGroup(
                         new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
                         new ParallelDeadlineGroup(

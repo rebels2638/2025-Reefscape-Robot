@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
@@ -42,6 +44,7 @@ import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
+import frc.robot.commands.pivot.simple.MovePivotBargeBackwards;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 
 public class Autos {
@@ -140,23 +143,16 @@ public class Autos {
                             new MovePivotStow()
                         ),
                         new SequentialCommandGroup(
-                            new ParallelDeadlineGroup(
-                                waitForElevatorExtension(toBargePath),
-                                new SequentialCommandGroup(
-                                    new QueueStowAction(),
-                                    new DequeueElevatorAction()
-                                )
-                            ),
-                            new SequentialCommandGroup(
-                                queueElevatorCommand(Height.L4),
-                                new DequeueElevatorAction()
-                            )
+                            new QueueStowAction(),
+                            new DequeueElevatorAction()
                         )
                     ),
+                    queueElevatorCommand(Height.L4),
+                    new DequeueElevatorAction(),
                     new ParallelCommandGroup(
-                        new MovePivotAlgay(),
+                        new MovePivotBargeBackwards(),
                         new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 90),
+                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 100),
                             new ParallelDeadlineGroup(
                                 new WaitUntilCommand(0.8),
                                 new RunClawEject()
@@ -312,6 +308,8 @@ public class Autos {
 
     public static final Command resetPose(String name) {
         PathPlannerPath path = loadPath(name);
+        Logger.recordOutput("ResetPose/shouldFlipPath", Constants.shouldFlipPath());
+        
         return
             Constants.shouldFlipPath() ?
                 new InstantCommand(  // flip starting pose

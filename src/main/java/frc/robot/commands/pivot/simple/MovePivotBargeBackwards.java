@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.pivot.PivotConfigComp;
 import frc.robot.subsystems.pivot.Pivot;
 
-public class MovePivotStow extends Command {
+public class MovePivotBargeBackwards extends Command {
     private final Pivot pivot;
-    public MovePivotStow() {
+    public MovePivotBargeBackwards() {
         this.pivot = Pivot.getInstance();
         
         addRequirements(pivot);
@@ -15,7 +15,7 @@ public class MovePivotStow extends Command {
 
     @Override
     public void initialize() {
-        pivot.setAngle(Rotation2d.fromDegrees(90));//110
+        pivot.setAngle(Rotation2d.fromDegrees(110));//110
     }
 
     @Override
