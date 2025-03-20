@@ -7,6 +7,7 @@ import java.util.function.IntFunction;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,6 +16,7 @@ import frc.robot.constants.elevator.ElevatorConfigBase;
 import frc.robot.constants.elevator.ElevatorConfigComp;
 import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
+import frc.robot.lib.util.LoggedTunableNumber;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance = null;
@@ -24,6 +26,11 @@ public class Elevator extends SubsystemBase {
         }
         return instance;
     }
+    private static LoggedTunableNumber L1_height = new LoggedTunableNumber("Elevator/L1", 0.0);
+    private static LoggedTunableNumber L2_height = new LoggedTunableNumber("Elevator/L2", 0.1);
+    private static LoggedTunableNumber L3_height = new LoggedTunableNumber("Elevator/L3", 0.77);
+    private static LoggedTunableNumber L4_height = new LoggedTunableNumber("Elevator/L4", 1.42);
+    private static double[] tuningReferences = {0.0,0.1,0.34,0.77,1.42};
 
     public enum Height {
         STOW(0.01),
@@ -94,7 +101,20 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         elevatorIO.updateInputs(elevatorIOInputs);
         Logger.processInputs("Elevator", elevatorIOInputs);
-        setpoint = currHeightRequest.getExtensionHeight();
+
+        if (Constants.isInTuningMode) {
+            if (L1_height.hasChanged(hashCode())) {tuningReferences[1] = L1_height.getAsDouble();}
+            if (L2_height.hasChanged(hashCode())) {tuningReferences[2] = L2_height.getAsDouble();}
+            if (L3_height.hasChanged(hashCode())) {tuningReferences[3] = L3_height.getAsDouble();}
+            if (L4_height.hasChanged(hashCode())) {tuningReferences[4] = L4_height.getAsDouble();}
+            setpoint = tuningReferences[Arrays.asList(Height.values()).indexOf(currHeightRequest)];
+        }
+
+        else {
+            setpoint = currHeightRequest.getExtensionHeight();
+        }
+
+        // setpoint = currHeightRequest.getExtensionHeight();
 
         if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
 

@@ -8,10 +8,35 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
+import frc.robot.lib.util.LoggedTunableNumber;
 
 public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
 
     public static SwerveDrivetrainConfigSim instance = null;
+
+    private static LoggedTunableNumber[] AutoAlignTranslationalPID = {
+        new LoggedTunableNumber(
+            "AutoAlign/translational/kP", 4
+        ),
+        new LoggedTunableNumber(
+            "AutoAlign/translational/kI", 0
+        ),
+        new LoggedTunableNumber(
+            "AutoAlign/translational/kD", 0
+        ),
+    };
+    private static LoggedTunableNumber[] AutoAlignRotationalPID = {
+        new LoggedTunableNumber(
+            "AutoAlign/rotational/kP", 4
+        ),
+        new LoggedTunableNumber(
+            "AutoAlign/rotational/kI", 0
+        ),
+        new LoggedTunableNumber(
+            "AutoAlign/rotational/kD", 0
+        ),
+    };
+
     public static SwerveDrivetrainConfigSim getInstance() {
         if (instance == null) {
             instance = new SwerveDrivetrainConfigSim();
@@ -107,6 +132,17 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
         PIDController p = new PIDController(4, 0, 0);
+
+        if (AutoAlignTranslationalPID[0].hasChanged(hashCode())) {
+            p.setP(AutoAlignTranslationalPID[0].getAsDouble());
+        }
+        if (AutoAlignTranslationalPID[0].hasChanged(hashCode())) {
+            p.setI(AutoAlignTranslationalPID[1].getAsDouble());
+        }
+        if (AutoAlignTranslationalPID[0].hasChanged(hashCode())) {
+            p.setD(AutoAlignTranslationalPID[2].getAsDouble());
+        }
+
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -115,6 +151,16 @@ public class SwerveDrivetrainConfigSim extends SwerveDrivetrainConfigBase {
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
         PIDController p = new PIDController(4, 0, 0);
+
+        if (AutoAlignRotationalPID[0].hasChanged(hashCode())) {
+            p.setP(AutoAlignRotationalPID[0].getAsDouble());
+        }
+        if (AutoAlignRotationalPID[0].hasChanged(hashCode())) {
+            p.setI(AutoAlignRotationalPID[1].getAsDouble());
+        }
+        if (AutoAlignRotationalPID[0].hasChanged(hashCode())) {
+            p.setD(AutoAlignRotationalPID[2].getAsDouble());
+        }
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
