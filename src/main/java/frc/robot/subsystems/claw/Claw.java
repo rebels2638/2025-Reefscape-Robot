@@ -43,7 +43,7 @@ public class Claw extends SubsystemBase {
 
             case SIM:
                 config = ClawConfigSim.getInstance();
-                clawIO = new ClawIOSim(PivotConfigSim.getInstance()); //temporary fix so the clawIO is not null in sim
+                clawIO = new ClawIOSim(); 
 
                 break;
 

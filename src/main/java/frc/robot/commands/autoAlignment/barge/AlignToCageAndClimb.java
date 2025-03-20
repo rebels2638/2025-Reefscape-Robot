@@ -11,16 +11,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
-import frc.robot.commands.DropFunnel;
 import frc.robot.commands.autoAlignment.LinearAlignFace;
-import frc.robot.commands.climber.simple.EnableOppositeRotation;
 import frc.robot.commands.climber.simple.MoveClimberStow;
 import frc.robot.commands.climber.simple.MoveDeepCage;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueL2Action;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
-import frc.robot.subsystems.pneumatics.Pneumatics;
 
 public class AlignToCageAndClimb extends SequentialCommandGroup{
     public AlignToCageAndClimb(XboxController controller) {
@@ -52,8 +49,6 @@ public class AlignToCageAndClimb extends SequentialCommandGroup{
                 2
             ),
             new DequeueElevatorAction(),
-            new DropFunnel(),
-            new EnableOppositeRotation(),
             new MoveClimberStow()
         );
     }

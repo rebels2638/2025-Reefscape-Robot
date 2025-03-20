@@ -81,7 +81,7 @@ public class Vision extends SubsystemBase {
                 visionIO = new VisionIO[config.getNames().length];
                 visionIOInputs = new VisionIOInputsAutoLogged[config.getNames().length];
                 for (int i = 0; i < config.getNames().length; i++) {
-                    visionIO[i] = new VisionIO() {};
+                    visionIO[i] = new VisionIOSim();
                     visionIOInputs[i] = new VisionIOInputsAutoLogged();
                 }
 

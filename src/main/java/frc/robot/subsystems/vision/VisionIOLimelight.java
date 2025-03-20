@@ -35,6 +35,7 @@ public class VisionIOLimelight implements VisionIO {
         );
     }
 
+    @Override
     public void updateInputs(VisionIOInputs inputs) {
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
         
@@ -50,6 +51,7 @@ public class VisionIOLimelight implements VisionIO {
         inputs.scale = scale;
     }
 
+    @Override
     public void includeTagIDs(Optional<int[]> tags) {
         if (tags.isPresent()) {
             LimelightHelpers.SetFiducialIDFiltersOverride(name, tags.get());

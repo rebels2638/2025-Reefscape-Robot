@@ -31,7 +31,6 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
-import frc.robot.subsystems.pneumatics.Pneumatics;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.barge.AlignToCageAndClimb;
@@ -115,7 +114,6 @@ public class RobotContainer {
         elevator = Elevator.getInstance();
         mechanismVisualizer = MechanismVisualizer.getInstance();
         autoRunner = AutoRunner.getInstance();
-        Pneumatics.getInstance();
 
         swerveDrive.setDefaultCommand(new AbsoluteFieldDrive(xboxDriver));
         claw.setDefaultCommand(new HoldAlgayClaw());
@@ -208,8 +206,8 @@ public class RobotContainer {
         xboxTester.getYButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));
         xboxTester.getXButton().onTrue(new QueueL4Action().andThen(new DequeueElevatorAction()));
         
-        xboxTester.getRightBumper().onTrue(new IntakeCoral());
-        xboxTester.getLeftBumper().onTrue(new EjectCoral());
+        xboxDriver.getRightMiddleButton().onTrue(new IntakeCoral());
+        xboxDriver.getLeftMiddleButton().onTrue(new EjectCoral());
 
         new Trigger(
             () -> (

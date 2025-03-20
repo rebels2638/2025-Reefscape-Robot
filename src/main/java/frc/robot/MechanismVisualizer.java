@@ -127,6 +127,14 @@ public class MechanismVisualizer extends SubsystemBase {
             Logger.recordOutput("MechanismVisualizer/rollerPose", new Pose3d());
         }
 
+        Pose3d algayPose = new Pose3d(rollerPose.getX(), rollerPose.getY(), rollerPose.getZ() + 0.3, new Rotation3d());
+        if (roller.inRoller()) {
+            Logger.recordOutput("MechanismVisualizer/clawPose", algayPose);
+        }
+        else {
+            Logger.recordOutput("MechanismVisualizer/clawPose", new Pose3d());
+        }
+
         if (!roller.inRoller() && inRoller) {
             Pose3d nearest = new Pose3d();
             for (Map<ReefHeight, Pose3d> coralPose : MechAElementConstants.Reef.branchPositions) {
