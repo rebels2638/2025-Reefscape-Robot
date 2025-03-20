@@ -28,9 +28,8 @@ import frc.robot.lib.util.AlignmentUtil.Axis;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
+    public static final Mode currentMode = Mode.COMP; // TODO: change this if sim
     // public static final boolean isSYSID = true; // TODO: change this if sysid
-    public static final boolean isInTuningMode = true;
 
     public static enum Mode {
         /** Running on a real robot. */
