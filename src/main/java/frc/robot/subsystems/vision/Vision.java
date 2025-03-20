@@ -25,6 +25,7 @@ import frc.robot.constants.vision.VisionConfigComp;
 import frc.robot.constants.vision.VisionConfigProto;
 import frc.robot.constants.vision.VisionConfigSim;
 import frc.robot.lib.util.LimelightHelpers;
+import frc.robot.lib.util.RebelUtil;
 
 public class Vision extends SubsystemBase {
     private static Vision instance = null;
@@ -135,10 +136,14 @@ public class Vision extends SubsystemBase {
                 visionIOInputs[i].hasValidTargets) {
             
                 double translationDev = 
-                    config.getTranslationDevBase() +
-                    Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
-                    / config.getTranslationDevRotationExpoDenominator() 
-                    + Math.pow((100.0 - visionIOInputs[i].ta), 5) * config.getTranslationDevTaScaler();
+                    RebelUtil.constrain(
+                        ((Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
+                        / config.getTranslationDevRotationExpoDenominator())
+                        + Math.pow(visionIOInputs[i].ta - 5.2, 3) * config.getTranslationDevTaScaler()),
+                        config.getTranslationDevBase(),
+                        20.0
+                    );
+                    
         
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "totalDev", translationDev);
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", (100 - visionIOInputs[i].ta) * config.getTranslationDevTaScaler());
