@@ -37,6 +37,8 @@ public class PivotIOSim implements PivotIO {
 
     private double previousAngleRad = 0;
     private double appliedVolts = 0;
+
+    private Rotation2d currentPosition = new Rotation2d();
     
     public PivotIOSim(PivotConfigBase config) {
         kMIN_ANGLE_RAD = config.getMinAngleRotations() * Math.PI * 2;
@@ -89,7 +91,8 @@ public class PivotIOSim implements PivotIO {
         pivotSim.update(dt);
 
         inputs.pivotVelocityRadPerSec = pivotSim.getVelocityRadPerSec();
-        inputs.pivotPosition = new Rotation2d(MathUtil.angleModulus(pivotSim.getAngleRads()));
+        // inputs.pivotPosition = new Rotation2d(MathUtil.angleModulus(pivotSim.getAngleRads()));
+        inputs.pivotPosition = currentPosition;
         previousAngleRad = inputs.pivotPosition.getRadians();
 
         inputs.pivotAppliedVolts = appliedVolts;
@@ -97,6 +100,7 @@ public class PivotIOSim implements PivotIO {
 
     @Override
     public void setAngle(Rotation2d angle) {
+        currentPosition = angle;
         double dt = Timer.getTimestamp() - prevTimeState;
         prevTimeState = Timer.getTimestamp();
 
