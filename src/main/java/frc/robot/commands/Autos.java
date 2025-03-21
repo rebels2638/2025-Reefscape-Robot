@@ -55,20 +55,34 @@ public class Autos {
             cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
         );
 
-        public static final Command start_middle_1xL4_1xBarge = 
-            new SequentialCommandGroup(
-                resetPose("MS_T_RB"),
-                cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
-                cycleAlgay(null, "T_AG_B", Height.L2)
-            );
-        
-        public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
+    public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
 
-        public static final Command start_middle_1xL4 = 
-            new SequentialCommandGroup(
-                resetPose("MS_T_RB"),
-                cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
-            );
+
+    public static final Command start_right_1xL3_1xL4 = 
+        new SequentialCommandGroup(
+            resetPose("PS_TR_RB"),
+            cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L3, Branch.RIGHT),
+            cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
+        );
+    
+    public static final Supplier<Pose2d> zero_start_right_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+
+
+    public static final Command start_middle_1xL4_1xBarge = 
+        new SequentialCommandGroup(
+            resetPose("MS_T_RB"),
+            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
+            cycleAlgay(null, "T_AG_B", Height.L2)
+        );
+    
+    public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
+    public static final Supplier<Pose2d> zero_start_bottom_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+
+    public static final Command start_middle_1xL4 = 
+        new SequentialCommandGroup(
+            resetPose("MS_T_RB"),
+            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
+        );
 
     public static final Supplier<Pose2d> zero_start_middle_1xL4 = () -> getStartingPose("MS_T_RB");
 
@@ -81,15 +95,12 @@ public class Autos {
     public static final Command cycleCoral(String toReefPath, String toSourcePath, Height level, Branch branch) {
         Command sourceCommand = 
             toSourcePath != null ? 
-                new ParallelDeadlineGroup(
-                    new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                            new QueueStowAction(),
-                            new DequeueElevatorAction()
-                        ),
-                        followPath(toSourcePath)
+                new ParallelCommandGroup(
+                    new SequentialCommandGroup(
+                        new QueueStowAction(),
+                        new DequeueElevatorAction()
                     ),
-                    new IntakeCoral()
+                    followPath(toSourcePath)
                 ) :
                 new SequentialCommandGroup(
                     new QueueStowAction(),

@@ -48,7 +48,7 @@ public class AlignToClosestBargePointAndScore extends SequentialCommandGroup{
                 new ParallelCommandGroup(
                     new MovePivotBargeForwards(),
                     new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
+                        new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 70),
                         new ParallelDeadlineGroup(
                             new WaitUntilCommand(0.8),
                             new RunClawEject()
