@@ -156,11 +156,11 @@ public class RobotContainer {
             )
         ).whileTrue(new AlignToClosestBargePointAndScore(xboxDriver)).onFalse(new CancelScoreAlgay());
         
-        // new Trigger(
-        //     () -> (
-        //         xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
-        //     )
-        // ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
+        new Trigger(
+            () -> (
+                xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
+            )
+        ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
 
         new Trigger(
             () -> (
@@ -194,20 +194,10 @@ public class RobotContainer {
             )
         );
 
-        // xboxOperator.getLeftBumper().onTrue(
-        //     new InstantCommand(
-        //         () -> RobotState.getInstance().resetPose(
-        //             new Pose2d(8.786035537719727, 4.756836414337158, new Rotation2d())
-        //         ))
-        //     );
-
         xboxTester.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         xboxTester.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
         xboxTester.getYButton().onTrue(new QueueL3Action().andThen(new DequeueElevatorAction()));
         xboxTester.getXButton().onTrue(new QueueL4Action().andThen(new DequeueElevatorAction()));
-        
-        xboxDriver.getRightMiddleButton().onTrue(new IntakeCoral());
-        xboxDriver.getLeftMiddleButton().onTrue(new EjectCoral());
 
         new Trigger(
             () -> (
@@ -267,12 +257,6 @@ public class RobotContainer {
                 )
             )
         ).onFalse(new CancelScoreAlgay()); // DescoreAlgay
-
-
-        // xboxTester.getBButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushFunnel()));
-        // xboxTester.getAButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullFunnel()));
-        // xboxTester.getXButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pushRatchet()));
-        // xboxTester.getYButton().onTrue(new InstantCommand(() -> Pneumatics.getInstance().pullRatchet()));
 
         autoCommand = autoRunner.getAutonomousCommand();
         autoRunner.getAutonomousZeroCommand().runsWhenDisabled();

@@ -17,24 +17,24 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     private static LoggedTunableNumber[] AutoAlignTranslationalPID = {
         new LoggedTunableNumber(
-            "AutoAlign/translational/kP"
+            "AutoAlign/translational/kP", 2.5
         ),
         new LoggedTunableNumber(
-            "AutoAlign/translational/kI"
+            "AutoAlign/translational/kI", 0.0
         ),
         new LoggedTunableNumber(
-            "AutoAlign/translational/kD"
+            "AutoAlign/translational/kD", 0.2
         ),
     };
     private static LoggedTunableNumber[] AutoAlignRotationalPID = {
         new LoggedTunableNumber(
-            "AutoAlign/rotational/kP"
+            "AutoAlign/rotational/kP", 2.5
         ),
         new LoggedTunableNumber(
-            "AutoAlign/rotational/kI"
+            "AutoAlign/rotational/kI", 0.0
         ),
         new LoggedTunableNumber(
-            "AutoAlign/rotational/kD"
+            "AutoAlign/rotational/kD", 0.0
         ),
     };
 
