@@ -136,17 +136,23 @@ public class Vision extends SubsystemBase {
                 visionIOInputs[i].hasValidTargets) {
             
                 double translationDev = 
-                    RebelUtil.constrain(
-                        ((Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
-                        / config.getTranslationDevRotationExpoDenominator())
-                        + Math.pow(visionIOInputs[i].ta - 5.2, 3) * config.getTranslationDevTaScaler()),
-                        config.getTranslationDevBase(),
-                        20.0
-                    );
+                        (Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
+                        / config.getTranslationDevRotationExpoDenominator()) +
+                        RebelUtil.constrain(
+                            -Math.sqrt(
+                                RebelUtil.constrain(
+                                    ((visionIOInputs[i].ta - 0.07) / 35570),
+                                    0.0,
+                                    10000.0
+                                )
+                            ) + 0.03,
+                            0.003,
+                            0.03
+                        );
                     
         
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "totalDev", translationDev);
-                Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", (100 - visionIOInputs[i].ta) * config.getTranslationDevTaScaler());
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", Math.pow(visionIOInputs[i].ta - 5.2, 3) * config.getTranslationDevTaScaler());
 
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "/addingSample", true);
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "/rotationalDevContribution", 
