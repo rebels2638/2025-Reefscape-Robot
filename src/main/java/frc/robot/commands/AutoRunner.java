@@ -1,9 +1,13 @@
 package frc.robot.commands;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -89,6 +93,8 @@ public class AutoRunner {
                 Constants::shouldFlipPath,
                 SwerveDrive.getInstance() // Reference to this subsystem to set requirements
         ); 
+
+        Shuffleboard.getTab("Auto").add("ResetRobotPose", new ZeroPose(getAutonomousZeroSupplier()));
     }
 
     private void loadPath() {
@@ -97,13 +103,14 @@ public class AutoRunner {
     }
 
         
-    public Command getAutonomousCommand() {
-        return Autos.start_middle_1xL4_1xBarge;
+    public static Command getAutonomousCommand() {
+        return Autos.start_right_2xL4;
     }
     
-    public Command getAutonomousZeroCommand() {
-        return Autos.zero_start_middle_1xL4_1xBarge;
+    public static Supplier<Pose2d> getAutonomousZeroSupplier() {
+        return Autos.zero_start_right_2xL4;
     }
+
 
     public PathConstraints getPathConstraints() {
         return

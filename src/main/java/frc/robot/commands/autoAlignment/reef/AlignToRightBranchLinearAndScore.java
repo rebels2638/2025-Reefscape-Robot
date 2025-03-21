@@ -55,9 +55,9 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                 new InstantCommand(),
                 () -> Elevator.getInstance().getRequestedLevel() == Height.L4
             ),
-            new EjectCoral(),
-            new QueueStowAction(),
-            new DequeueElevatorAction(),
+            // new EjectCoral(),
+            // new QueueStowAction(),
+            // new DequeueElevatorAction(),
             new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
         );
     }

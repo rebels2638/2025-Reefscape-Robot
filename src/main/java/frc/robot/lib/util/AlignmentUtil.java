@@ -176,6 +176,12 @@ public class AlignmentUtil {
     }
 
     public static void loadCandidates() { // this has to be called on telop / auto init in order to ensure ds is connected
+        leftBranchCandidates = new ArrayList<>();
+        rightBranchCandidates = new ArrayList<>();
+        algayCandidates = new ArrayList<>();
+        sourceCandidates = new ArrayList<>();
+        cageCandidates = new ArrayList<>();
+
         if (Constants.shouldFlipPath()) {
             for (int i = 0; i < 6; i++) {
                 leftBranchCandidates.add(FlippingUtil
@@ -275,6 +281,10 @@ public class AlignmentUtil {
             rightSourceAxis = offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false);
             leftSourceAxis = offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true);
             bargeAxis = offsetAxis(AlignmentConstants.kBARGE_AXIS, false);
+        }
+
+        for (int i = 0; i < leftBranchCandidates.size(); i++) {
+            Logger.recordOutput("AligmentUtil/leftBranchCandidates" + i, leftBranchCandidates.get(i));
         }
     }
 

@@ -13,7 +13,7 @@ public class RunRollerEject extends Command {
 
     @Override
     public void initialize() {
-        roller.setVoltage(12);
+        roller.setVoltage(8);
     }
 
     @Override

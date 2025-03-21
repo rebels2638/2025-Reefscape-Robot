@@ -55,22 +55,36 @@ public class Autos {
             cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
         );
 
-        public static final Command start_middle_1xL4_1xBarge = 
-            new SequentialCommandGroup(
-                resetPose("MS_T_RB"),
-                cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
-                cycleAlgay(null, "T_AG_B", Height.L2)
-            );
-        
-        public static final Command zero_start_middle_1xL4_1xBarge = resetPose("MS_T_RB");
+    public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
 
-        public static final Command start_middle_1xL4 = 
-            new SequentialCommandGroup(
-                resetPose("MS_T_RB"),
-                cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
-            );
 
-    public static final Command zero_start_middle_1xL4 = resetPose("MS_T_RB");
+    public static final Command start_right_1xL3_1xL4 = 
+        new SequentialCommandGroup(
+            resetPose("PS_TR_RB"),
+            cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L3, Branch.RIGHT),
+            cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
+        );
+    
+    public static final Supplier<Pose2d> zero_start_right_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+
+
+    public static final Command start_middle_1xL4_1xBarge = 
+        new SequentialCommandGroup(
+            resetPose("MS_T_RB"),
+            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
+            cycleAlgay(null, "T_AG_B", Height.L2)
+        );
+    
+    public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
+    public static final Supplier<Pose2d> zero_start_bottom_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+
+    public static final Command start_middle_1xL4 = 
+        new SequentialCommandGroup(
+            resetPose("MS_T_RB"),
+            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
+        );
+
+    public static final Supplier<Pose2d> zero_start_middle_1xL4 = () -> getStartingPose("MS_T_RB");
 
     
     public enum Branch {
@@ -81,15 +95,12 @@ public class Autos {
     public static final Command cycleCoral(String toReefPath, String toSourcePath, Height level, Branch branch) {
         Command sourceCommand = 
             toSourcePath != null ? 
-                new ParallelDeadlineGroup(
-                    new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                            new QueueStowAction(),
-                            new DequeueElevatorAction()
-                        ),
-                        followPath(toSourcePath)
+                new ParallelCommandGroup(
+                    new SequentialCommandGroup(
+                        new QueueStowAction(),
+                        new DequeueElevatorAction()
                     ),
-                    new IntakeCoral()
+                    followPath(toSourcePath)
                 ) :
                 new SequentialCommandGroup(
                     new QueueStowAction(),
@@ -139,7 +150,7 @@ public class Autos {
                     new ParallelCommandGroup(
                         followPath(toBargePath),
                         new SequentialCommandGroup(
-                            new WaitCommand(1.2),
+                            new WaitCommand(0.5),
                             new MovePivotStow()
                         ),
                         new SequentialCommandGroup(
@@ -295,7 +306,7 @@ public class Autos {
 
     public static final Translation2d getEndPose(String name) {
         PathPlannerPath path = loadPath(name);
-        return
+        Translation2d pose = 
             Constants.shouldFlipPath() ?
                 FlippingUtil.flipFieldPose(
                     new Pose2d(
@@ -304,26 +315,26 @@ public class Autos {
                     )
                 ).getTranslation():
                 path.getPoint(path.getAllPathPoints().size() - 1).position;
+        Logger.recordOutput("Autos/getEndPose", pose);
+        return pose;
+    }
+
+    public static final Pose2d getStartingPose(String name) {
+        PathPlannerPath path = loadPath(name);
+
+        return
+            Constants.shouldFlipPath() ?
+                FlippingUtil.flipFieldPose(
+                    path.getStartingHolonomicPose().get()
+                )
+            :
+            path.getStartingHolonomicPose().get();
     }
 
     public static final Command resetPose(String name) {
-        PathPlannerPath path = loadPath(name);
         Logger.recordOutput("ResetPose/shouldFlipPath", Constants.shouldFlipPath());
         
-        return
-            Constants.shouldFlipPath() ?
-                new InstantCommand(  // flip starting pose
-                    () -> RobotState.getInstance().resetPose(
-                        FlippingUtil.flipFieldPose(
-                            path.getStartingHolonomicPose().get()
-                        )
-                    )
-                ) :
-                new InstantCommand(  // flip starting pose
-                    () -> RobotState.getInstance().resetPose(
-                        path.getStartingHolonomicPose().get()
-                    )
-                );
+        return new InstantCommand( () -> RobotState.getInstance().resetPose(getStartingPose(name)));
     }
 
     private Autos() {}

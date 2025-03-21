@@ -97,8 +97,6 @@ public class RobotContainer {
 
     private final Debouncer climbDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kBoth);
 
-    private final Command autoCommand;
-
     private RobotContainer() {
         this.xboxTester = new XboxController(1);
         this.xboxOperator = new XboxController(2);
@@ -188,9 +186,19 @@ public class RobotContainer {
         xboxOperator.getLeftBumper().onTrue(
             new SequentialCommandGroup(
                 new EjectCoral(),
-                new WaitCommand(0.5),
                 new QueueStowAction(),
-                new DequeueElevatorAction()
+                new DequeueElevatorAction(),
+                new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
+            )
+        );
+
+        xboxTester.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+        xboxTester.getLeftBumper().onTrue(
+            new SequentialCommandGroup(
+                new EjectCoral(),
+                new QueueStowAction(),
+                new DequeueElevatorAction(),
+                new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
             )
         );
 
@@ -225,8 +233,7 @@ public class RobotContainer {
                     ), 
                     new MovePivotAlgay(),
                     new RunClawIntake()
-                ),
-                new MovePivotStow()
+                )
             )
         ).onFalse(new CancelScoreAlgay());
 
@@ -244,7 +251,7 @@ public class RobotContainer {
                     new ParallelCommandGroup(
                         new MovePivotBargeForwards(),
                         new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
+                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 70),
                             new ParallelDeadlineGroup(
                                 new WaitUntilCommand(0.8),
                                 new RunClawEject()
@@ -257,12 +264,9 @@ public class RobotContainer {
                 )
             )
         ).onFalse(new CancelScoreAlgay()); // DescoreAlgay
-
-        autoCommand = autoRunner.getAutonomousCommand();
-        autoRunner.getAutonomousZeroCommand().runsWhenDisabled();
     }
 
     public Command getAutonomousCommand() {
-        return autoCommand;
+        return autoRunner.getAutonomousCommand();
     }
 }
