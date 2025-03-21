@@ -331,30 +331,39 @@ public class AlignmentUtil {
     public static int getClosestReefFace(Pose2d curr, List<Pose2d> candidates) {
         curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr;
 
-        int nearest = 0;
-        int penultimateNearest = 0;
-        for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
-            if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
-                    .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
-                            .getTranslation().getDistance(curr.getTranslation())) {
-                nearest = i;
+        // int nearest = 0;
+        // int penultimateNearest = 0;
+        // for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
+        //     if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
+        //             .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
+        //                     .getTranslation().getDistance(curr.getTranslation())) {
+        //         nearest = i;
+        //     }
+        // }
+
+        // for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
+        //     if (i == nearest) {
+        //         continue;
+        //     }
+        //     if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
+        //             .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
+        //                     .getTranslation().getDistance(curr.getTranslation())) {
+        //         penultimateNearest = i;
+        //     }
+        // }
+
+        // return candidates.get(nearest).getTranslation().getDistance(curr.getTranslation()) < candidates
+        //         .get(penultimateNearest).getTranslation().getDistance(curr.getTranslation()) ? nearest
+        //                 : penultimateNearest;
+
+        int index = 0;
+        for (int i = 1; i < candidates.size(); i++) {
+            if (candidates.get(i).getTranslation().getDistance(curr.getTranslation()) < candidates.get(index).getTranslation().getDistance(curr.getTranslation())) {
+                index = i;
             }
         }
 
-        for (int i = 0; i < AlignmentConstants.kREEF_CENTER_FACES.length; i++) {
-            if (i == nearest) {
-                continue;
-            }
-            if (AlignmentConstants.kREEF_CENTER_FACES[i].getTranslation()
-                    .getDistance(curr.getTranslation()) < AlignmentConstants.kREEF_CENTER_FACES[nearest]
-                            .getTranslation().getDistance(curr.getTranslation())) {
-                penultimateNearest = i;
-            }
-        }
-
-        return candidates.get(nearest).getTranslation().getDistance(curr.getTranslation()) < candidates
-                .get(penultimateNearest).getTranslation().getDistance(curr.getTranslation()) ? nearest
-                        : penultimateNearest;
+        return index;
     }
 
     public static Pose2d getClosestAlgayPose() {
