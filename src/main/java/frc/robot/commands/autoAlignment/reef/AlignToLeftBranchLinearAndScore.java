@@ -31,7 +31,7 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
-                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 2.3 &&
+                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 3.6 &&
                     Roller.getInstance().inRoller()
                 ),
                 new AbsoluteFieldDrive(controller)
@@ -45,7 +45,7 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                 new LinearAlignFace(
                     () -> AlignmentUtil.getClosestLeftBranchPose(),
                     () -> new ChassisSpeeds(),
-                    2.3
+                    3.6
                 ),
                 new MovePivotStow()
             ),
@@ -54,9 +54,9 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                 new InstantCommand(),
                 () -> Elevator.getInstance().getRequestedLevel() == Height.L4
             ),
-            // new EjectCoral(),
-            // new QueueStowAction(),
-            // new DequeueElevatorAction(),
+            new EjectCoral(),
+            new QueueStowAction(),
+            new DequeueElevatorAction(),
             new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
         );
     }
