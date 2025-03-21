@@ -329,7 +329,7 @@ public class AlignmentUtil {
     }
 
     public static int getClosestReefFace(Pose2d curr, List<Pose2d> candidates) {
-        curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr;
+        // curr = Constants.shouldFlipPath() ? FlippingUtil.flipFieldPose(curr) : curr;
 
         // int nearest = 0;
         // int penultimateNearest = 0;

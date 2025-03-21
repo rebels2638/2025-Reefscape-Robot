@@ -150,10 +150,11 @@ public class Autos {
                     new ParallelCommandGroup(
                         followPath(toBargePath),
                         new SequentialCommandGroup(
-                            new WaitCommand(0.5),
+                            new WaitCommand(1.2),
                             new MovePivotStow()
                         ),
                         new SequentialCommandGroup(
+                            new WaitUntilCommand(2),
                             new QueueStowAction(),
                             new DequeueElevatorAction()
                         )
@@ -191,7 +192,7 @@ public class Autos {
                     new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
                             followPath(toReefPath),
-                            new WaitCommand(0.5)
+                            new WaitCommand(1.5)
                         ),
                         new SequentialCommandGroup(
                             waitForElevatorExtension(toReefPath),
