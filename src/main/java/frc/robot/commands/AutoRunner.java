@@ -104,11 +104,11 @@ public class AutoRunner {
 
         
     public static Command getAutonomousCommand() {
-        return Autos.start_middle_1xL4;
+        return Autos.start_right_2xL4;
     }
     
     public static Supplier<Pose2d> getAutonomousZeroSupplier() {
-        return Autos.zero_start_middle_1xL4;
+        return Autos.zero_start_right_2xL4;
     }
 
 

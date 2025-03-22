@@ -101,7 +101,8 @@ public class Autos {
                         new QueueStowAction(),
                         new DequeueElevatorAction()
                     ),
-                    followPath(toSourcePath)
+                    followPath(toSourcePath),
+                    new WaitCommand(1.2)
                 ) :
                 new SequentialCommandGroup(
                     new QueueStowAction(),
