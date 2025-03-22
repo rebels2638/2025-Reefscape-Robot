@@ -128,7 +128,6 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    AlignmentUtil.loadCandidates(); // called on ds init
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -148,7 +147,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    AlignmentUtil.loadCandidates(); // called on ds init
     Elastic.selectTab(0);  // called on ds init, selects teleoperated tab on Elastic
 
     // This makes sure that the autonomous stops running when
