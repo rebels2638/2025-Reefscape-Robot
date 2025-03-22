@@ -1,6 +1,7 @@
 package frc.robot.lib.util;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class RebelUtil {
     public static final double EPSILON = 1e-12;
@@ -59,5 +60,14 @@ public class RebelUtil {
 
     public static boolean epsilonEquals(double a, double b) {
         return epsilonEquals(a, b, EPSILON);
+    }
+
+    public static ChassisSpeeds scaleSpeeds(double maxTranslationalSpeedMps, ChassisSpeeds speeds) {
+        ChassisSpeeds corrected = new ChassisSpeeds();
+        double scaler = Math.sqrt(Math.pow(maxTranslationalSpeedMps,2)/(Math.pow(speeds.vxMetersPerSecond,2) + Math.pow(speeds.vyMetersPerSecond,2)));
+        corrected.vxMetersPerSecond = speeds.vxMetersPerSecond * scaler;
+        corrected.vyMetersPerSecond = speeds.vyMetersPerSecond * scaler;
+        corrected.omegaRadiansPerSecond = speeds.omegaRadiansPerSecond;
+        return corrected;
     }
 }
