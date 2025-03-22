@@ -40,6 +40,6 @@ public class RobotStateConfigComp extends RobotStateConfigBase {
 
     @Override
     public int getMinLocalVisionObservationCount() {
-        return 80;
+        return 45;
     }
 }

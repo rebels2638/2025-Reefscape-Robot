@@ -292,6 +292,10 @@ public class AlignmentUtil {
         return offsetPoseToPreAlignment(pose, config.getBumperLengthMeters() / 2 * Math.sqrt(2));
     }
 
+    public static Pose2d offsetCoralPoseToVisionReading(Pose2d pose) {
+        return offsetPoseToPreAlignment(pose, 0.17);
+    }
+
     public static Pose2d offsetPoseToPreAlignment(Pose2d pose, double distance) {
         return pose.transformBy(
                 new Transform2d(
