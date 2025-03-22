@@ -74,6 +74,7 @@ public class Autos {
             cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
             cycleAlgay(null, "T_AG_B", Height.L2)
         );
+
     
     public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
     public static final Supplier<Pose2d> zero_start_bottom_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
@@ -150,11 +151,11 @@ public class Autos {
                     new ParallelCommandGroup(
                         followPath(toBargePath),
                         new SequentialCommandGroup(
-                            new WaitCommand(1.2),
+                            new WaitCommand(3),
                             new MovePivotStow()
                         ),
                         new SequentialCommandGroup(
-                            new WaitUntilCommand(2),
+                            new WaitUntilCommand(4),
                             new QueueStowAction(),
                             new DequeueElevatorAction()
                         )

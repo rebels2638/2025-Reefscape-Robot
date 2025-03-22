@@ -8,8 +8,6 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,7 +15,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,8 +38,6 @@ import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleGeneralConfigP
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificBLConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.proto.SwerveModuleSpecificFRConfigProto;
 import frc.robot.constants.swerve.moduleConfigs.sim.SwerveModuleGeneralConfigSim;
-import frc.robot.lib.util.Elastic;
-import frc.robot.lib.util.LoggedTunableNumber;
 import frc.robot.lib.util.RebelUtil;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIO;
 import frc.robot.subsystems.drivetrain.swerve.gyro.GyroIOInputsAutoLogged;
@@ -364,7 +359,6 @@ public class SwerveDrive extends SubsystemBase {
     public void disableRotationLock() {
         isRotationLockEnabled = false;
         Logger.recordOutput("SwerveDrive/rotationLockEnabled", false);
-
     }
 
     public void setSlowdownCoeffs(double transCoeff, double rotCoeff) {
