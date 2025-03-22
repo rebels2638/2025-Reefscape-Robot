@@ -135,24 +135,25 @@ public class Vision extends SubsystemBase {
                 rotationalRate.isPresent() && 
                 visionIOInputs[i].hasValidTargets) {
             
+                double taDev = 
+                    RebelUtil.constrain(
+                        -Math.sqrt(
+                            RebelUtil.constrain(
+                                ((visionIOInputs[i].ta - 0.07) / 35570),
+                                0.0,
+                                10000.0
+                            )
+                        ) + 0.03,
+                        0.003,
+                        0.03
+                    );
+
                 double translationDev = 
                         (Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
-                        / config.getTranslationDevRotationExpoDenominator()) +
-                        RebelUtil.constrain(
-                            -Math.sqrt(
-                                RebelUtil.constrain(
-                                    ((visionIOInputs[i].ta - 0.07) / 35570),
-                                    0.0,
-                                    10000.0
-                                )
-                            ) + 0.03,
-                            0.003,
-                            0.03
-                        );
-                    
+                        / config.getTranslationDevRotationExpoDenominator()) + taDev;
         
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "totalDev", translationDev);
-                Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", Math.pow(visionIOInputs[i].ta - 5.2, 3) * config.getTranslationDevTaScaler());
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", taDev);
 
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "/addingSample", true);
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "/rotationalDevContribution", 

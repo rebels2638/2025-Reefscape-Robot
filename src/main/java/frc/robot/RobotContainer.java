@@ -119,7 +119,7 @@ public class RobotContainer {
         new Trigger(
             () -> (
                 leftAlignDebouncer.calculate(
-                    xboxDriver.getLeftTriggerButton(0.94).getAsBoolean() && !xboxDriver.getRightTriggerButton(0.94).getAsBoolean()
+                    xboxDriver.getLeftTriggerButton(0.5).getAsBoolean() && !xboxDriver.getRightTriggerButton(0.5).getAsBoolean()
                 )
             )
         ).whileTrue(new AlignToLeftBranchLinearAndScore(xboxDriver)).onFalse(new CancelScoreCoral());
@@ -127,15 +127,15 @@ public class RobotContainer {
         new Trigger(
             () -> (
                 rightAlignDebouncer.calculate(
-                    xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && !xboxDriver.getLeftTriggerButton(0.94).getAsBoolean()
+                    xboxDriver.getRightTriggerButton(0.5).getAsBoolean() && !xboxDriver.getLeftTriggerButton(0.5).getAsBoolean()
                 )
             )
         ).whileTrue(new AlignToRightBranchLinearAndScore(xboxDriver)).onFalse(new CancelScoreCoral());
 
         new Trigger(
             () -> (
-                xboxDriver.getRightTriggerButton(0.94).getAsBoolean() && 
-                xboxDriver.getLeftTriggerButton(0.94).getAsBoolean()
+                xboxDriver.getRightTriggerButton(0.5).getAsBoolean() && 
+                xboxDriver.getLeftTriggerButton(0.5).getAsBoolean()
             )
         ).whileTrue(new AlignToAlgayLinearAndRemove(xboxDriver)).onFalse(new CancelScoreAlgay()); // DescoreAlgay
 
@@ -209,7 +209,7 @@ public class RobotContainer {
 
         new Trigger(
             () -> (
-                xboxTester.getLeftTriggerButton(0.94).getAsBoolean() && !xboxTester.getRightTriggerButton(0.94).getAsBoolean()
+                xboxTester.getLeftTriggerButton(0.94).getAsBoolean() && !xboxTester.getRightTriggerButton(0.5).getAsBoolean()
             )
         ).whileTrue(
             new MovePivotProcesser()
@@ -222,7 +222,7 @@ public class RobotContainer {
 
         new Trigger(
             () -> (
-                xboxTester.getRightTriggerButton(0.94).getAsBoolean() && !xboxTester.getLeftTriggerButton(0.94).getAsBoolean()
+                xboxTester.getRightTriggerButton(0.5).getAsBoolean() && !xboxTester.getLeftTriggerButton(0.5).getAsBoolean()
             )
         ).whileTrue(
             new SequentialCommandGroup(
@@ -239,8 +239,8 @@ public class RobotContainer {
 
         new Trigger(
             () -> (
-                xboxTester.getRightTriggerButton(0.94).getAsBoolean() && 
-                xboxTester.getLeftTriggerButton(0.94).getAsBoolean()
+                xboxTester.getRightTriggerButton(0.5).getAsBoolean() && 
+                xboxTester.getLeftTriggerButton(0.5).getAsBoolean()
             )
         ).whileTrue(
             new SequentialCommandGroup(
@@ -267,6 +267,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoRunner.getAutonomousCommand();
+        return autoRunner.getAutonomousCommand(); // was static
     }
 }
