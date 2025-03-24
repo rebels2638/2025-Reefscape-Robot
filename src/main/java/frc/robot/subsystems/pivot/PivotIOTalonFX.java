@@ -194,7 +194,7 @@ public class PivotIOTalonFX implements PivotIO {
         }
         else {
             pivotMotor.getConfigurator().apply(pivotConfig.MotionMagic.withMotionMagicCruiseVelocity(3));
-        }
+        } // can't do this
         pivotMotor.setControl(
             pivotPositionRequest.withPosition(
                 RebelUtil.constrain(

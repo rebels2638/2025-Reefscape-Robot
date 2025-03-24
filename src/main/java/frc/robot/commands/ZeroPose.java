@@ -15,8 +15,8 @@ public class ZeroPose extends Command {
 
     @Override
     public void initialize() {
-        RobotState.getInstance().resetPose(pose.get());
         AlignmentUtil.loadCandidates();
+        RobotState.getInstance().resetPose(pose.get());
     }
 
     @Override

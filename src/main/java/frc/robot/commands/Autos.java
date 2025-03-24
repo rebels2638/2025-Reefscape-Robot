@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.commands.autoAlignment.LinearAlignFace;
 import frc.robot.commands.autoAlignment.LinearDriveToPose;
@@ -55,35 +56,54 @@ public class Autos {
             cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
         );
 
-    public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
-
-
-    public static final Command start_right_1xL3_1xL4 = 
+    public static final Command start_right_3xL4 = 
         new SequentialCommandGroup(
             resetPose("PS_TR_RB"),
-            cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L3, Branch.RIGHT),
-            cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
+            cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L4, Branch.RIGHT),
+            cycleCoral("RST_BR_RB", "BR_RB_RST", Height.L4, Branch.RIGHT),
+            cycleCoral("RST_BR_LB", null, Height.L4, Branch.LEFT)
+
         );
-    
-    public static final Supplier<Pose2d> zero_start_right_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+    public static final Supplier<Pose2d> zero_start_right_3xL4 = () -> getStartingPose("PS_TR_RB");
 
+    public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
 
-    public static final Command start_middle_1xL4_1xBarge = 
+    public static final Command start_left_2xL4 = 
         new SequentialCommandGroup(
-            resetPose("MS_T_RB"),
-            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
-            cycleAlgay(null, "T_AG_B", Height.L2)
+            resetPose("OPS_TL_LB"),
+            cycleCoral("OPS_TL_LB", "TL_LB_LST", Height.L4, Branch.LEFT),
+            cycleCoral("LST_BL_LB", null, Height.L4, Branch.LEFT)
         );
+
+    public static final Supplier<Pose2d> zero_start_left_2xL4 = () -> getStartingPose("OPS_TL_LB");
+
+
+    // public static final Command start_right_1xL3_1xL4 = 
+    //     new SequentialCommandGroup(
+    //         resetPose("PS_TR_RB"),
+    //         cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L3, Branch.RIGHT),
+    //         cycleCoral("RST_BR_RB", null, Height.L4, Branch.RIGHT)
+    //     );
+    
+    // public static final Supplier<Pose2d> zero_start_right_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+
+
+    // public static final Command start_middle_1xL4_1xBarge = 
+    //     new SequentialCommandGroup(
+    //         resetPose("MS_T_RB"),
+    //         cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
+    //         cycleAlgay(null, "T_AG_B", Height.L2)
+    //     );
 
     
-    public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
-    public static final Supplier<Pose2d> zero_start_bottom_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
+    // public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
+    // public static final Supplier<Pose2d> zero_start_bottom_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
 
-    public static final Command start_middle_1xL4 = 
-        new SequentialCommandGroup(
-            resetPose("MS_T_RB"),
-            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
-        );
+    // public static final Command start_middle_1xL4 = 
+    //     new SequentialCommandGroup(
+    //         resetPose("MS_T_RB"),
+    //         cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT)
+    //     );
 
     public static final Supplier<Pose2d> zero_start_middle_1xL4 = () -> getStartingPose("MS_T_RB");
 
@@ -112,30 +132,33 @@ public class Autos {
         return 
             new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                    new IntakeCoral(),
                     new SequentialCommandGroup(
                         waitForQueueLocalEstimate(toReefPath),
                         new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
                     ),
-                    // new SequentialCommandGroup(
-                    //     waitForElevatorExtension(toReefPath),
-                    //     queueElevatorCommand(level),
-                    //     new DequeueElevatorAction()
-                    // ),
-                    // new MovePivotStow(),
+                    new SequentialCommandGroup(
+                        new IntakeCoral(),
+                        waitForElevatorExtension(toReefPath),
+                        queueElevatorCommand(level),
+                        new DequeueElevatorAction()
+                    ),
+                    new MovePivotStow(),
                     
                     followPath(toReefPath)
                 ),
-                new MovePivotStow(),
-                waitForElevatorExtension(toReefPath),
-                queueElevatorCommand(level),
-                new DequeueElevatorAction(),
                 new LinearDriveToPose(
-                    branchAlignmentPoseSupplier(branch, getEndPose(toReefPath)),
+                    branchAlignmentPoseSupplier(branch),
                     () -> new ChassisSpeeds()
                 ),
+                // new ParallelCommandGroup(
+                //     new MovePivotStow(),
+                //     new SequentialCommandGroup(
+                //         queueElevatorCommand(level),
+                //         new DequeueElevatorAction()
+                //     )
+                // ),
                 new ConditionalCommand(
-                    new WaitCommand(0.5),
+                    new WaitCommand(0.55),
                     new InstantCommand(),
                     () -> level == Height.L4
                 ),
@@ -238,13 +261,13 @@ public class Autos {
             );
     }
 
-    public static final Supplier<Pose2d> branchAlignmentPoseSupplier(Branch branch, Translation2d pose) {
+    public static final Supplier<Pose2d> branchAlignmentPoseSupplier(Branch branch) {
         switch (branch) {
             case RIGHT:
-                return () -> AlignmentUtil.getClosestRightBranchPose(pose);
+                return () -> AlignmentUtil.getClosestRightBranchPose(RobotState.getInstance().getEstimatedPose().getTranslation());
         
             default:
-                return () -> AlignmentUtil.getClosestLeftBranchPose(pose);
+                return () -> AlignmentUtil.getClosestLeftBranchPose(RobotState.getInstance().getEstimatedPose().getTranslation());
         }
     }
 
@@ -278,8 +301,8 @@ public class Autos {
         return
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.07 &&
-                    RobotState.getInstance().getIsElevatorExtendable() &&
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.3 && //0.7
+                    // RobotState.getInstance().getIsElevatorExtendable() &&
                     Roller.getInstance().inRoller()
             );
     }

@@ -240,6 +240,6 @@ public class LinearDriveToPose extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        swerveDrive.driveFieldRelative(feedforwardVelo.get());
+        swerveDrive.driveFieldRelative(new ChassisSpeeds());
     }
 }

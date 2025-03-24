@@ -41,7 +41,6 @@ public class Robot extends LoggedRobot {
    */
 
   String logPath = "/Users/conne/Downloads/"; // TODO: Remember to change this value guys (Edan)
-  Servo servo = new Servo(1);
 
   @Override
   public void robotInit() {
@@ -134,10 +133,6 @@ public class Robot extends LoggedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
-    }
-
-    if (Constants.currentMode != Mode.SIM && Constants.currentMode != Mode.REPLAY) {
-        servo.setAngle(75);
     }
   }
 
