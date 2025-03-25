@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
+import frc.robot.commands.RumbleDriver;
 import frc.robot.commands.autoAlignment.LinearAlignFace;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
@@ -34,6 +35,7 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                     RobotState.getInstance().getEstimatedPose().getTranslation()) <= 3.6 &&
                     Roller.getInstance().inRoller()
                 ),
+                new RumbleDriver(controller),
                 new AbsoluteFieldDrive(controller)
             ),
             new ParallelCommandGroup(

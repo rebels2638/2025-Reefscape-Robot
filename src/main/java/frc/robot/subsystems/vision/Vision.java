@@ -133,7 +133,9 @@ public class Vision extends SubsystemBase {
             Optional<Rotation2d> rotationalRate = rotationalRateBuffer.getSample(visionIOInputs[i].timestampSeconds);
             if (Timer.getTimestamp() - visionIOInputs[i].timestampSeconds <= config.getObservationBufferSizeSeconds() && 
                 rotationalRate.isPresent() && 
-                visionIOInputs[i].hasValidTargets) {
+                visionIOInputs[i].hasValidTargets &&
+                !(visionIOInputs[i].scale == VisionObservationScale.LOCAL && Math.abs(rotationalRate.get().getDegrees()) > 20)
+            ) {
             
                 double taDev = 
                     RebelUtil.constrain(
@@ -149,7 +151,7 @@ public class Vision extends SubsystemBase {
                     );
 
                 double translationDev = 
-                        (Math.pow(rotationalRate.get().getRadians(), config.getTranslationDevRotationExpo())
+                        (Math.pow(rotationalRate.get().getRadians() + 0.5, config.getTranslationDevRotationExpo())
                         / config.getTranslationDevRotationExpoDenominator()) + taDev;
         
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "totalDev", translationDev);
