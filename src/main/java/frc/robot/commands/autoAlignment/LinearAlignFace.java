@@ -19,10 +19,15 @@ public class LinearAlignFace extends ConditionalCommand {
                 // drive to the closest algay pose
                 new ParallelDeadlineGroup(
                     new WaitUntilCommand(
-                        () -> Math.abs(RobotState.getInstance().getEstimatedPose().getRotation().minus(goalPoseSupplier.get().getRotation()).getDegrees()) < 45 && // check if rotating will first increase the bumper profile while driving to the goal
-                        RobotState.getInstance().isPoseEstimateValid()
+                        () -> Math.abs(RobotState.getInstance().getEstimatedPose().getRotation().minus(goalPoseSupplier.get().getRotation()).getDegrees()) < 45  // check if rotating will first increase the bumper profile while driving to the goal
                     ),
                     new LinearDriveToPose(() -> AlignmentUtil.offsetCoralPoseToPreAlignment(goalPoseSupplier.get()), () -> chassisSpeedsSupplier.get()) // drive to a intermediate pose                     
+                ),
+                new ParallelDeadlineGroup(
+                    new WaitUntilCommand(
+                        () -> RobotState.getInstance().isPoseEstimateValid() // check if rotating will first increase the bumper profile while driving to the goal
+                    ),
+                    new LinearDriveToPose(() -> AlignmentUtil.offsetCoralPoseToVisionReading(goalPoseSupplier.get()), () -> chassisSpeedsSupplier.get()) // drive to a intermediate pose                     
                 ),
                 new LinearDriveToPose(() -> goalPoseSupplier.get(), () -> chassisSpeedsSupplier.get()) // finally drive to the target end goal
             ),

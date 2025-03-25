@@ -95,4 +95,8 @@ public class Climber extends SubsystemBase {
     public Rotation2d getAngle() {
         return climberIOInputs.climberPosition;
     }
+
+    public Rotation2d getSetpoint() {
+        return setpoint;
+    }
 }

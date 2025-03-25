@@ -22,7 +22,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 35.0;
+        return 40.0;
     }
 
     @Override
@@ -38,18 +38,18 @@ public class ClimberConfigComp extends ClimberConfigBase {
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 20.0;
+        return 30.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 20.0;
+        return 30.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -20.0;
+        return -30.0;
     }
 
     // Characterization / Gains
@@ -70,7 +70,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getKP() {
-        return 20000;
+        return 8000; //20,000
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getKD() {
-        return 220;
+        return 220; //220
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
 
     @Override
     public double getToleranceDegrees() {
-        return 4.0;
+        return 4.0; // lower tol
     }
     
     // Neutral mode
@@ -124,7 +124,7 @@ public class ClimberConfigComp extends ClimberConfigBase {
     // Gear ratio
     @Override
     public double getMotorToOutputShaftRatio() {
-        return 1500;
+        return 627.987859; // 1500 previous, 625
     }
 
     @Override

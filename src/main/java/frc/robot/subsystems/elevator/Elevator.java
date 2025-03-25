@@ -10,6 +10,7 @@ import frc.robot.constants.elevator.ElevatorConfigBase;
 import frc.robot.constants.elevator.ElevatorConfigComp;
 import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
+import frc.robot.subsystems.climber.Climber;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance = null;
@@ -92,7 +93,12 @@ public class Elevator extends SubsystemBase {
 
         setpoint = currHeightRequest.getExtensionHeight();
 
-        if (setpointModifiable) {elevatorIO.setHeight(setpoint);}
+        if (Climber.getInstance().getSetpoint().getDegrees() < 180) {
+            elevatorIO.setHeight(Height.L2.getExtensionHeight());
+        }
+        else if (setpointModifiable) {
+            elevatorIO.setHeight(setpoint);
+        }
 
         Logger.recordOutput("Elevator/setpoint", setpoint);
         Logger.recordOutput("Elevator/setpointModifiable", setpointModifiable);
