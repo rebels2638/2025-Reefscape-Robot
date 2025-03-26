@@ -69,6 +69,8 @@ public class PivotIOTalonFX implements PivotIO {
     private final PivotConfigBase config;
     private final TalonFXConfiguration pivotConfig;
 
+    private boolean lastInClaw = false;
+
     public PivotIOTalonFX(PivotConfigBase config) {
         this.config = config;
         kMAX_ANGLE_ROTATIONS = config.getMaxAngleRotations();
@@ -184,17 +186,19 @@ public class PivotIOTalonFX implements PivotIO {
             Elastic.sendNotification(pivotDisconnectAlert.withDisplayMilliseconds(10000));
             DriverStation.reportError("Pivot Motor Disconnected", false);
         }
-
     }
 
     @Override
     public void setAngle(Rotation2d state) {
-        if (Claw.getInstance().inClaw()) {
+        if (Claw.getInstance().inClaw() && !lastInClaw) {
             pivotMotor.getConfigurator().apply(pivotConfig.MotionMagic.withMotionMagicCruiseVelocity(0.3));
+            lastInClaw = true;
         }
-        else {
+        else if (!Claw.getInstance().inClaw() && lastInClaw) {
             pivotMotor.getConfigurator().apply(pivotConfig.MotionMagic.withMotionMagicCruiseVelocity(3));
-        } // can't do this
+            lastInClaw = false;
+        }
+        // can't do this
         pivotMotor.setControl(
             pivotPositionRequest.withPosition(
                 RebelUtil.constrain(
