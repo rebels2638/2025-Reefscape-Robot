@@ -223,17 +223,6 @@ public class ModuleIOTalonFX implements ModuleIO {
         steerEncoderAbsolutePosition = steerEncoder.getAbsolutePosition().clone();
         steerEncoderPositionStatusSignal = steerEncoder.getPosition().clone();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-            100,
-            driveAppliedVolts,
-            driveTorqueCurrent,
-            driveTemperature,
-
-            steerAppliedVolts,
-            steerTorqueCurrent,
-            steerTemperature
-        );
-
         drivePositionStatusSignal = driveMotor.getPosition().clone();
         driveVelocityStatusSignal = driveMotor.getVelocity().clone();
         driveAccelerationStatusSignal = driveMotor.getAcceleration().clone();
@@ -243,23 +232,31 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             100,
+            driveAppliedVolts,
+            driveTorqueCurrent,
+            driveTemperature,
+
+            steerAppliedVolts,
+            steerTorqueCurrent,
+            steerTemperature,
             drivePositionStatusSignal,
             driveVelocityStatusSignal,
             driveAccelerationStatusSignal,
 
             steerPositionStatusSignal,
-            steerVelocityStatusSignal,
+            steerVelocityStatusSignal
+        );
 
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            250, 
             steerEncoderAbsolutePosition,
-            steerEncoderPositionStatusSignal
+            steerEncoderPositionStatusSignal,
+            drivePositionStatusSignal
         );
 
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, drivePositionStatusSignal);
-        Phoenix6Odometry.getInstance().registerSignal(driveMotor, driveVelocityStatusSignal);
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, driveAccelerationStatusSignal);
-
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerPositionStatusSignal);
-        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerVelocityStatusSignal);
+        Phoenix6Odometry.getInstance().registerSignal(steerEncoder, steerEncoderAbsolutePosition);
+        Phoenix6Odometry.getInstance().registerSignal(steerEncoder, steerEncoderPositionStatusSignal);
 
         driveMotor.optimizeBusUtilization();
         steerMotor.optimizeBusUtilization();
@@ -272,13 +269,13 @@ public class ModuleIOTalonFX implements ModuleIO {
             driveAppliedVolts,
             driveTorqueCurrent,
             driveTemperature,
+            drivePositionStatusSignal,
+            driveVelocityStatusSignal,
+            driveAccelerationStatusSignal,
 
             steerAppliedVolts,
             steerTorqueCurrent,
-            steerTemperature,
-
-            steerEncoderAbsolutePosition,
-            steerEncoderPositionStatusSignal
+            steerTemperature
         );
 
         inputs.driveMotorConnected = 
