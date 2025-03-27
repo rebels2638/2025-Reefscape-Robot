@@ -120,9 +120,8 @@ public class Robot extends LoggedRobot {
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathfindingCommand.warmupCommand().schedule();
 
-    Threads.setCurrentThreadPriority(true, 10);
-    Phoenix6Odometry.getInstance().setThreadPriority(8);
-
+        Threads.setCurrentThreadPriority(true, 10);
+        Phoenix6Odometry.getInstance().setThreadPriority(8);
 
         PathPlannerLogging.setLogCurrentPoseCallback(logCurrentPose -> Logger.recordOutput("PathPlanner/currentPose", logCurrentPose));        
         PathPlannerLogging.setLogTargetPoseCallback(logTargetPose -> Logger.recordOutput("PathPlanner/targetPose", logTargetPose));
