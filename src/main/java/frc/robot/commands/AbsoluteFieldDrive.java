@@ -27,10 +27,10 @@ public class AbsoluteFieldDrive extends Command {
     
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
-    private double lastVectorAngle = 0;
-    private ChassisSpeeds lastCoinstrainedFieldRelativeSpeeds = new ChassisSpeeds();
+    // private double lastVectorAngle = 0;
+    // private ChassisSpeeds lastCoinstrainedFieldRelativeSpeeds = new ChassisSpeeds();
 
-    private final SlewRateLimiter deltaLimiter = new SlewRateLimiter(2*Math.PI*0.6);
+    // private final SlewRateLimiter deltaLimiter = new SlewRateLimiter(2*Math.PI*0.6);
 
     // Constructor to initialize the AbsoluteFieldDrive command.
     public AbsoluteFieldDrive(XboxController xboxDriver) {
@@ -85,19 +85,19 @@ public class AbsoluteFieldDrive extends Command {
         );
         Logger.recordOutput("AbsoluteFeildRrive/desiredFieldRelativeSpeeds", desiredFieldRelativeSpeeds);
         
-        double currentVectorAngle = Math.atan2(desiredFieldRelativeSpeeds.vyMetersPerSecond, desiredFieldRelativeSpeeds.vxMetersPerSecond);
-        double angleDelta = (((currentVectorAngle - lastVectorAngle) + Math.PI * 2) % (Math.PI * 2)) % (Math.PI * 2);
+        // double currentVectorAngle = Math.atan2(desiredFieldRelativeSpeeds.vyMetersPerSecond, desiredFieldRelativeSpeeds.vxMetersPerSecond);
+        // double angleDelta = (((currentVectorAngle - lastVectorAngle) + Math.PI * 2) % (Math.PI * 2)) % (Math.PI * 2);
 
-        double speedMag = Math.hypot(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
-        speedMag *= Math.cos(deltaLimiter.calculate(angleDelta));
-        ChassisSpeeds scaledSpeeds = RebelUtil.scaleSpeeds(speedMag, desiredFieldRelativeSpeeds);
+        // double speedMag = Math.hypot(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
+        // speedMag *= Math.cos(deltaLimiter.calculate(angleDelta));
+        // ChassisSpeeds scaledSpeeds = RebelUtil.scaleSpeeds(speedMag, desiredFieldRelativeSpeeds);
         
-        Logger.recordOutput("AbsoluteFeildRrive/scaledSpeeds", scaledSpeeds);
+        // Logger.recordOutput("AbsoluteFeildRrive/scaledSpeeds", scaledSpeeds);
 
         swerve.driveFieldRelative(desiredFieldRelativeSpeeds); // Drive the robot using the calculated speeds.
 
-        lastVectorAngle = currentVectorAngle;
-        lastCoinstrainedFieldRelativeSpeeds = desiredFieldRelativeSpeeds;
+    //     lastVectorAngle = currentVectorAngle;
+    //     lastCoinstrainedFieldRelativeSpeeds = desiredFieldRelativeSpeeds;
     }
 
     // Called when the command ends or is interrupted.
