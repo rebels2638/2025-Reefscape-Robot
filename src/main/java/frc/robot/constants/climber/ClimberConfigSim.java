@@ -127,16 +127,16 @@ public class ClimberConfigSim extends ClimberConfigBase {
 
     @Override
     public double getMaxAngleRotations() {
-        return 0.75;
+        return 220/360.0;
     }
 
     @Override 
     public double getMinAngleRotations() {
-        return -0.25;
+        return -80.00/360.0;
     }
 
     @Override 
     public double getStartingAngleRotations() {
-        return -1;
+        return getMaxAngleRotations();
     } 
 }
