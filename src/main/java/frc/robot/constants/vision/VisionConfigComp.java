@@ -27,7 +27,7 @@ public class VisionConfigComp extends VisionConfigBase {
 
     @Override
     public double getTranslationDevRotationExpoDenominator() {
-        return 60;
+        return 4;
     }
 
     @Override

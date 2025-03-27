@@ -144,10 +144,10 @@ public class Autos {
                         new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
                     ),
                     new SequentialCommandGroup(
-                        new IntakeCoral(),
-                        waitForElevatorExtension(toReefPath),
-                        queueElevatorCommand(level),
-                        new DequeueElevatorAction()
+                        new IntakeCoral() // TODO:adasdasd
+                        // waitForElevatorExtension(toReefPath),
+                        // queueElevatorCommand(level),
+                        // new DequeueElevatorAction()
                     ),
                     new MovePivotStow(),
                     
@@ -169,7 +169,7 @@ public class Autos {
                     new InstantCommand(),
                     () -> level == Height.L4
                 ),
-                new EjectCoral(),
+                // new EjectCoral(), // TODO: ASdlnasdl
                 new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
                 sourceCommand
             );

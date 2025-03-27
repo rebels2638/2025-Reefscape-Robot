@@ -41,24 +41,7 @@ public class AlignToClosestBargePointAndScore extends SequentialCommandGroup{
                 new AbsoluteFieldDrive(controller)
             ),
             new LinearDriveToPose(() -> AlignmentUtil.getClosestBargePose(), () -> new ChassisSpeeds()), // drive to a intermediate pose   
-            new QueueL4Action(),                  
-            new SequentialCommandGroup(
-                new MovePivotStow(),
-                new DequeueElevatorAction(),
-                new ParallelCommandGroup(
-                    new MovePivotBargeForwards(),
-                    new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 70),
-                        new ParallelDeadlineGroup(
-                            new WaitUntilCommand(0.8),
-                            new RunClawEject()
-                        )
-                    )
-                ),
-                new MovePivotStow(),
-                new QueueStowAction(),
-                new DequeueElevatorAction()
-            )
+            new MoveSuperstructureBargeSequence()
         );
         Logger.recordOutput("AlignToBargeAxisLocked", AlignmentUtil.getClosestBargePose());
     }

@@ -108,7 +108,7 @@ public class AutoRunner {
     }
     
     public static Supplier<Pose2d> getAutonomousZeroSupplier() {
-        return Autos.zero_start_right_3xL4;
+        return Autos.zero_start_middle_1xL4;
     }
 
 

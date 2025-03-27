@@ -144,6 +144,11 @@ public class AlignmentUtil {
     private static Axis leftSourceAxis = new Axis(0.0, 0.0);
     private static Axis bargeAxis = new Axis(0.0, 0.0);
 
+    private static Rotation2d rightSourceAxisRotation = new Rotation2d();
+    private static Rotation2d leftSourceAxisRotation = new Rotation2d();
+    private static Rotation2d bargeAxisRotation = new Rotation2d();
+
+
     static {
         switch (Constants.currentMode) {
             case COMP:
@@ -233,6 +238,7 @@ public class AlignmentUtil {
             rightSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false));
             leftSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true));
             bargeAxis = flipAxis(offsetAxis(AlignmentConstants.kBARGE_AXIS, false)); // TODO: correctness?
+            
         } 
 
         else {
@@ -290,6 +296,10 @@ public class AlignmentUtil {
 
     public static Pose2d offsetCoralPoseToPreAlignment(Pose2d pose) {
         return offsetPoseToPreAlignment(pose, config.getBumperLengthMeters() / 2 * Math.sqrt(2));
+    }
+
+    public static Pose2d offsetSourcePoseToPreAlignment(Pose2d pose) {
+        return offsetPoseToPreAlignment(pose, -config.getBumperLengthMeters() / 2 * Math.sqrt(2));
     }
 
     public static Pose2d offsetCoralPoseToVisionReading(Pose2d pose) {
@@ -430,6 +440,12 @@ public class AlignmentUtil {
         return nearest;
     }
 
+    // public static Pose2d getClosestBargePose() {
+    //     Pose2d curr = RobotState.getInstance().getEstimatedPose();
+    //     Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(curr.getTranslation()), ;
+    //     Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
+    //     return nearest;
+    // }
 
     public static Pose2d getClosestBargePose() {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();

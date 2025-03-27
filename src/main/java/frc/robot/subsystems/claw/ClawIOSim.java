@@ -21,13 +21,13 @@ public class ClawIOSim implements ClawIO {
             clawRunStartTime = Timer.getTimestamp();
         }
         double timeSinceClawRun = Timer.getTimestamp() - clawRunStartTime;
-
+        
         inputs.inClaw = 
             !inputs.inClaw ?
-                new Translation2d(4.48, 4.027).getDistance(RobotState.getInstance().getEstimatedPose().getTranslation()) < 1.1 &&
+                new Translation2d(4.48, 4.027).getDistance(RobotState.getInstance().getEstimatedPose().getTranslation()) < 3 &&
                 Pivot.getInstance().getAngle().getDegrees() < -20 &&
                 timeSinceClawRun >= 0.7 && inputs.clawAppliedVolts > 5 : 
-                timeSinceClawRun < 0.7 && inputs.clawAppliedVolts < -5;
+                !(timeSinceClawRun >= 0.7 && inputs.clawAppliedVolts < -5);
 
     }
 

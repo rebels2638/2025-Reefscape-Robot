@@ -36,6 +36,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.barge.AlignToCageAndClimb;
 import frc.robot.commands.autoAlignment.barge.AlignToClosestBargePointAndScore;
 import frc.robot.commands.autoAlignment.barge.ClimbSequence;
+import frc.robot.commands.autoAlignment.barge.MoveSuperstructureBargeSequence;
 import frc.robot.commands.autoAlignment.barge.PrepareForClimbSequence;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
@@ -243,26 +244,7 @@ public class RobotContainer {
                 xboxTester.getLeftTriggerButton(0.5).getAsBoolean()
             )
         ).whileTrue(
-            new SequentialCommandGroup(
-                new QueueL4Action(),                  
-                new SequentialCommandGroup(
-                    new MovePivotStow(),
-                    new DequeueElevatorAction(),
-                    new ParallelCommandGroup(
-                        new MovePivotBargeForwards(),
-                        new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 70),
-                            new ParallelDeadlineGroup(
-                                new WaitUntilCommand(0.8),
-                                new RunClawEject()
-                            )
-                        )
-                    ),
-                    new MovePivotStow(),
-                    new QueueStowAction(),
-                    new DequeueElevatorAction()
-                )
-            )
+            new MoveSuperstructureBargeSequence()
         ).onFalse(new CancelScoreAlgay()); // DescoreAlgay
     }
 
