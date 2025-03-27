@@ -155,7 +155,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(0.0, 0.02);
+        return new Translation2d(0.0, -0.1);
     }
 
     @Override

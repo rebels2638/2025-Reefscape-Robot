@@ -135,8 +135,8 @@ public class Vision extends SubsystemBase {
             Optional<Rotation2d> rotationalRate = rotationalRateBuffer.getSample(visionIOInputs[i].timestampSeconds);
             if (Timer.getTimestamp() - visionIOInputs[i].timestampSeconds <= config.getObservationBufferSizeSeconds() && 
                 rotationalRate.isPresent() && 
-                visionIOInputs[i].hasValidTargets &&
-                !(visionIOInputs[i].scale == VisionObservationScale.LOCAL && Math.abs(rotationalRate.get().getDegrees()) > 20)
+                visionIOInputs[i].hasValidTargets 
+                // !(visionIOInputs[i].scale == VisionObservationScale.LOCAL && Math.abs(rotationalRate.get().getDegrees()) > 20)
             ) {
 
                 double taDev = 

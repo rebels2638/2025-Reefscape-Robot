@@ -93,10 +93,10 @@ public class Elevator extends SubsystemBase {
 
         setpoint = currHeightRequest.getExtensionHeight();
 
-        if (Climber.getInstance().getSetpoint().getDegrees() < 180) {
-            elevatorIO.setHeight(Height.L2.getExtensionHeight());
-        }
-        else if (setpointModifiable) {
+        // if (Climber.getInstance().getSetpoint().getDegrees() < 180) {
+        //     elevatorIO.setHeight(Height.L2.getExtensionHeight());
+        // }
+        if (setpointModifiable) {
             elevatorIO.setHeight(setpoint);
         }
 
