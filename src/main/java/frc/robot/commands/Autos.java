@@ -62,10 +62,8 @@ public class Autos {
             cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L4, Branch.RIGHT),
             cycleCoral("RST_BR_RB", "BR_RB_RST", Height.L4, Branch.RIGHT),
             cycleCoral("RST_BR_LB", null, Height.L4, Branch.LEFT)
-
         );
     public static final Supplier<Pose2d> zero_start_right_3xL4 = () -> getStartingPose("PS_TR_RB");
-
     public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
 
     public static final Command start_left_2xL4 = 

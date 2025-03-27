@@ -46,7 +46,7 @@ public class LinearDriveToPose extends Command {
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
-    // This is the blue alliance pose! 
+    // This is the blue alliance pose
     // field relative velo and pose and velocity
     public LinearDriveToPose(Supplier<Pose2d> targetPose, Supplier<ChassisSpeeds> feedforwardVelo) {
         switch (Constants.currentMode) {
@@ -96,8 +96,6 @@ public class LinearDriveToPose extends Command {
         );
 
         this.rotationalFeedbackController = drivetrainConfig.getAutoAlignProfiledRotationController();
-
-        System.out.println("NEW COMMAND");
         addRequirements(swerveDrive);
     }
 

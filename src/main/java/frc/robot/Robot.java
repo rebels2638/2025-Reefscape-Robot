@@ -17,6 +17,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.autoAlignment.LocalADStarAK;
@@ -24,6 +25,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.Mode;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.lib.util.Elastic;
+import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -96,9 +98,12 @@ public class Robot extends LoggedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
     
     m_robotContainer = RobotContainer.getInstance();
-
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathfindingCommand.warmupCommand().schedule();
+
+    Threads.setCurrentThreadPriority(true, 10);
+    Phoenix6Odometry.getInstance().setThreadPriority(8);
+
   }
 
   /**
