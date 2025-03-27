@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -38,6 +39,7 @@ import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.commands.elevator.simple.isElevatorExtendable;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
+import frc.robot.commands.roller.simple.InRoller;
 import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.elevator.Elevator;
@@ -121,8 +123,13 @@ public class Autos {
                         new QueueStowAction(),
                         new DequeueElevatorAction()
                     ),
-                    followPath(toSourcePath),
-                    new WaitCommand(1.2)
+                    new SequentialCommandGroup(
+                        followPath(toSourcePath),
+                        new ParallelRaceGroup(
+                            new InRoller(),
+                            new WaitCommand(0.1)
+                        )
+                    )
                 ) :
                 new SequentialCommandGroup(
                     new QueueStowAction(),
@@ -301,7 +308,7 @@ public class Autos {
         return
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.3 && //0.7
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.6 && //0.7
                     // RobotState.getInstance().getIsElevatorExtendable() &&
                     Roller.getInstance().inRoller()
             );
