@@ -54,7 +54,7 @@ import frc.robot.commands.elevator.simple.QueueL4Action;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
 import frc.robot.commands.pivot.simple.MovePivotBargeForwards;
-import frc.robot.commands.pivot.simple.MovePivotProcesser;
+import frc.robot.commands.pivot.simple.MovePivotProcessor;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
@@ -166,7 +166,7 @@ public class RobotContainer {
                 xboxDriver.getYButton().getAsBoolean()
             )
         ).whileTrue(
-            new MovePivotProcesser()
+            new MovePivotProcessor()
         ).onFalse(
             new ParallelDeadlineGroup(
                 new WaitCommand(5),
@@ -212,7 +212,7 @@ public class RobotContainer {
                 xboxTester.getLeftTriggerButton(0.94).getAsBoolean() && !xboxTester.getRightTriggerButton(0.5).getAsBoolean()
             )
         ).whileTrue(
-            new MovePivotProcesser()
+            new MovePivotProcessor()
         ).onFalse(
             new ParallelDeadlineGroup(
                 new WaitCommand(1.3),

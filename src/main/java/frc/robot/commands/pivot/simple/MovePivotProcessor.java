@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.pivot.PivotConfigComp;
 import frc.robot.subsystems.pivot.Pivot;
 
-public class MovePivotProcesser extends Command {
+public class MovePivotProcessor extends Command {
     private final Pivot pivot;
-    public MovePivotProcesser() {
+    public MovePivotProcessor() {
         this.pivot = Pivot.getInstance();
         
         addRequirements(pivot);
