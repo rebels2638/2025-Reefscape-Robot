@@ -206,7 +206,7 @@ public class PivotIOTalonFX implements PivotIO {
                     kMIN_ANGLE_ROTATIONS,
                     kMAX_ANGLE_ROTATIONS
                 ) - kSTARTING_ANGLE_RAD / (2 * Math.PI)
-            ).withSlot(Claw.getInstance().inClaw() ? 0 : 1)
+            )
         ); 
     }
 
