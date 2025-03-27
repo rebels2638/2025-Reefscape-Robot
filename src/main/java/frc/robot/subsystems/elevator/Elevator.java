@@ -10,7 +10,6 @@ import frc.robot.constants.elevator.ElevatorConfigBase;
 import frc.robot.constants.elevator.ElevatorConfigComp;
 import frc.robot.constants.elevator.ElevatorConfigProto;
 import frc.robot.constants.elevator.ElevatorConfigSim;
-import frc.robot.subsystems.climber.Climber;
 
 public class Elevator extends SubsystemBase {
     private static Elevator instance = null;
@@ -26,7 +25,7 @@ public class Elevator extends SubsystemBase {
         L1(0.1),
         L2(0.37),
         L3(0.77),
-        L4(1.44);
+        L4(1.42);
     
         private final double extensionHeight;
     
@@ -110,6 +109,9 @@ public class Elevator extends SubsystemBase {
             )
         );
         Logger.recordOutput("Elevator/CurrentCommand", this.getCurrentCommand() == null ? "" : this.getCurrentCommand().toString());
+
+        Logger.recordOutput("Elevator/reachesSetpoint", reachedSetpoint());
+
     }
 
     public void requestLevel(Height level) {
