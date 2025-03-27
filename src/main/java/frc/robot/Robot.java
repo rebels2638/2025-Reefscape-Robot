@@ -27,6 +27,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.autoAlignment.LocalADStarAK;
@@ -34,6 +35,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.Mode;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.lib.util.Elastic;
+import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
 import frc.robot.lib.util.NT4KeyLogger;
 
 /**
@@ -115,9 +117,12 @@ public class Robot extends LoggedRobot {
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
         m_robotContainer = RobotContainer.getInstance();
-
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathfindingCommand.warmupCommand().schedule();
+
+    Threads.setCurrentThreadPriority(true, 10);
+    Phoenix6Odometry.getInstance().setThreadPriority(8);
+
 
         PathPlannerLogging.setLogCurrentPoseCallback(logCurrentPose -> Logger.recordOutput("PathPlanner/currentPose", logCurrentPose));        
         PathPlannerLogging.setLogTargetPoseCallback(logTargetPose -> Logger.recordOutput("PathPlanner/targetPose", logTargetPose));

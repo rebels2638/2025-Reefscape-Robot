@@ -169,7 +169,7 @@ public class RobotContainer {
             new MovePivotProcesser()
         ).onFalse(
             new ParallelDeadlineGroup(
-                new WaitCommand(1.3),
+                new WaitCommand(5),
                 new RunClawEject()
             ).andThen(new CancelScoreAlgay())
         ); // Processor
