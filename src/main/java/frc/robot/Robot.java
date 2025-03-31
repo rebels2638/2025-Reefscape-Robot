@@ -22,6 +22,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -36,6 +37,7 @@ import frc.robot.constants.Constants.Mode;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.lib.util.Elastic;
 import frc.robot.subsystems.drivetrain.swerve.Phoenix6Odometry;
+import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 import frc.robot.lib.util.NT4KeyLogger;
 
 /**
@@ -196,6 +198,8 @@ public class Robot extends LoggedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+
+        SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds());
 
         // m_robotContainer.offsetAngle();
     }

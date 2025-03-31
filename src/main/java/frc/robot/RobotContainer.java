@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
+import frc.robot.commands.RumbleDriver;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.claw.Claw;
@@ -183,7 +184,17 @@ public class RobotContainer {
         xboxOperator.getYButton().onTrue(new QueueL3Action());
         xboxOperator.getXButton().onTrue(new QueueL4Action());
 
-        xboxOperator.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+        xboxOperator.getRightMiddleButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
+
+        xboxOperator.getRightBumper().whileTrue(
+            new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).andThen(
+                new ParallelDeadlineGroup(
+                    new WaitCommand(0.7),
+                    new RumbleDriver(xboxOperator)
+                )
+            )
+        ).onFalse(new StopRoller());
+
         xboxOperator.getLeftBumper().onTrue(
             new SequentialCommandGroup(
                 new EjectCoral(),
@@ -193,7 +204,15 @@ public class RobotContainer {
             )
         );
 
-        xboxTester.getRightBumper().onTrue(new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+        xboxTester.getRightBumper().whileTrue(
+            new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).andThen(
+                new ParallelDeadlineGroup(
+                    new WaitCommand(0.7),
+                    new RumbleDriver(xboxOperator)
+                )
+            )
+        ).onFalse(new StopRoller());
+        
         xboxTester.getLeftBumper().onTrue(
             new SequentialCommandGroup(
                 new EjectCoral(),
@@ -202,6 +221,8 @@ public class RobotContainer {
                 new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())
             )
         );
+
+        xboxTester.getRightMiddleButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
 
         xboxTester.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         xboxTester.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));

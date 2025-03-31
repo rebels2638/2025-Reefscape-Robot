@@ -127,7 +127,7 @@ public final class Constants {
 
     public static final class AlignmentConstants {
         // these assume the robot's volume is zero. does not take into account frame
-        public static final double kINTER_BRANCH_DIST_METER = 0.34;
+        public static final double kINTER_BRANCH_DIST_METER = 0.32;
 
         public static final Pose2d[] kREEF_CENTER_FACES = new Pose2d[6]; // Starting facing the driver station in clockwise
                                                                     // order

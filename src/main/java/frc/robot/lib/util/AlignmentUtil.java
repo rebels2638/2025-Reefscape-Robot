@@ -311,7 +311,7 @@ public class AlignmentUtil {
     }
 
     public static Pose2d offsetCoralPoseToVisionReading(Pose2d pose) {
-        return offsetPoseToPreAlignment(pose, 0.17);
+        return offsetPoseToPreAlignment(pose, 0.4);
     }
 
     public static Pose2d offsetPoseToPreAlignment(Pose2d pose, double distance) {

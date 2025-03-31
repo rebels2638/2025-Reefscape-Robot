@@ -135,15 +135,21 @@ public class Vision extends SubsystemBase {
             Optional<Rotation2d> rotationalRate = rotationalRateBuffer.getSample(visionIOInputs[i].timestampSeconds);
             if (Timer.getTimestamp() - visionIOInputs[i].timestampSeconds <= config.getObservationBufferSizeSeconds() && 
                 rotationalRate.isPresent() && 
-                visionIOInputs[i].hasValidTargets 
-                // !(visionIOInputs[i].scale == VisionObservationScale.LOCAL && Math.abs(rotationalRate.get().getDegrees()) > 20)
+                visionIOInputs[i].hasValidTargets &&
+                !(visionIOInputs[i].scale == VisionObservationScale.LOCAL && Math.abs(rotationalRate.get().getDegrees()) > 20)
             ) {
 
                 double taDev = 
                     RebelUtil.constrain(
-                        0.842244 * Math.pow(0.339891, visionIOInputs[i].ta),
+                        -Math.sqrt(
+                            RebelUtil.constrain(
+                                ((visionIOInputs[i].ta - 0.07) / 35570),
+                                0.0,
+                                10000.0
+                            )
+                        ) + 0.03,
                         0.003,
-                        0.5
+                        0.03
                     );
 
                 double translationDev = 
