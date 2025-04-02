@@ -28,7 +28,7 @@ import frc.robot.lib.util.AlignmentUtil.Axis;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final Mode currentMode = Mode.SIM; // TODO: change this if sim
+    public static final Mode currentMode = Mode.COMP; // TODO: change this if sim
     // public static final boolean isSYSID = true; // TODO: change this if sysid
 
     public static enum Mode {
@@ -127,7 +127,7 @@ public final class Constants {
 
     public static final class AlignmentConstants {
         // these assume the robot's volume is zero. does not take into account frame
-        public static final double kINTER_BRANCH_DIST_METER = 0.34;
+        public static final double kINTER_BRANCH_DIST_METER = 0.32;
 
         public static final Pose2d[] kREEF_CENTER_FACES = new Pose2d[6]; // Starting facing the driver station in clockwise
                                                                     // order
@@ -228,7 +228,7 @@ public final class Constants {
                 7.642292499542236,
                 7.5 
             );
-        public static final Rotation2d kBARGE_ROTATION = Rotation2d.fromDegrees(0);
+        public static final Rotation2d kBARGE_ROTATION = Rotation2d.fromDegrees(180);
 
         public static final Axis kRIGHT_SOURCE_AXIS = 
             new Axis(

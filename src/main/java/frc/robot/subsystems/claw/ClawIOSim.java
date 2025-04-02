@@ -1,8 +1,11 @@
 package frc.robot.subsystems.claw;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotState;
+import frc.robot.constants.Constants;
 import frc.robot.subsystems.pivot.Pivot;
 
 public class ClawIOSim implements ClawIO {
@@ -21,13 +24,17 @@ public class ClawIOSim implements ClawIO {
             clawRunStartTime = Timer.getTimestamp();
         }
         double timeSinceClawRun = Timer.getTimestamp() - clawRunStartTime;
-
+        
         inputs.inClaw = 
             !inputs.inClaw ?
-                new Translation2d(4.48, 4.027).getDistance(RobotState.getInstance().getEstimatedPose().getTranslation()) < 1.1 &&
+                new Translation2d(4.48, 4.027).getDistance(
+                    (Constants.shouldFlipPath() ?
+                        FlippingUtil.flipFieldPose(RobotState.getInstance().getEstimatedPose()) :
+                        RobotState.getInstance().getEstimatedPose()).getTranslation()
+                    ) < 3 &&
                 Pivot.getInstance().getAngle().getDegrees() < -20 &&
                 timeSinceClawRun >= 0.7 && inputs.clawAppliedVolts > 5 : 
-                timeSinceClawRun < 0.7 && inputs.clawAppliedVolts < -5;
+                !(timeSinceClawRun >= 0.7 && inputs.clawAppliedVolts < -5);
 
     }
 

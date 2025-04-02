@@ -144,6 +144,11 @@ public class AlignmentUtil {
     private static Axis leftSourceAxis = new Axis(0.0, 0.0);
     private static Axis bargeAxis = new Axis(0.0, 0.0);
 
+    private static Rotation2d rightSourceAxisRotation = new Rotation2d();
+    private static Rotation2d leftSourceAxisRotation = new Rotation2d();
+    private static Rotation2d bargeAxisRotation = new Rotation2d();
+
+
     static {
         switch (Constants.currentMode) {
             case COMP:
@@ -232,7 +237,12 @@ public class AlignmentUtil {
 
             rightSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false));
             leftSourceAxis = flipAxis(offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true));
-            bargeAxis = flipAxis(offsetAxis(AlignmentConstants.kBARGE_AXIS, false)); // TODO: correctness?
+            bargeAxis = flipAxis(AlignmentConstants.kBARGE_AXIS); // TODO: correctness?
+            
+            rightSourceAxisRotation = AlignmentConstants.kRIGHT_SOURCE_AXIS_ROTATION.plus(new Rotation2d(Math.PI));
+            leftSourceAxisRotation = AlignmentConstants.kLEFT_SOURCE_AXIS_ROTATION.plus(new Rotation2d(Math.PI));
+            bargeAxisRotation = AlignmentConstants.kBARGE_ROTATION.plus(new Rotation2d(Math.PI));
+
         } 
 
         else {
@@ -280,7 +290,11 @@ public class AlignmentUtil {
 
             rightSourceAxis = offsetAxis(AlignmentConstants.kRIGHT_SOURCE_AXIS, false);
             leftSourceAxis = offsetAxis(AlignmentConstants.kLEFT_SOURCE_AXIS, true);
-            bargeAxis = offsetAxis(AlignmentConstants.kBARGE_AXIS, false);
+            bargeAxis = AlignmentConstants.kBARGE_AXIS;
+
+            rightSourceAxisRotation = AlignmentConstants.kRIGHT_SOURCE_AXIS_ROTATION;
+            leftSourceAxisRotation = AlignmentConstants.kLEFT_SOURCE_AXIS_ROTATION;
+            bargeAxisRotation = AlignmentConstants.kBARGE_ROTATION;
         }
 
         for (int i = 0; i < leftBranchCandidates.size(); i++) {
@@ -292,8 +306,12 @@ public class AlignmentUtil {
         return offsetPoseToPreAlignment(pose, config.getBumperLengthMeters() / 2 * Math.sqrt(2));
     }
 
+    public static Pose2d offsetSourcePoseToPreAlignment(Pose2d pose) {
+        return offsetPoseToPreAlignment(pose, -config.getBumperLengthMeters() / 2 * Math.sqrt(2));
+    }
+
     public static Pose2d offsetCoralPoseToVisionReading(Pose2d pose) {
-        return offsetPoseToPreAlignment(pose, 0.17);
+        return offsetPoseToPreAlignment(pose, 0.4);
     }
 
     public static Pose2d offsetPoseToPreAlignment(Pose2d pose, double distance) {
@@ -430,8 +448,15 @@ public class AlignmentUtil {
         return nearest;
     }
 
-
     public static Pose2d getClosestBargePose() {
+        Pose2d current = RobotState.getInstance().getEstimatedPose();
+        Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(current.getTranslation()), bargeAxisRotation);
+        
+        Logger.recordOutput("AlignmentUtil/alignmentPoseSearch/nearest", nearest);
+        return nearest;
+    }
+
+    public static Pose2d getClosestBargePoseWithFlip() {
         Pose2d curr = RobotState.getInstance().getEstimatedPose();
         double rot = Math.abs(180-Math.abs(curr.getRotation().getDegrees())) <= 90 ? Math.PI : 0;
         Pose2d nearest = new Pose2d(bargeAxis.getPointOnAxis(curr.getTranslation()), new Rotation2d(rot));
@@ -442,8 +467,8 @@ public class AlignmentUtil {
     public static Pose2d getClosestSourcePose() { 
         Pose2d current = RobotState.getInstance().getEstimatedPose();
 
-        Pose2d rightNearest = new Pose2d(rightSourceAxis.getPointOnAxis(current.getTranslation()), AlignmentConstants.kRIGHT_SOURCE_AXIS_ROTATION);
-        Pose2d leftNearest = new Pose2d(leftSourceAxis.getPointOnAxis(current.getTranslation()), AlignmentConstants.kLEFT_SOURCE_AXIS_ROTATION);
+        Pose2d rightNearest = new Pose2d(rightSourceAxis.getPointOnAxis(current.getTranslation()), rightSourceAxisRotation);
+        Pose2d leftNearest = new Pose2d(leftSourceAxis.getPointOnAxis(current.getTranslation()), leftSourceAxisRotation);
 
         Pose2d nearest = 
             current.getTranslation().getDistance(rightNearest.getTranslation()) < 

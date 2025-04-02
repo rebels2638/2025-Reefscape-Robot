@@ -241,22 +241,25 @@ public class ModuleIOTalonFX implements ModuleIO {
             steerTemperature,
             drivePositionStatusSignal,
             driveVelocityStatusSignal,
-            driveAccelerationStatusSignal,
-
-            steerPositionStatusSignal,
-            steerVelocityStatusSignal
+            driveAccelerationStatusSignal
         );
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             250, 
             steerEncoderAbsolutePosition,
             steerEncoderPositionStatusSignal,
-            drivePositionStatusSignal
+            drivePositionStatusSignal, 
+
+            steerPositionStatusSignal,
+            steerVelocityStatusSignal
         );
 
         Phoenix6Odometry.getInstance().registerSignal(driveMotor, drivePositionStatusSignal);
         Phoenix6Odometry.getInstance().registerSignal(steerEncoder, steerEncoderAbsolutePosition);
         Phoenix6Odometry.getInstance().registerSignal(steerEncoder, steerEncoderPositionStatusSignal);
+
+        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerPositionStatusSignal);
+        Phoenix6Odometry.getInstance().registerSignal(steerMotor, steerVelocityStatusSignal);
 
         driveMotor.optimizeBusUtilization();
         steerMotor.optimizeBusUtilization();

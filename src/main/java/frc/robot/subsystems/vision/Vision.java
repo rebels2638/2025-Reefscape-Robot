@@ -120,6 +120,8 @@ public class Vision extends SubsystemBase {
         robotState.registerRunnableOnLocalVisionEstimateRequest(this::requestLocalEstimationScale);
 
         CommandScheduler.getInstance().registerSubsystem(this);
+
+        requestGlobalEstimationScale();
     }
 
     @Override
@@ -136,7 +138,7 @@ public class Vision extends SubsystemBase {
                 visionIOInputs[i].hasValidTargets &&
                 !(visionIOInputs[i].scale == VisionObservationScale.LOCAL && Math.abs(rotationalRate.get().getDegrees()) > 20)
             ) {
-            
+
                 double taDev = 
                     RebelUtil.constrain(
                         -Math.sqrt(
@@ -151,15 +153,14 @@ public class Vision extends SubsystemBase {
                     );
 
                 double translationDev = 
-                        (Math.pow(rotationalRate.get().getRadians() + 0.5, config.getTranslationDevRotationExpo())
+                        (Math.pow(Math.abs(rotationalRate.get().getRadians()) + 0.5, config.getTranslationDevRotationExpo())
                         / config.getTranslationDevRotationExpoDenominator()) + taDev;
         
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "totalDev", translationDev);
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "taDevContribution", taDev);
 
                 Logger.recordOutput("Vision/" + config.getNames()[i] + "/addingSample", true);
-                Logger.recordOutput("Vision/" + config.getNames()[i] + "/rotationalDevContribution", 
-                Math.pow(rotationalRate.get().getDegrees() ,2) / config.getTranslationDevRotationExpoDenominator());
+                Logger.recordOutput("Vision/" + config.getNames()[i] + "/rotationalDevContribution", translationDev - taDev);
                 
                 robotState.addVisionObservation(
                     new VisionObservation(

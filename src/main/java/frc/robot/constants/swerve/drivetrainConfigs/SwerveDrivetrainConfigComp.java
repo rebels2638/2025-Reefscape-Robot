@@ -108,7 +108,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(2.5, 1.5, 0);
+        PIDController p = new PIDController(2.5, 1.8, 0);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -125,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.025;
+        return 0.01;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignRotationTolerance() {
-        return Math.toRadians(3);
+        return Math.toRadians(2);
     }
 
     @Override
@@ -145,17 +145,17 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     
     @Override
     public double getBumperLengthMeters() {
-        return 0.75;
+        return 0.707;
     }
 
     @Override
     public Translation2d getBranchOffsetFromRobotCenter() {
-        return new Translation2d(0,-0.015); // increasing the y value will move the robot to the left of the branch
+        return new Translation2d(0,-0.0063); // increasing the y value will move the robot to the left of the branch // 0.015
     }
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(0.0, 0.02);
+        return new Translation2d(0.0, -0.1);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class AlignToRightBranchLinearAndScore extends SequentialCommandGroup {
                 new MovePivotStow()
             ),
             new ConditionalCommand(
-                new WaitCommand(0.5),
+                new WaitCommand(0.7),
                 new InstantCommand(),
                 () -> Elevator.getInstance().getRequestedLevel() == Height.L4
             ),
