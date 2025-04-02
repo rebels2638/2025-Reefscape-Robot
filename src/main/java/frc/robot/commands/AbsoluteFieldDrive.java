@@ -98,6 +98,7 @@ public class AbsoluteFieldDrive extends Command {
         limSpeeds.vxMetersPerSecond = Math.cos(limTheta) * mag;
         limSpeeds.vyMetersPerSecond = Math.sin(limTheta) * mag;
         limSpeeds.omegaRadiansPerSecond = desiredFieldRelativeSpeeds.omegaRadiansPerSecond;
+        Logger.recordOutput("AbsoluteFieldDrive/limFieldRelativeSpeeds", limSpeeds);
 
         swerve.driveFieldRelative(limSpeeds); // Drive the robot using the calculated speeds.
 
