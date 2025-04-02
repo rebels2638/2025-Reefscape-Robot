@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds; // Class to handle chassis speed calculations.
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command; // Base class for commands.
 import frc.robot.RobotState;
 import frc.robot.constants.Constants;
@@ -27,10 +28,8 @@ public class AbsoluteFieldDrive extends Command {
     
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
-    // private double lastVectorAngle = 0;
-    // private ChassisSpeeds lastCoinstrainedFieldRelativeSpeeds = new ChassisSpeeds();
-
-    // private final SlewRateLimiter deltaLimiter = new SlewRateLimiter(2*Math.PI*0.6);
+    private double lastTheta = 0;
+    private double lastTime = 0;
 
     // Constructor to initialize the AbsoluteFieldDrive command.
     public AbsoluteFieldDrive(XboxController xboxDriver) {
@@ -72,32 +71,37 @@ public class AbsoluteFieldDrive extends Command {
     @Override
     public void initialize() {
         invert = Constants.shouldFlipPath() ? -1 : 1;
+        lastTime = Timer.getTimestamp();
     }
 
     // Called repeatedly while the command is scheduled.
     @Override
     public void execute() {
+        double dt = Timer.getTimestamp() - lastTime;
+        lastTime = Timer.getTimestamp();     
+
         // Calculate speeds based on input and max speed constants.
         ChassisSpeeds desiredFieldRelativeSpeeds = new ChassisSpeeds(
             vX.getAsDouble() * drivetrainConfig.getMaxTranslationalVelocityMetersPerSec() * invert,
             vY.getAsDouble() * drivetrainConfig.getMaxTranslationalVelocityMetersPerSec() * invert,
             heading.getAsDouble() * drivetrainConfig.getMaxAngularVelocityRadiansPerSec()
         );
-        Logger.recordOutput("AbsoluteFeildRrive/desiredFieldRelativeSpeeds", desiredFieldRelativeSpeeds);
+        Logger.recordOutput("AbsoluteFieldDrive/desiredFieldRelativeSpeeds", desiredFieldRelativeSpeeds);
         
-        // double currentVectorAngle = Math.atan2(desiredFieldRelativeSpeeds.vyMetersPerSecond, desiredFieldRelativeSpeeds.vxMetersPerSecond);
-        // double angleDelta = (((currentVectorAngle - lastVectorAngle) + Math.PI * 2) % (Math.PI * 2)) % (Math.PI * 2);
+        double mag = Math.hypot(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
+        double theta =  Math.atan2(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
+        double limThetaSec = Math.toRadians(360 + mag * 60);
+        double delta = RebelUtil.constrain(theta - lastTheta, -limThetaSec * dt, limThetaSec * dt);
+        double limTheta = theta + delta;
 
-        // double speedMag = Math.hypot(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
-        // speedMag *= Math.cos(deltaLimiter.calculate(angleDelta));
-        // ChassisSpeeds scaledSpeeds = RebelUtil.scaleSpeeds(speedMag, desiredFieldRelativeSpeeds);
-        
-        // Logger.recordOutput("AbsoluteFeildRrive/scaledSpeeds", scaledSpeeds);
+        ChassisSpeeds limSpeeds = new ChassisSpeeds();
+        limSpeeds.vxMetersPerSecond = Math.cos(limTheta) * mag;
+        limSpeeds.vyMetersPerSecond = Math.sin(limTheta) * mag;
+        limSpeeds.omegaRadiansPerSecond = desiredFieldRelativeSpeeds.omegaRadiansPerSecond;
 
-        swerve.driveFieldRelative(desiredFieldRelativeSpeeds); // Drive the robot using the calculated speeds.
+        swerve.driveFieldRelative(limSpeeds); // Drive the robot using the calculated speeds.
 
-    //     lastVectorAngle = currentVectorAngle;
-    //     lastCoinstrainedFieldRelativeSpeeds = desiredFieldRelativeSpeeds;
+        lastTheta = theta;
     }
 
     // Called when the command ends or is interrupted.
