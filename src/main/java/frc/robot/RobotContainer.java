@@ -178,7 +178,7 @@ public class RobotContainer {
         new Trigger(
             () -> (
                 xboxDriver.getBButton().getAsBoolean() &&
-                xboxDriver.getYButton().getAsBoolean()
+                !xboxDriver.getYButton().getAsBoolean()
             )
         ).whileTrue(
             new MovePivotProcessor()

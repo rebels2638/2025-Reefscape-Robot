@@ -72,7 +72,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     public RobotConfig getRobotConfig() {
         return new RobotConfig(
             52.16,
-            5,
+            6,//5
             new ModuleConfig(
                 SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
                 4.2, 
@@ -108,7 +108,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(2.5, 1.8, 0);
+        PIDController p = new PIDController(3, 1.8, 0);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -125,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.01;
+        return 0.022;
     }
 
     @Override
@@ -155,7 +155,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(0.0, -0.1);
+        return new Translation2d(-0.05, -0.1);
     }
 
     @Override

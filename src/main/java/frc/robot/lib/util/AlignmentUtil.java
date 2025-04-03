@@ -134,6 +134,7 @@ public class AlignmentUtil {
 
     private static final SwerveDrivetrainConfigBase config;
 
+    private static List<Pose2d> faceCandidates = new ArrayList<>();
     private static List<Pose2d> leftBranchCandidates = new ArrayList<>();
     private static List<Pose2d> rightBranchCandidates = new ArrayList<>();
     private static List<Pose2d> algayCandidates = new ArrayList<>();
@@ -181,6 +182,7 @@ public class AlignmentUtil {
     }
 
     public static void loadCandidates() { // this has to be called on telop / auto init in order to ensure ds is connected
+        faceCandidates = new ArrayList<>();
         leftBranchCandidates = new ArrayList<>();
         rightBranchCandidates = new ArrayList<>();
         algayCandidates = new ArrayList<>();
@@ -198,6 +200,16 @@ public class AlignmentUtil {
             }
 
             double bumperOffset = config.getBumperLengthMeters() / 2;
+
+            for (Pose2d element : AlignmentConstants.kREEF_CENTER_FACES) {
+                faceCandidates.add(
+                        FlippingUtil.flipFieldPose(
+                                element.transformBy(
+                                        new Transform2d(
+                                                -bumperOffset,
+                                                0,
+                                                new Rotation2d(0)))));
+            }
 
             for (Pose2d element : AlignmentConstants.kREEF_CENTER_FACES) {
                 algayCandidates.add(
@@ -256,6 +268,15 @@ public class AlignmentUtil {
             double bumperOffset = config.getBumperLengthMeters() / 2;
 
             for (Pose2d element : AlignmentConstants.kREEF_CENTER_FACES) {
+                faceCandidates.add(
+                        element.transformBy(
+                                new Transform2d(
+                                        -bumperOffset,
+                                        0,
+                                        new Rotation2d(0))));
+            }
+
+            for (Pose2d element : AlignmentConstants.kREEF_CENTER_FACES) {
                 algayCandidates.add(
                         element.transformBy(
                                 new Transform2d(
@@ -311,7 +332,7 @@ public class AlignmentUtil {
     }
 
     public static Pose2d offsetCoralPoseToVisionReading(Pose2d pose) {
-        return offsetPoseToPreAlignment(pose, 0.4);
+        return offsetPoseToPreAlignment(faceCandidates.get(getClosestReefFace(pose, faceCandidates)), 0.3);
     }
 
     public static Pose2d offsetPoseToPreAlignment(Pose2d pose, double distance) {
