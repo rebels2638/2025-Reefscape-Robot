@@ -17,29 +17,27 @@ import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.roller.simple.StopRoller;
 import frc.robot.subsystems.pivot.Pivot;
 
-public class MoveSuperstructureBargeSequence extends SequentialCommandGroup {
-    public MoveSuperstructureBargeSequence() {
+public class ScoreMoveSuperstrucutreBargeSequence extends SequentialCommandGroup {
+    public ScoreMoveSuperstrucutreBargeSequence() {
         super(
-            new QueueL4Action(),                  
-            new SequentialCommandGroup(
-                new MovePivotAlgay(),
-                new DequeueElevatorAction(),
-                new ParallelCommandGroup(
-                    new MovePivotBargeBackwards(),
-                    new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 90),
-                        new WaitCommand(0.2),
-                        new ParallelDeadlineGroup(
-                            new RunClawEject(),
-                            new WaitCommand(0.7)
-                        ),
-                        new StopRoller()
-                    )
-                ),
-                new MovePivotStow(),
-                new QueueStowAction(),
-                new DequeueElevatorAction()
-            )
+            new MovePivotStow(),
+            new QueueL4Action(),
+            new DequeueElevatorAction(),
+            new ParallelCommandGroup(
+                new MovePivotBargeForwards(),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() < 90),
+                    new WaitCommand(0.2),
+                    new ParallelDeadlineGroup(
+                        new WaitCommand(0.7),
+                        new RunClawEject()
+                    ),
+                    new StopRoller()
+                )
+            ),
+            new MovePivotStow(),
+            new QueueStowAction(),
+            new DequeueElevatorAction()
         );
     } 
 }

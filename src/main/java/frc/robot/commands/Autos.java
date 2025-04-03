@@ -89,6 +89,7 @@ public class Autos {
 
     public static final Supplier<Pose2d> zero_start_left_2xL4 = () -> getStartingPose("OPS_TL_LB");
     public static final Supplier<Pose2d> zero_prac = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(120));
+    public static final Supplier<Pose2d> zero_shop = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(0));
 
 
     // public static final Command start_right_1xL3_1xL4 = 

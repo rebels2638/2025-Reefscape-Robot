@@ -11,14 +11,11 @@ import frc.robot.commands.pivot.simple.MovePivotStow;
 public class CancelScoreAlgay extends SequentialCommandGroup {
     public CancelScoreAlgay() {
         addCommands(
+            new StopClaw(),
             new QueueStowAction(),
             new MovePivotStow(),
             new DequeueElevatorAction()
 
-            // new ParallelCommandGroup(
-            //     new HoldAlgayClaw()
-            //     new DequeueElevatorAction()
-            // )
         );
     }
     
