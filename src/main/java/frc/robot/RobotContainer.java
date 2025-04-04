@@ -98,6 +98,9 @@ public class RobotContainer {
     private final Debouncer leftAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
     private final Debouncer rightAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
 
+    private final Debouncer bargeDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
+    private final Debouncer processerDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
+
     private final Debouncer climbDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kBoth);
 
     private RobotContainer() {
@@ -159,7 +162,9 @@ public class RobotContainer {
 
         new Trigger(
             () -> (
-                xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
+                bargeDebouncer.calculate(
+                    xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
+                )
             )
         ).onTrue(new PrepareMoveSuperstructureBargeSequence()).onFalse(
             new ConditionalCommand(
@@ -169,16 +174,29 @@ public class RobotContainer {
             )
         );
         
-        // new Trigger(
-        //     () -> (
-        //         xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
-        //     )
-        // ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
+        new Trigger(
+            () -> (
+                xboxDriver.getBButton().getAsBoolean() && xboxDriver.getYButton().getAsBoolean()
+            )
+        ).whileTrue(
+            new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                    // new SequentialCommandGroup(
+                    //     new InClaw(),
+                    //     new WaitCommand(0.5)
+                    // ), 
+                    new MovePivotProcessor(),
+                    new RunClawIntake()
+                )
+            )
+        ).onFalse(new CancelScoreAlgay());
 
         new Trigger(
             () -> (
-                xboxDriver.getBButton().getAsBoolean() &&
-                !xboxDriver.getYButton().getAsBoolean()
+                processerDebouncer.calculate(
+                    xboxDriver.getBButton().getAsBoolean() &&
+                    !xboxDriver.getYButton().getAsBoolean()
+                )
             )
         ).whileTrue(
             new MovePivotProcessor()
@@ -266,7 +284,7 @@ public class RobotContainer {
                         new InClaw(),
                         new WaitCommand(0.5)
                     ), 
-                    new MovePivotAlgay(),
+                    new MovePivotProcessor(),
                     new RunClawIntake()
                 )
             )

@@ -15,7 +15,7 @@ public class MovePivotProcessor extends Command {
 
     @Override
     public void initialize() {
-        pivot.setAngle(Rotation2d.fromDegrees(-40));
+        pivot.setAngle(Rotation2d.fromDegrees(-45));
     }
 
     @Override

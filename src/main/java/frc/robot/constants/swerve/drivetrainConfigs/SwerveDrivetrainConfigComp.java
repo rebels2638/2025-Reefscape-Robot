@@ -93,12 +93,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDConstants getPathplannerDrivePIDConfig() {
-        return new PIDConstants(3,0,0.1 ,0);
+        return new PIDConstants(3, 0, 0.06);
     }
 
     @Override
     public PIDConstants getPathplannerSteerPIDConfig() {
-        return new PIDConstants(4,0,0.03,0);
+        return new PIDConstants(5.3, 0.2, 0.04);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(3, 1.8, 0);
+        PIDController p = new PIDController(3, 1, 0.06);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -116,7 +116,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(2.5, 0.2, 0);
+        PIDController p = new PIDController(4, 0.2, 0.03);
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -125,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.022;
+        return 0.03;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignRotationTolerance() {
-        return Math.toRadians(2);
+        return Math.toRadians(3);
     }
 
     @Override
