@@ -50,6 +50,7 @@ import frc.robot.subsystems.roller.Roller;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
 import frc.robot.commands.pivot.simple.MovePivotBargeBackwards;
 import frc.robot.commands.pivot.simple.MovePivotStow;
+import frc.robot.commands.autoAlignment.PathPlannerFollowPathWrapper;
 
 public class Autos {
     public static final Command start_right_2xL4 = 
@@ -137,7 +138,7 @@ public class Autos {
                         new DequeueElevatorAction()
                     ),
                     new SequentialCommandGroup(
-                        followPath(toSourcePath),
+                        new PathPlannerFollowPathWrapper(toSourcePath),
                         new ParallelRaceGroup(
                             new InRoller(),
                             new WaitCommand(0.1)
@@ -164,7 +165,7 @@ public class Autos {
                     ),
                     new MovePivotStow(),
                     
-                    followPath(toReefPath)
+                    new PathPlannerFollowPathWrapper(toReefPath)
                 ),
                 new ParallelDeadlineGroup(
                     new WaitCommand(0.7),
@@ -198,7 +199,7 @@ public class Autos {
             toBargePath != null ? 
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        followPath(toBargePath),
+                        new PathPlannerFollowPathWrapper(toBargePath),
                         new SequentialCommandGroup(
                             new WaitCommand(3),
                             new MovePivotStow()
@@ -241,7 +242,7 @@ public class Autos {
                 new SequentialCommandGroup(
                     new ParallelDeadlineGroup(
                         new SequentialCommandGroup(
-                            followPath(toReefPath),
+                            new PathPlannerFollowPathWrapper(toReefPath),
                             new WaitCommand(1.5)
                         ),
                         new SequentialCommandGroup(
@@ -349,10 +350,6 @@ public class Autos {
             DriverStation.reportError("Oh shit, ur fucked haha " + e.getMessage(), e.getStackTrace());
             return null;
         }
-    }
-
-    public static final Command followPath(String name) {
-        return AutoBuilder.followPath(loadPath(name));
     }
 
     public static final Translation2d getEndPose(String name) {
