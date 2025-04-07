@@ -204,7 +204,7 @@ public class RobotContainer {
             new ParallelDeadlineGroup(
                 new WaitCommand(1),
                 new RunClawEject()
-            ).andThen(new WaitCommand(2)).andThen(new CancelScoreAlgay())
+            ).andThen(new WaitCommand(1)).andThen(new CancelScoreAlgay())
         ); // Processor
 
 
