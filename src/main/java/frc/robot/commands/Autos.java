@@ -175,17 +175,20 @@ public class Autos {
                         )
                     ),
                     new MovePivotStow(),
-                    new ParallelRaceGroup(
-                        waitForAlign(toReefPath),
-                        new PathPlannerFollowPathWrapper(toReefPath)
+                    new SequentialCommandGroup(
+                        new ParallelRaceGroup(
+                            waitForAlign(toReefPath),
+                            new PathPlannerFollowPathWrapper(toReefPath)
+                        ),
+                        new ParallelRaceGroup(
+                            new WaitCommand(2),
+                            new LinearDriveToPose(
+                                branchAlignmentPoseSupplier(branch),
+                                () -> new ChassisSpeeds()
+                            )
+                        )
                     )
-                ),
-                new ParallelRaceGroup(
-                    new WaitCommand(2),
-                    new LinearDriveToPose(
-                        branchAlignmentPoseSupplier(branch),
-                        () -> new ChassisSpeeds()
-                    )
+                    
                 ),
                 new InstantCommand(() -> SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds(0,0,0))),
                 new SequentialCommandGroup(
