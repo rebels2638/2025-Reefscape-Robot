@@ -81,7 +81,7 @@ public class Autos {
     public static final Supplier<Pose2d> zero_start_right_3xL4 = () -> getStartingPose("PS_TR_RB");
     public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
 
-    public static final Command test = followPath("Test");
+    public static final Command test = new PathPlannerFollowPathWrapper("Test");
     public static final Supplier<Pose2d> zero_test = () -> getStartingPose("Test");
 
     public static final Command start_left_2xL4 = 
