@@ -28,8 +28,8 @@
    "maxToSourceAccel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"3 m / s ^ 2",
-     "val":3.0
+     "exp":"1.8 m / s ^ 2",
+     "val":1.8
     }
    },
    "maxToSourceVelo":{
@@ -49,8 +49,8 @@
    "maxTranslationalVelo":{
     "dimension":"LinVel",
     "var":{
-     "exp":"2.2 m / s",
-     "val":2.2
+     "exp":"2.7 m / s",
+     "val":2.7
     }
    }
   },

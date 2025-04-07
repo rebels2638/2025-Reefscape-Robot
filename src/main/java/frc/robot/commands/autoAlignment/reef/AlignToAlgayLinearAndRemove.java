@@ -13,6 +13,7 @@ import frc.robot.commands.autoAlignment.LinearAlignFace;
 import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.claw.simple.InClaw;
 import frc.robot.commands.claw.simple.RunClawIntake;
+import frc.robot.commands.claw.simple.StopClaw;
 import frc.robot.commands.elevator.simple.DequeueElevatorAction;
 import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
@@ -31,8 +32,8 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
             new ParallelDeadlineGroup(
                 new WaitUntilCommand( // we wait for this ot be true to allow continual scheduling
                     () -> AlignmentUtil.getClosestLeftBranchPose().getTranslation().getDistance( // check for the correct max distance from target
-                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 3.6 &&
-                    !Claw.getInstance().inClaw()
+                    RobotState.getInstance().getEstimatedPose().getTranslation()) <= 3.6 
+                    // !Claw.getInstance().inClaw()
                 ),
                 new AbsoluteFieldDrive(controller)
             ),
@@ -59,7 +60,8 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     new WaitCommand(0.5)
                 ),
                 new RunClawIntake()
-            ),         
+            ),
+            new StopClaw(),
             new LinearAlignFace(
                 () -> AlignmentUtil.getClosestAlgayRecessedPose(),
                 () -> new ChassisSpeeds(),

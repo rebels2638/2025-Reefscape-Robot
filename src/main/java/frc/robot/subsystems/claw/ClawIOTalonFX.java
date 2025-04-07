@@ -148,10 +148,10 @@ public class ClawIOTalonFX implements ClawIO {
         inputs.clawAppliedVolts = clawAppliedVolts.getValue().in(Volts);
         inputs.clawTemperatureFahrenheit = clawTemperature.getValue().in(Fahrenheit);
 
-        if (!inputs.isCanRangeConnected) {
-            Elastic.sendNotification(canRangeDisconnectAlert.withDisplayMilliseconds(10000));
-            DriverStation.reportError("Claw CANRange Disconnected", false);
-        }
+        // if (!inputs.isCanRangeConnected) {
+        //     Elastic.sendNotification(canRangeDisconnectAlert.withDisplayMilliseconds(10000));
+        //     DriverStation.reportError("Claw CANRange Disconnected", false);
+        // }
 
         if (!inputs.isMotorConnected) {
             Elastic.sendNotification(motorDisconnectAlert.withDisplayMilliseconds(10000));

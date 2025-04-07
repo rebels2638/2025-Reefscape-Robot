@@ -89,6 +89,9 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final Elastic.Notification steerEncoderConnectedDisconnectAlert = new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR,
                                             "Swerve Encoder Disconnected", "Swerve Steer CANCODER Disconnected");
 
+    private Rotation2d lastSteerAngleRad = new Rotation2d();
+    private Rotation2d lastSteerSetpoint = new Rotation2d();
+
     public ModuleIOTalonFX(SwerveModuleGeneralConfigBase generalConfig, SwerveModuleSpecificConfigBase specificConfig, int moduleID) {
         this.generalConfig = generalConfig;
         this.moduleID = moduleID;
@@ -330,6 +333,8 @@ public class ModuleIOTalonFX implements ModuleIO {
                 Units.rotationsToRadians(steerRotations));
         inputs.steerVelocityRadPerSec = steerVelocityStatusSignal.getValue().in(RadiansPerSecond);
 
+        lastSteerAngleRad = new Rotation2d(inputs.steerPosition.getRadians());
+
         inputs.driveCurrentDrawAmps = driveTorqueCurrent.getValue().in(Amps);
         inputs.driveAppliedVolts = driveAppliedVolts.getValue().in(Volts);
         inputs.driveTemperatureFahrenheit = driveTemperature.getValue().in(Fahrenheit);
@@ -372,22 +377,11 @@ public class ModuleIOTalonFX implements ModuleIO {
             RebelUtil.constrain(
                 state.speedMetersPerSecond,
                 -generalConfig.getDriveMaxVelocityMetersPerSec(),
-                generalConfig.getDriveMaxVelocityMetersPerSec())
+                generalConfig.getDriveMaxVelocityMetersPerSec()
+            ) * Math.cos(RebelUtil.substractRotations(lastSteerAngleRad, lastSteerSetpoint).getRadians())
             ).withAcceleration(
                 driveAcell
             )
-            // withAcceleration(
-            //     Math.abs(state.speedMetersPerSecond) >= Math.abs(currentDriveVelo) ?
-            //         generalConfig.getDriveMotionMagicVelocityAccelerationMetersPerSecSec() :
-            //         generalConfig.getDriveMotionMagicVelocityDecelerationMetersPerSecSec()
-            // )
-            // withSlot(
-            //     MathUtil.isNear(driveVelocityStatusSignal.getValue().in(RotationsPerSecond), 0, generalConfig.getDriveMaxWallVeloMetersPerSec()) && 
-            //     Math.abs(driveTorqueCurrent.getValue().in(Amps)) >= generalConfig.getDriveMinWallCurrent() &&
-            //     Math.signum(state.speedMetersPerSecond) == Math.signum(Math.abs(driveTorqueCurrent.getValue().in(Amps))) ?
-            //         1 : // no acel config to prevent the backlash 
-            //         0 // regular w acel
-            // )
         );
         
         steerMotor.setControl(
@@ -395,6 +389,8 @@ public class ModuleIOTalonFX implements ModuleIO {
                 state.angle.getRotations()
             )
         );
+
+        lastSteerSetpoint = state.angle;
     }
 
     @Override

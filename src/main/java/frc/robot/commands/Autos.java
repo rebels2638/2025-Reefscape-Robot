@@ -64,22 +64,25 @@ public class Autos {
         new SequentialCommandGroup(
             resetPose("PS_TR_RB"),
             cycleCoral("PS_TR_RB", "TR_RB_RST", Height.L4, Branch.RIGHT),
-            cycleCoral("RST_BR_RB", "BR_RB_RST", Height.L4, Branch.RIGHT)
-            // cycleCoral("RST_BR_LB", null, Height.L4, Branch.LEFT)
+            cycleCoral("RST_BR_RB", "BR_RB_RST", Height.L4, Branch.RIGHT),
+            cycleCoral("RST_BR_LB", null, Height.L4, Branch.LEFT)
         );
 
     public static final Command start_left_3xL4 = 
         new SequentialCommandGroup(
             resetPose("OPS_TL_LB"),
             cycleCoral("OPS_TL_LB", "TL_LB_LST", Height.L4, Branch.LEFT),
-            cycleCoral("LST_BL_LB", "BL_LB_LST", Height.L4, Branch.LEFT)
-            // cycleCoral("LST_BL_RB", null, Height.L4, Branch.RIGHT)
+            cycleCoral("LST_BL_LB", "BL_LB_LST", Height.L4, Branch.LEFT),
+            cycleCoral("LST_BL_RB", null, Height.L4, Branch.RIGHT)
         );
 
     public static final Supplier<Pose2d> zero_start_left_3xL4 = () -> getStartingPose("OPS_TL_LB");
 
     public static final Supplier<Pose2d> zero_start_right_3xL4 = () -> getStartingPose("PS_TR_RB");
     public static final Supplier<Pose2d> zero_start_right_2xL4 = () -> getStartingPose("PS_TR_RB");
+
+    public static final Command test = followPath("Test");
+    public static final Supplier<Pose2d> zero_test = () -> getStartingPose("Test");
 
     public static final Command start_left_2xL4 = 
         new SequentialCommandGroup(
@@ -90,6 +93,8 @@ public class Autos {
 
     public static final Supplier<Pose2d> zero_start_left_2xL4 = () -> getStartingPose("OPS_TL_LB");
     public static final Supplier<Pose2d> zero_prac = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(120));
+    public static final Supplier<Pose2d> zero_shop = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(0));
+
 
 
     // public static final Command start_right_1xL3_1xL4 = 
@@ -158,33 +163,37 @@ public class Autos {
                         new InstantCommand(() -> RobotState.getInstance().requestLocalVisionEstimateScale(getEndPose(toReefPath)))
                     ),
                     new SequentialCommandGroup(
-                        new IntakeCoral(), // TODO:adasdasd
-                        waitForElevatorExtension(toReefPath),
-                        queueElevatorCommand(level),
-                        new DequeueElevatorAction()
+                        new IntakeCoral(),
+                        new ConditionalCommand(
+                            new SequentialCommandGroup(
+                                waitForElevatorExtension(toReefPath),
+                                queueElevatorCommand(Height.L3),
+                                new DequeueElevatorAction()
+                            ),                        
+                            new InstantCommand(),
+                            () -> level == Height.L4
+                        )
                     ),
                     new MovePivotStow(),
-                    
-                    new PathPlannerFollowPathWrapper(toReefPath)
+                    new ParallelRaceGroup(
+                        waitForAlign(toReefPath),
+                        new PathPlannerFollowPathWrapper(toReefPath)
+                    )
                 ),
-                new ParallelDeadlineGroup(
-                    new WaitCommand(0.7),
+                new ParallelRaceGroup(
+                    new WaitCommand(2),
                     new LinearDriveToPose(
                         branchAlignmentPoseSupplier(branch),
                         () -> new ChassisSpeeds()
                     )
                 ),
                 new InstantCommand(() -> SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds(0,0,0))),
-                //jkniuh
-                // new ParallelCommandGroup(
-                //     new MovePivotStow(),
-                //     new SequentialCommandGroup(
-                //         queueElevatorCommand(level),
-                //         new DequeueElevatorAction()
-                //     )
-                // ),
+                new SequentialCommandGroup(
+                    queueElevatorCommand(level),
+                    new DequeueElevatorAction()
+                ),
                 new ConditionalCommand(
-                    new WaitCommand(0.55),
+                    new WaitCommand(0.1),
                     new InstantCommand(),
                     () -> level == Height.L4
                 ),
@@ -337,7 +346,7 @@ public class Autos {
         return 
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.3 
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.7 
             );
     }
 

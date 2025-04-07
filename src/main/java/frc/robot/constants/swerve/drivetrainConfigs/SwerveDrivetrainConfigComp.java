@@ -72,7 +72,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     public RobotConfig getRobotConfig() {
         return new RobotConfig(
             52.16,
-            5,
+            6,//5
             new ModuleConfig(
                 SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
                 4.2, 
@@ -93,12 +93,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDConstants getPathplannerDrivePIDConfig() {
-        return new PIDConstants(3,0,0.1 ,0);
+        return new PIDConstants(3, 0, 0.06);
     }
 
     @Override
     public PIDConstants getPathplannerSteerPIDConfig() {
-        return new PIDConstants(4,0,0.03,0);
+        return new PIDConstants(5.3, 0.2, 0.04);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledTranslationController() {
-        PIDController p = new PIDController(2.5, 1.8, 0);
+        PIDController p = new PIDController(3, 0.05, 0.08);
         p.setTolerance(getAutoAlignTranslationTolerance(), getAutoAlignTranslationVeloTolerance());
 
         return p;
@@ -116,7 +116,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public PIDController getAutoAlignProfiledRotationController() {
-        PIDController p = new PIDController(2.5, 0.2, 0);
+        PIDController p = new PIDController(4, 0.02, 0.03);
         p.setTolerance(getAutoAlignRotationTolerance(), getAutoAlignRotationVeloTolerance());
         p.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -125,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.01;
+        return 0.03;
     }
 
     @Override
@@ -135,12 +135,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignRotationTolerance() {
-        return Math.toRadians(2);
+        return Math.toRadians(3);
     }
 
     @Override
     public double getAutoAlignRotationVeloTolerance() {
-        return Math.toRadians(3);
+        return Math.toRadians(12);
     }
     
     @Override
@@ -155,12 +155,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(0.0, -0.1);
+        return new Translation2d(-0.05, -0.1);
     }
 
     @Override
     public double getMaxAlignmentTranslationVeloMetersPerSec() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -168,9 +168,10 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
         return 3.7;
     }
 
+
     @Override
     public double getMaxAlignmentTranslationalAcelMetersPerSecPerSec() {
-        return 3;
+        return 2.2;
     }
 
     @Override

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.AutoRunner;
 import frc.robot.commands.RumbleDriver;
+import frc.robot.commands.ZeroPose;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.claw.Claw;
@@ -35,10 +36,10 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.autoAlignment.barge.AlignToCageAndClimb;
-import frc.robot.commands.autoAlignment.barge.AlignToClosestBargePointAndScore;
 import frc.robot.commands.autoAlignment.barge.ClimbSequence;
-import frc.robot.commands.autoAlignment.barge.MoveSuperstructureBargeSequence;
 import frc.robot.commands.autoAlignment.barge.PrepareForClimbSequence;
+import frc.robot.commands.autoAlignment.barge.PrepareMoveSuperstructureBargeSequence;
+import frc.robot.commands.autoAlignment.barge.ScoreMoveSuperstrucutreBargeSequence;
 import frc.robot.commands.autoAlignment.reef.AlignToAlgayLinearAndRemove;
 import frc.robot.commands.autoAlignment.reef.AlignToLeftBranchLinearAndScore;
 import frc.robot.commands.autoAlignment.reef.AlignToRightBranchLinearAndScore;
@@ -97,6 +98,9 @@ public class RobotContainer {
     private final Debouncer leftAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
     private final Debouncer rightAlignDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
 
+    private final Debouncer bargeDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
+    private final Debouncer processerDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kRising);
+
     private final Debouncer climbDebouncer = new Debouncer(0.25, edu.wpi.first.math.filter.Debouncer.DebounceType.kBoth);
 
     private RobotContainer() {
@@ -150,34 +154,61 @@ public class RobotContainer {
             )
         ).whileTrue(new PrepareForClimbSequence()).onFalse(new ClimbSequence());
 
-        new Trigger(
-            () -> (
-                xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
-            )
-        ).whileTrue(new AlignToClosestBargePointAndScore(xboxDriver)).onFalse(new CancelScoreAlgay());
-        
-        new Trigger(
-            () -> (
-                xboxDriver.getBButton().getAsBoolean() && !xboxDriver.getYButton().getAsBoolean()
-            )
-        ).whileTrue(new AlignToClosestSourceLinearAndIntake(xboxDriver)).onFalse(new StopRoller());
+        // new Trigger(
+        //     () -> (
+        //         xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
+        //     )
+        // ).whileTrue(new AlignToClosestBargePointAndScore(xboxDriver)).onFalse(new CancelScoreAlgay());
 
         new Trigger(
             () -> (
-                xboxDriver.getBButton().getAsBoolean() &&
-                xboxDriver.getYButton().getAsBoolean()
+                bargeDebouncer.calculate(
+                    xboxDriver.getYButton().getAsBoolean() && !xboxDriver.getBButton().getAsBoolean()
+                )
+            )
+        ).onTrue(new PrepareMoveSuperstructureBargeSequence()).onFalse(
+            new ConditionalCommand(
+                new ScoreMoveSuperstrucutreBargeSequence(),
+                new CancelScoreAlgay(),
+                () -> Elevator.getInstance().getHeight() > 0.5
+            )
+        );
+        
+        new Trigger(
+            () -> (
+                xboxDriver.getBButton().getAsBoolean() && xboxDriver.getYButton().getAsBoolean()
+            )
+        ).whileTrue(
+            new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                    // new SequentialCommandGroup(
+                    //     new InClaw(),
+                    //     new WaitCommand(0.5)
+                    // ), 
+                    new MovePivotProcessor(),
+                    new RunClawIntake()
+                )
+            )
+        ).onFalse(new CancelScoreAlgay());
+
+        new Trigger(
+            () -> (
+                processerDebouncer.calculate(
+                    xboxDriver.getBButton().getAsBoolean() &&
+                    !xboxDriver.getYButton().getAsBoolean()
+                )
             )
         ).whileTrue(
             new MovePivotProcessor()
         ).onFalse(
             new ParallelDeadlineGroup(
-                new WaitCommand(5),
+                new WaitCommand(1),
                 new RunClawEject()
-            ).andThen(new CancelScoreAlgay())
+            ).andThen(new WaitCommand(1)).andThen(new CancelScoreAlgay())
         ); // Processor
 
 
-        xboxDriver.getXButton().onTrue(new InstantCommand(() -> robotState.zeroGyro()));
+        xboxDriver.getXButton().onTrue(new ZeroPose(() -> new Pose2d(RobotState.getInstance().getEstimatedPose().getTranslation(), new Rotation2d(0))));
 
         xboxOperator.getAButton().onTrue(new QueueStowAction());
         xboxOperator.getBButton().onTrue(new QueueL2Action());
@@ -253,7 +284,7 @@ public class RobotContainer {
                         new InClaw(),
                         new WaitCommand(0.5)
                     ), 
-                    new MovePivotAlgay(),
+                    new MovePivotProcessor(),
                     new RunClawIntake()
                 )
             )
@@ -264,9 +295,13 @@ public class RobotContainer {
                 xboxTester.getRightTriggerButton(0.5).getAsBoolean() && 
                 xboxTester.getLeftTriggerButton(0.5).getAsBoolean()
             )
-        ).whileTrue(
-            new MoveSuperstructureBargeSequence()
-        ).onFalse(new CancelScoreAlgay()); // DescoreAlgay
+        ).onTrue(new PrepareMoveSuperstructureBargeSequence()).onFalse(
+            new ConditionalCommand(
+                new ScoreMoveSuperstrucutreBargeSequence(),
+                new CancelScoreAlgay(),
+                () -> Elevator.getInstance().getHeight() > 0.5
+            )
+        );
     }
 
     public Command getAutonomousCommand() {

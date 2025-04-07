@@ -23,7 +23,7 @@ public class PivotConfigComp extends PivotConfigBase {
     // Supply current limits
     @Override
     public double getSupplyCurrentLimit() {
-        return 35.0;
+        return 55.0;
     }
 
     @Override
@@ -33,24 +33,24 @@ public class PivotConfigComp extends PivotConfigBase {
 
     @Override
     public double getSupplyCurrentLimitLowerLimit() {
-        return 30.0;
+        return 50.0;
     }
 
     // Stator current limit
     @Override
     public double getStatorCurrentLimit() {
-        return 25.0;
+        return 40.0;
     }
 
     // Peak torque currents
     @Override
     public double getPeakForwardTorqueCurrent() {
-        return 25.0;
+        return 40.0;
     }
 
     @Override
     public double getPeakReverseTorqueCurrent() {
-        return -25.0;
+        return -40.0;
     }
 
     // Characterization / Gains

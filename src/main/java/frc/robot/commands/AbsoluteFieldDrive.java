@@ -78,7 +78,6 @@ public class AbsoluteFieldDrive extends Command {
     @Override
     public void execute() {
         double dt = Timer.getTimestamp() - lastTime;
-        lastTime = Timer.getTimestamp();     
 
         // Calculate speeds based on input and max speed constants.
         ChassisSpeeds desiredFieldRelativeSpeeds = new ChassisSpeeds(
@@ -89,10 +88,10 @@ public class AbsoluteFieldDrive extends Command {
         Logger.recordOutput("AbsoluteFieldDrive/desiredFieldRelativeSpeeds", desiredFieldRelativeSpeeds);
         
         double mag = Math.hypot(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
-        double theta =  Math.atan2(desiredFieldRelativeSpeeds.vxMetersPerSecond, desiredFieldRelativeSpeeds.vyMetersPerSecond);
-        double limThetaSec = Math.toRadians(360 + mag * 60);
+        double theta =  Math.atan2(desiredFieldRelativeSpeeds.vyMetersPerSecond, desiredFieldRelativeSpeeds.vxMetersPerSecond);
+        double limThetaSec = RebelUtil.constrain(Math.toRadians(360 - mag * 120), 0.01, 3000);
         double delta = RebelUtil.constrain(theta - lastTheta, -limThetaSec * dt, limThetaSec * dt);
-        double limTheta = theta + delta;
+        double limTheta = lastTheta + delta;
 
         ChassisSpeeds limSpeeds = new ChassisSpeeds();
         limSpeeds.vxMetersPerSecond = Math.cos(limTheta) * mag;
@@ -100,9 +99,11 @@ public class AbsoluteFieldDrive extends Command {
         limSpeeds.omegaRadiansPerSecond = desiredFieldRelativeSpeeds.omegaRadiansPerSecond;
         Logger.recordOutput("AbsoluteFieldDrive/limFieldRelativeSpeeds", limSpeeds);
 
-        swerve.driveFieldRelative(limSpeeds); // Drive the robot using the calculated speeds.
+        swerve.driveFieldRelative(desiredFieldRelativeSpeeds); // Drive the robot using the calculated speeds.
 
         lastTheta = theta;
+        lastTime = Timer.getTimestamp();     
+
     }
 
     // Called when the command ends or is interrupted.
