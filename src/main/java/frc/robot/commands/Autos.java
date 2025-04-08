@@ -109,15 +109,15 @@ public class Autos {
     // public static final Supplier<Pose2d> zero_start_right_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
 
 
-    // public static final Command start_middle_1xL4_1xBarge = 
-    //     new SequentialCommandGroup(
-    //         resetPose("MS_T_RB"),
-    //         cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
-    //         cycleAlgay(null, "T_AG_B", Height.L2)
-    //     );
+    public static final Command start_middle_1xL4_1xBarge = 
+        new SequentialCommandGroup(
+            resetPose("MS_T_RB"),
+            cycleCoral("MS_T_RB",null, Height.L4, Branch.RIGHT),
+            cycleAlgay(null, "T_AG_B", Height.L2)
+        );
 
     
-    // public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
+    public static final Supplier<Pose2d> zero_start_middle_1xL4_1xBarge = () -> getStartingPose("MS_T_RB");
     // public static final Supplier<Pose2d> zero_start_bottom_1xL3_1xL4 = () -> getStartingPose("PS_TR_RB");
 
     // public static final Command start_middle_1xL4 = 
@@ -151,6 +151,7 @@ public class Autos {
                     )
                 ) :
                 new SequentialCommandGroup(
+                    new WaitCommand(0.65),
                     new QueueStowAction(),
                     new DequeueElevatorAction()
                 );
@@ -164,16 +165,22 @@ public class Autos {
                     ),
                     new SequentialCommandGroup(
                         new IntakeCoral(),
-                        new ConditionalCommand(
-                            new SequentialCommandGroup(
-                                waitForElevatorExtension(toReefPath),
-                                queueElevatorCommand(Height.L3),
-                                new DequeueElevatorAction()
-                            ),                        
-                            new InstantCommand(),
-                            () -> level == Height.L4
-                        )
+                        waitForElevatorExtension(toReefPath),
+                        queueElevatorCommand(level),
+                        new DequeueElevatorAction()
                     ),
+                    // new SequentialCommandGroup(
+                    //     new IntakeCoral(),
+                    //     new ConditionalCommand(
+                    //         new SequentialCommandGroup(
+                    //             waitForElevatorExtension(toReefPath),
+                    //             queueElevatorCommand(Height.L3),
+                    //             new DequeueElevatorAction()
+                    //         ),                        
+                    //         new InstantCommand(),
+                    //         () -> level == Height.L4
+                    //     )
+                    // ),
                     new MovePivotStow(),
                     new SequentialCommandGroup(
                         new ParallelRaceGroup(
@@ -191,15 +198,10 @@ public class Autos {
                     
                 ),
                 new InstantCommand(() -> SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds(0,0,0))),
-                new SequentialCommandGroup(
-                    queueElevatorCommand(level),
-                    new DequeueElevatorAction()
-                ),
-                new ConditionalCommand(
-                    new WaitCommand(0.1),
-                    new InstantCommand(),
-                    () -> level == Height.L4
-                ),
+                // new SequentialCommandGroup(
+                //     queueElevatorCommand(level),
+                //     new DequeueElevatorAction()
+                // ),
                 new EjectCoral(), // TODO: ASdlnasdl
                 new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale()),
                 sourceCommand
@@ -339,7 +341,7 @@ public class Autos {
         return
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.2 && //0.7
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 2 && //0.7
                     // RobotState.getInstance().getIsElevatorExtendable() &&
                     Roller.getInstance().inRoller()
             );
@@ -349,7 +351,7 @@ public class Autos {
         return 
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.7 
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 0.3 
             );
     }
 

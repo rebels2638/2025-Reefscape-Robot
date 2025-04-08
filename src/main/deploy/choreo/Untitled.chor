@@ -28,29 +28,29 @@
    "maxToSourceAccel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"1.8 m / s ^ 2",
-     "val":1.8
+     "exp":"2.6 m / s ^ 2",
+     "val":2.6
     }
    },
    "maxToSourceVelo":{
     "dimension":"LinVel",
     "var":{
-     "exp":"3 m / s",
-     "val":3.0
+     "exp":"4 m / s",
+     "val":4.0
     }
    },
    "maxTranslationalAcel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"1.7 m / s ^ 2",
-     "val":1.7
+     "exp":"2.6 m / s ^ 2",
+     "val":2.6
     }
    },
    "maxTranslationalVelo":{
     "dimension":"LinVel",
     "var":{
-     "exp":"2.7 m / s",
-     "val":2.7
+     "exp":"4 m / s",
+     "val":4.0
     }
    }
   },

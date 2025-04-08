@@ -6,12 +6,15 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigBase;
@@ -45,6 +48,9 @@ public class LinearDriveToPose extends Command {
     protected Supplier<ChassisSpeeds> feedforwardVelo;
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
+
+    private Debouncer zeroVeloDebouncer = new Debouncer(0.1, DebounceType.kBoth);
+    private ChassisSpeeds startingSpeeds = new ChassisSpeeds();
 
     // This is the blue alliance pose
     // field relative velo and pose and velocity
@@ -146,6 +152,9 @@ public class LinearDriveToPose extends Command {
 
         translationalFeedbackController.reset();
         rotationalFeedbackController.reset();
+
+        zeroVeloDebouncer = new Debouncer(0.1, DebounceType.kBoth); 
+        startingSpeeds = RobotState.getInstance().getFieldRelativeSpeeds();
     }
 
     @Override
@@ -218,6 +227,13 @@ public class LinearDriveToPose extends Command {
 
     @Override
     public boolean isFinished() {
+        boolean zeroVelo = zeroVeloDebouncer.calculate(
+            Math.hypot(
+                robotState.getFieldRelativeSpeeds().vxMetersPerSecond,
+                robotState.getFieldRelativeSpeeds().vyMetersPerSecond
+            ) <= 0.06
+        );
+
         boolean poseAligned = 
             robotState.getEstimatedPose().getTranslation().getDistance(targetPose.get().getTranslation()) <= 
                 drivetrainConfig.getAutoAlignTranslationTolerance() &&
@@ -233,7 +249,7 @@ public class LinearDriveToPose extends Command {
                 Math.abs(robotState.getFieldRelativeSpeeds().omegaRadiansPerSecond) <= drivetrainConfig.getAutoAlignRotationVeloTolerance() :
             true;
 
-        return poseAligned && speedsAligned;
+        return (poseAligned && speedsAligned) || (zeroVelo && Math.hypot(startingSpeeds.vxMetersPerSecond, startingSpeeds.vyMetersPerSecond) > 0.2);
     }
 
     @Override

@@ -71,11 +71,11 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     @Override
     public RobotConfig getRobotConfig() {
         return new RobotConfig(
-            52.16,
+            40.16,
             6,//5
             new ModuleConfig(
                 SwerveModuleGeneralConfigSim.getInstance().getDriveWheelRadiusMeters(), 
-                4.2, 
+                4.5, 
                 1.2, 
                 DCMotor.getKrakenX60(1).
                     withReduction(

@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.autoAlignment.LocalADStarAK;
+import frc.robot.commands.roller.simple.StopRoller;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.Mode;
 import frc.robot.lib.util.AlignmentUtil;
@@ -199,6 +200,7 @@ public class Robot extends LoggedRobot {
             m_autonomousCommand.cancel();
         }
 
+        new StopRoller().schedule();
         SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds());
 
         // m_robotContainer.offsetAngle();

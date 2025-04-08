@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotState;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
 
 /**
@@ -78,6 +79,8 @@ public class PathPlannerFollowPathWrapper extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        ChassisSpeeds currentSpeeds = RobotState.getInstance().getFieldRelativeSpeeds();
+
         if (internalCommand != null) {
             // Explicitly cancel the internal command if interrupted
             if (interrupted) {
@@ -86,8 +89,7 @@ public class PathPlannerFollowPathWrapper extends Command {
             // Call end on the internal command
             internalCommand.end(interrupted);
         }
-        
-        // Always stop the robot when the command ends
-        SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds());
+
+        SwerveDrive.getInstance().driveFieldRelative(currentSpeeds);
     }
 } 
