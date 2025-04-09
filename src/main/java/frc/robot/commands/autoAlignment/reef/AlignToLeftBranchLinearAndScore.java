@@ -51,11 +51,6 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                 ),
                 new MovePivotStow()
             ),
-            new ConditionalCommand(
-                new WaitCommand(0.7),
-                new InstantCommand(),
-                () -> Elevator.getInstance().getRequestedLevel() == Height.L4
-            ),
             new EjectCoral(),
             new QueueStowAction(),
             new DequeueElevatorAction(),

@@ -4,16 +4,16 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.roller.Roller;
 
-public class RunRollerEject extends Command {
+public class RunRollerReverse extends Command {
     private final Roller roller = Roller.getInstance();
 
-    public RunRollerEject() {
+    public RunRollerReverse() {
         addRequirements(roller);
     }
 
     @Override
     public void initialize() {
-        roller.setVoltage(9);
+        roller.setVoltage(-9);
     }
 
     @Override

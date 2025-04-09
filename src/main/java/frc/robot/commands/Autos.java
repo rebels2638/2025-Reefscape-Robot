@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
+import org.opencv.photo.AlignMTB;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -40,6 +41,7 @@ import frc.robot.commands.elevator.simple.isElevatorExtendable;
 import frc.robot.commands.roller.EjectCoral;
 import frc.robot.commands.roller.IntakeCoral;
 import frc.robot.commands.roller.simple.InRoller;
+import frc.robot.commands.roller.simple.StopRoller;
 import frc.robot.constants.Constants;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
@@ -49,8 +51,10 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
 import frc.robot.commands.pivot.simple.MovePivotBargeBackwards;
+import frc.robot.commands.pivot.simple.MovePivotBargeForwards;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.autoAlignment.PathPlannerFollowPathWrapper;
+import frc.robot.commands.autoAlignment.barge.PrepareMoveSuperstructureBargeSequence;
 
 public class Autos {
     public static final Command start_right_2xL4 = 
@@ -68,6 +72,14 @@ public class Autos {
             cycleCoral("RST_BR_LB", null, Height.L4, Branch.LEFT)
         );
 
+    public static final Command start_mid_1xL4_2xBarge = 
+        new SequentialCommandGroup(
+            resetPose("MS_T_LB"),
+            cycleCoral("MS_T_LB", null, Height.L4, Branch.LEFT),
+            cycleAlgay("T_LB_T_AG_INTER", "T_AG_B_B", Height.L2),
+            cycleAlgay("B_B_TL_AG_INTER", "TL_AG_B_T", Height.L3)
+        );
+
     public static final Command start_left_3xL4 = 
         new SequentialCommandGroup(
             resetPose("OPS_TL_LB"),
@@ -75,6 +87,8 @@ public class Autos {
             cycleCoral("LST_BL_LB", "BL_LB_LST", Height.L4, Branch.LEFT),
             cycleCoral("LST_BL_RB", null, Height.L4, Branch.RIGHT)
         );
+    
+    public static final Supplier<Pose2d> zero_start_mid_1xL4_2xBarge = () -> getStartingPose("MS_T_LB");
 
     public static final Supplier<Pose2d> zero_start_left_3xL4 = () -> getStartingPose("OPS_TL_LB");
 
@@ -139,6 +153,7 @@ public class Autos {
             toSourcePath != null ? 
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
+                        new WaitCommand(0.65),
                         new QueueStowAction(),
                         new DequeueElevatorAction()
                     ),
@@ -209,96 +224,64 @@ public class Autos {
     }
 
     public static final Command cycleAlgay(String toReefPath, String toBargePath, Height level) {
-        Command bargeCommand = 
+        Command sourceCommand = 
             toBargePath != null ? 
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new PathPlannerFollowPathWrapper(toBargePath),
                         new SequentialCommandGroup(
-                            new WaitCommand(3),
-                            new MovePivotStow()
+                            new WaitCommand(2.3),
+                            new ParallelCommandGroup(
+                                new MovePivotStow(),
+                                new SequentialCommandGroup(
+                                    new QueueStowAction(),
+                                    new DequeueElevatorAction()
+                                )
+                            )
                         ),
-                        new SequentialCommandGroup(
-                            new WaitUntilCommand(4),
-                            new QueueStowAction(),
-                            new DequeueElevatorAction()
-                        )
+                        new PathPlannerFollowPathWrapper(toBargePath)
                     ),
-                    queueElevatorCommand(Height.L4),
-                    new DequeueElevatorAction(),
+                    new PrepareMoveSuperstructureBargeSequence(),
                     new ParallelCommandGroup(
                         new MovePivotBargeBackwards(),
                         new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 100),
+                            new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 90),
+                            new WaitCommand(0.2),
                             new ParallelDeadlineGroup(
-                                new WaitUntilCommand(0.8),
+                                new WaitCommand(0.7),
                                 new RunClawEject()
-                            )
-                        )
-                    ),
-                    new MovePivotStow(),
-                    new QueueStowAction(),
-                    new DequeueElevatorAction() 
-                ) :
-                new SequentialCommandGroup(
-                    new LinearAlignFace(
-                        () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                        () -> new ChassisSpeeds(),
-                        5
-                    ),
-                    new MovePivotStow(),
-                    new QueueStowAction(),
-                    new DequeueElevatorAction()
-                );
-
-        Command reefCommand = 
-            toReefPath != null ?
-                new SequentialCommandGroup(
-                    new ParallelDeadlineGroup(
-                        new SequentialCommandGroup(
-                            new PathPlannerFollowPathWrapper(toReefPath),
-                            new WaitCommand(1.5)
-                        ),
-                        new SequentialCommandGroup(
-                            waitForElevatorExtension(toReefPath),
-                            queueElevatorCommand(level),
-                            new DequeueElevatorAction()
-                        ),
-                        new MovePivotAlgay(),
-                        new RunClawIntake()
-                    )
-                ) :
-                new SequentialCommandGroup(
-                    new ParallelCommandGroup(
-                        new MovePivotAlgay(),
-                        new SequentialCommandGroup(
-                            queueElevatorCommand(level),
-                            new DequeueElevatorAction()
-                        ),
-                        new LinearAlignFace(
-                            () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                            () -> new ChassisSpeeds(),
-                            5
-                        )
-                    ),
-                    new ParallelDeadlineGroup(
-                        new SequentialCommandGroup(
-                            new LinearAlignFace(
-                                () -> AlignmentUtil.getClosestAlgayPose(),
-                                () -> new ChassisSpeeds(),
-                                5
                             ),
-                            new WaitCommand(0.5)
-                        ),
-                        new RunClawIntake() 
-                    )
-                );
-                
-        return 
-            new SequentialCommandGroup(
-                reefCommand,
-                bargeCommand
-            );
+                            new StopRoller()
+                        )
+                    ),
+                    new MovePivotStow()
+                ) :
+                null
+        ;
+
+    return 
+        new SequentialCommandGroup(
+            new QueueStowAction(),
+            new DequeueElevatorAction(),
+            new ParallelCommandGroup(
+                new MovePivotAlgay(),
+                new SequentialCommandGroup(
+                    waitForElevatorExtension(toReefPath),
+                    queueElevatorCommand(level),
+                    new DequeueElevatorAction()
+                ),
+                new PathPlannerFollowPathWrapper(toReefPath)
+            ),
+            new ParallelRaceGroup(
+                new WaitCommand(3),
+                new RunClawIntake(),
+                new LinearDriveToPose(
+                    AlignmentUtil::getClosestAlgayPose,
+                    () -> new ChassisSpeeds()
+                )
+            ),
+            new InstantCommand(() -> SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds(0,0,0))),
+            sourceCommand
+        );
     }
 
     public static final Supplier<Pose2d> branchAlignmentPoseSupplier(Branch branch) {

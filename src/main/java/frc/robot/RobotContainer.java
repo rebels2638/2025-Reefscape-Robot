@@ -254,6 +254,7 @@ public class RobotContainer {
         );
 
         xboxTester.getRightMiddleButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));
+        xboxTester.getLeftMiddleButton().onTrue(new RunRollerReverse()).onFalse(new StopRoller());
 
         xboxTester.getAButton().onTrue(new QueueStowAction().andThen(new DequeueElevatorAction()));
         xboxTester.getBButton().onTrue(new QueueL2Action().andThen(new DequeueElevatorAction()));

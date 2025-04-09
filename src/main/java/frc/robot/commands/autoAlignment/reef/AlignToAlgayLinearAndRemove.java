@@ -57,7 +57,7 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                         () -> new ChassisSpeeds(),
                         3.6
                     ),
-                    new WaitCommand(0.5)
+                    new WaitCommand(0.1)
                 ),
                 new RunClawIntake()
             ),
