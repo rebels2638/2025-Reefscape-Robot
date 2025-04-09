@@ -153,7 +153,7 @@ public class Autos {
             toSourcePath != null ? 
                 new ParallelCommandGroup(
                     new SequentialCommandGroup(
-                        new WaitCommand(0.65),
+                        new WaitCommand(0.3),
                         new QueueStowAction(),
                         new DequeueElevatorAction()
                     ),
@@ -166,9 +166,9 @@ public class Autos {
                     )
                 ) :
                 new SequentialCommandGroup(
-                    new WaitCommand(0.65),
-                    new QueueStowAction(),
-                    new DequeueElevatorAction()
+                    new WaitCommand(0.3)
+                    // new QueueStowAction(),
+                    // new DequeueElevatorAction()
                 );
 
         return 
@@ -229,11 +229,11 @@ public class Autos {
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
                         new SequentialCommandGroup(
-                            new WaitCommand(2.3),
+                            new WaitCommand(.7),
                             new ParallelCommandGroup(
                                 new MovePivotStow(),
                                 new SequentialCommandGroup(
-                                    new QueueStowAction(),
+                                    new QueueL2Action(),
                                     new DequeueElevatorAction()
                                 )
                             )
@@ -252,34 +252,46 @@ public class Autos {
                             ),
                             new StopRoller()
                         )
-                    ),
-                    new MovePivotStow()
+                    )
                 ) :
                 null
         ;
 
     return 
         new SequentialCommandGroup(
-            new QueueStowAction(),
-            new DequeueElevatorAction(),
             new ParallelCommandGroup(
-                new MovePivotAlgay(),
                 new SequentialCommandGroup(
-                    waitForElevatorExtension(toReefPath),
-                    queueElevatorCommand(level),
-                    new DequeueElevatorAction()
+                    new ParallelCommandGroup(
+                        new MovePivotStow(),
+                        new SequentialCommandGroup(
+                            new QueueStowAction(),
+                            new DequeueElevatorAction()
+                        )
+                    ),
+                    new ParallelCommandGroup(
+                        new MovePivotAlgay(),
+                        new SequentialCommandGroup(
+                            waitForElevatorExtension(toReefPath),
+                            queueElevatorCommand(level),
+                            new DequeueElevatorAction()
+                        )
+                    )
                 ),
-                new PathPlannerFollowPathWrapper(toReefPath)
+                new SequentialCommandGroup(
+                    new PathPlannerFollowPathWrapper(toReefPath),
+                    new InstantCommand(() -> SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds(0,0,0)))
+                )
             ),
             new ParallelRaceGroup(
                 new WaitCommand(3),
                 new RunClawIntake(),
                 new LinearDriveToPose(
-                    AlignmentUtil::getClosestAlgayPose,
+                    algayAlignmentPoseSupplier(),
                     () -> new ChassisSpeeds()
                 )
             ),
             new InstantCommand(() -> SwerveDrive.getInstance().driveRobotRelative(new ChassisSpeeds(0,0,0))),
+
             sourceCommand
         );
     }
@@ -292,6 +304,10 @@ public class Autos {
             default:
                 return () -> AlignmentUtil.getClosestLeftBranchPose(RobotState.getInstance().getEstimatedPose().getTranslation());
         }
+    }
+
+    public static final Supplier<Pose2d> algayAlignmentPoseSupplier() {
+        return () -> AlignmentUtil.getClosestAlgayPose(RobotState.getInstance().getEstimatedPose().getTranslation());
     }
 
     public static final Command queueElevatorCommand(Height level) {
@@ -324,9 +340,9 @@ public class Autos {
         return
             new WaitUntilCommand(
                 () -> 
-                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 2 && //0.7
+                    RobotState.getInstance().getEstimatedPose().getTranslation().getDistance(getEndPose(name)) <= 2  //0.7
                     // RobotState.getInstance().getIsElevatorExtendable() &&
-                    Roller.getInstance().inRoller()
+                    // Roller.getInstance().inRoller()
             );
     }
 
