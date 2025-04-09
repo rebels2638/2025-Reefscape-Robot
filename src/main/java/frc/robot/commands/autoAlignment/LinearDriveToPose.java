@@ -231,7 +231,8 @@ public class LinearDriveToPose extends Command {
             Math.hypot(
                 robotState.getFieldRelativeSpeeds().vxMetersPerSecond,
                 robotState.getFieldRelativeSpeeds().vyMetersPerSecond
-            ) <= 0.06
+            ) <= 0.06 &&
+            robotState.getEstimatedPose().getTranslation().getDistance(targetPose.get().getTranslation()) <= 0.12
         );
 
         boolean poseAligned = 
