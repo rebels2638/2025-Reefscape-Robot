@@ -49,7 +49,7 @@ public class LinearDriveToPose extends Command {
 
     private final SwerveDrivetrainConfigBase drivetrainConfig;
 
-    private Debouncer zeroVeloDebouncer = new Debouncer(0.1, DebounceType.kBoth);
+    private Debouncer zeroVeloDebouncer = new Debouncer(0.55, DebounceType.kBoth);
     private ChassisSpeeds startingSpeeds = new ChassisSpeeds();
 
     // This is the blue alliance pose
@@ -153,7 +153,7 @@ public class LinearDriveToPose extends Command {
         translationalFeedbackController.reset();
         rotationalFeedbackController.reset();
 
-        zeroVeloDebouncer = new Debouncer(0.1, DebounceType.kBoth); 
+        zeroVeloDebouncer = new Debouncer(0.55, DebounceType.kBoth); 
         startingSpeeds = RobotState.getInstance().getFieldRelativeSpeeds();
     }
 
@@ -231,7 +231,8 @@ public class LinearDriveToPose extends Command {
             Math.hypot(
                 robotState.getFieldRelativeSpeeds().vxMetersPerSecond,
                 robotState.getFieldRelativeSpeeds().vyMetersPerSecond
-            ) <= 0.06
+            ) <= 0.06 &&
+            robotState.getEstimatedPose().getTranslation().getDistance(targetPose.get().getTranslation()) <= 0.12
         );
 
         boolean poseAligned = 
@@ -249,7 +250,7 @@ public class LinearDriveToPose extends Command {
                 Math.abs(robotState.getFieldRelativeSpeeds().omegaRadiansPerSecond) <= drivetrainConfig.getAutoAlignRotationVeloTolerance() :
             true;
 
-        return (poseAligned && speedsAligned) || (zeroVelo && Math.hypot(startingSpeeds.vxMetersPerSecond, startingSpeeds.vyMetersPerSecond) > 0.2);
+        return (poseAligned && speedsAligned) || zeroVelo;
     }
 
     @Override
