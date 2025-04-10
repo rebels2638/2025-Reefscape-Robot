@@ -125,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.034;
+        return 0.032;
     }
 
     @Override

@@ -77,7 +77,17 @@ public class Autos {
             resetPose("MS_T_LB"),
             cycleCoral("MS_T_LB", null, Height.L4, Branch.LEFT),
             cycleAlgay("T_LB_T_AG_INTER", "T_AG_B_B", Height.L2),
-            cycleAlgay("B_B_TL_AG_INTER", "TL_AG_B_T", Height.L3)
+            cycleAlgay("B_B_TL_AG_INTER", "TL_AG_B_T", Height.L3),
+            new ParallelCommandGroup(
+                new PathPlannerFollowPathWrapper("B_T_TAXI"),
+                new MovePivotStow(),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.4),
+                    new QueueStowAction(),
+                    new DequeueElevatorAction()
+                )
+            )
+
         );
 
     public static final Command start_left_3xL4 = 
@@ -203,7 +213,7 @@ public class Autos {
                             new PathPlannerFollowPathWrapper(toReefPath)
                         ),
                         new ParallelRaceGroup(
-                            new WaitCommand(2),
+                            new WaitCommand(3),
                             new LinearDriveToPose(
                                 branchAlignmentPoseSupplier(branch),
                                 () -> new ChassisSpeeds()
@@ -233,21 +243,20 @@ public class Autos {
                             new ParallelCommandGroup(
                                 new MovePivotStow(),
                                 new SequentialCommandGroup(
-                                    new QueueL2Action(),
+                                    waitForElevatorExtension(toBargePath),
+                                    new QueueL4Action(),
                                     new DequeueElevatorAction()
                                 )
                             )
                         ),
                         new PathPlannerFollowPathWrapper(toBargePath)
                     ),
-                    new PrepareMoveSuperstructureBargeSequence(),
                     new ParallelCommandGroup(
                         new MovePivotBargeBackwards(),
                         new SequentialCommandGroup(
                             new WaitUntilCommand(() -> Pivot.getInstance().getAngle().getDegrees() > 90),
-                            new WaitCommand(0.2),
                             new ParallelDeadlineGroup(
-                                new WaitCommand(0.7),
+                                new WaitCommand(0.4),
                                 new RunClawEject()
                             ),
                             new StopRoller()
@@ -261,21 +270,14 @@ public class Autos {
         new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                    new ParallelCommandGroup(
-                        new MovePivotStow(),
-                        new SequentialCommandGroup(
-                            new QueueStowAction(),
-                            new DequeueElevatorAction()
-                        )
-                    ),
-                    new ParallelCommandGroup(
-                        new MovePivotAlgay(),
-                        new SequentialCommandGroup(
-                            waitForElevatorExtension(toReefPath),
-                            queueElevatorCommand(level),
-                            new DequeueElevatorAction()
-                        )
-                    )
+                    new WaitCommand(0.3),
+                    new MovePivotAlgay()
+                ),
+                new SequentialCommandGroup(
+                    // waitForElevatorExtension(toReefPath),
+                    new WaitCommand(0.3),
+                    queueElevatorCommand(level),
+                    new DequeueElevatorAction()
                 ),
                 new SequentialCommandGroup(
                     new PathPlannerFollowPathWrapper(toReefPath),
