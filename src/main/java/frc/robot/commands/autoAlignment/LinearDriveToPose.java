@@ -104,7 +104,7 @@ public class LinearDriveToPose extends Command {
             case SIM:
                 return SwerveDrivetrainConfigSim.getInstance();
             case REPLAY:
-                // Fallthrough or explicitly return Comp instance
+                return SwerveDrivetrainConfigComp.getInstance();
             default:
                 return SwerveDrivetrainConfigComp.getInstance();
         }
