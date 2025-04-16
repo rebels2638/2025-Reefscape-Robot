@@ -71,7 +71,7 @@ public class RebelUtil {
         return corrected;
     }
 
-    public static Rotation2d substractRotations(Rotation2d a, Rotation2d b) {
+    public static Rotation2d subtractRotations(Rotation2d a, Rotation2d b) {
         return new Rotation2d(Math.min(Math.abs(a.getRadians() - b.getRadians()), Math.PI * 2 - Math.abs(a.getRadians() - b.getRadians())));
     }
 }

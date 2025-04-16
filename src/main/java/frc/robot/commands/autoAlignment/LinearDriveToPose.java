@@ -22,6 +22,7 @@ import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigComp;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigProto;
 import frc.robot.constants.swerve.drivetrainConfigs.SwerveDrivetrainConfigSim;
 import frc.robot.subsystems.drivetrain.swerve.SwerveDrive;
+import frc.robot.lib.util.RebelUtil;
 
 public class LinearDriveToPose extends Command {
     private final SwerveDrive swerveDrive = SwerveDrive.getInstance();
@@ -52,46 +53,30 @@ public class LinearDriveToPose extends Command {
     private Debouncer zeroVeloDebouncer = new Debouncer(0.4, DebounceType.kBoth);
     private ChassisSpeeds startingSpeeds = new ChassisSpeeds();
 
-    // This is the blue alliance pose
-    // field relative velo and pose and velocity
+    private final double translationToleranceMeters;
+    private final double rotationToleranceRad;
+
+    // Constructor using default tolerances from config
     public LinearDriveToPose(Supplier<Pose2d> targetPose, Supplier<ChassisSpeeds> feedforwardVelo) {
-        switch (Constants.currentMode) {
-            case COMP:
-                drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
+        // Call the more detailed constructor, passing default tolerances from the config
+        this(targetPose, feedforwardVelo, getConfigInstance().getAutoAlignTranslationTolerance(), getConfigInstance().getAutoAlignRotationTolerance());
+    }
 
-                break;
+    // Detailed constructor allowing custom tolerances
+    public LinearDriveToPose(Supplier<Pose2d> targetPose, Supplier<ChassisSpeeds> feedforwardVelo, double translationToleranceMeters, double rotationToleranceRad) {
+        // Load config *once* here (or use the instance from the other constructor if passed)
+        this.drivetrainConfig = getConfigInstance(); // Use the helper method
 
-            case PROTO:
-                drivetrainConfig = SwerveDrivetrainConfigProto.getInstance();
-                
-                break;
-            
-            case SIM:
-                drivetrainConfig = SwerveDrivetrainConfigSim.getInstance();
-
-                break;
-
-            case REPLAY:
-                drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-
-                break;
-
-            default:
-                drivetrainConfig = SwerveDrivetrainConfigComp.getInstance();
-
-                break;
-        }
-        
         this.targetPose = targetPose;
         this.feedforwardVelo = feedforwardVelo;
 
+        // Initialize profiles and controllers using the loaded config
         this.translationalMotionProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
                 drivetrainConfig.getMaxAlignmentTranslationVeloMetersPerSec(),
                 drivetrainConfig.getMaxAlignmentTranslationalAcelMetersPerSecPerSec()
             )
         );
-
         this.translationalFeedbackController = drivetrainConfig.getAutoAlignProfiledTranslationController();
 
         this.rotationalMotionProfile = new TrapezoidProfile(
@@ -100,9 +85,29 @@ public class LinearDriveToPose extends Command {
                 drivetrainConfig.getMaxAlignmentRotationAcelRadPerSecPerSec()
             )
         );
-
         this.rotationalFeedbackController = drivetrainConfig.getAutoAlignProfiledRotationController();
+
+        // Assign tolerances from parameters
+        this.translationToleranceMeters = translationToleranceMeters;
+        this.rotationToleranceRad = rotationToleranceRad;
+
         addRequirements(swerveDrive);
+    }
+
+    // Helper method to avoid repeating the switch statement
+    private static SwerveDrivetrainConfigBase getConfigInstance() {
+            switch (Constants.currentMode) {
+            case COMP:
+                return SwerveDrivetrainConfigComp.getInstance();
+            case PROTO:
+                return SwerveDrivetrainConfigProto.getInstance();
+            case SIM:
+                return SwerveDrivetrainConfigSim.getInstance();
+            case REPLAY:
+                // Fallthrough or explicitly return Comp instance
+            default:
+                return SwerveDrivetrainConfigComp.getInstance();
+        }
     }
 
     @Override 
@@ -237,9 +242,9 @@ public class LinearDriveToPose extends Command {
 
         boolean poseAligned = 
             robotState.getEstimatedPose().getTranslation().getDistance(targetPose.get().getTranslation()) <= 
-                drivetrainConfig.getAutoAlignTranslationTolerance() &&
-            Math.abs(robotState.getEstimatedPose().getRotation().getRadians() - targetPose.get().getRotation().getRadians()) <= 
-                drivetrainConfig.getAutoAlignRotationTolerance();
+                translationToleranceMeters &&
+            Math.abs(robotState.getEstimatedPose().getRotation().minus(targetPose.get().getRotation()).getRadians()) <= 
+                rotationToleranceRad;
         
         boolean speedsAligned = 
             feedforwardVelo.get().vxMetersPerSecond == 0 && feedforwardVelo.get().vyMetersPerSecond == 0 && feedforwardVelo.get().omegaRadiansPerSecond == 0 ?
