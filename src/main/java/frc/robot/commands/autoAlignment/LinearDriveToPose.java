@@ -255,6 +255,9 @@ public class LinearDriveToPose extends Command {
                 Math.abs(robotState.getFieldRelativeSpeeds().omegaRadiansPerSecond) <= drivetrainConfig.getAutoAlignRotationVeloTolerance() :
             true;
 
+        Logger.recordOutput("LinearDriveToPose/poseAligned", poseAligned);
+        Logger.recordOutput("LinearDriveToPose/zeroVelo", zeroVelo);
+
         return (poseAligned) || (zeroVelo);
     }
 

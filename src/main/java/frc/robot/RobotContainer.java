@@ -236,6 +236,10 @@ public class RobotContainer {
             )
         );
 
+        new Trigger(
+            () -> (xboxOperator.getLeftTriggerButton(0.5).getAsBoolean())
+        ).whileTrue(new RunRollerReverse()).onFalse(new StopRoller());
+
         xboxTester.getRightBumper().whileTrue(
             new IntakeCoral().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).andThen(
                 new ParallelDeadlineGroup(

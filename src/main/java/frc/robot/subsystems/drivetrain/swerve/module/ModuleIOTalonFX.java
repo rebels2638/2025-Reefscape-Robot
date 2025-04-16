@@ -378,7 +378,7 @@ public class ModuleIOTalonFX implements ModuleIO {
                 state.speedMetersPerSecond,
                 -generalConfig.getDriveMaxVelocityMetersPerSec(),
                 generalConfig.getDriveMaxVelocityMetersPerSec()
-            ) * Math.cos(RebelUtil.substractRotations(lastSteerAngleRad, lastSteerSetpoint).getRadians())
+            ) * Math.cos(RebelUtil.subtractRotations(lastSteerAngleRad, lastSteerSetpoint).getRadians())
             ).withAcceleration(
                 driveAcell
             )
