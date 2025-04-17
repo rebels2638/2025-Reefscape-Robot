@@ -125,7 +125,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public double getAutoAlignTranslationTolerance() {
-        return 0.025;
+        return 0.032;
     }
 
     @Override
@@ -155,7 +155,7 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
 
     @Override
     public Translation2d getAlgayOffsetFromRobotCenter() {
-        return new Translation2d(-0.05, -0.1);
+        return new Translation2d(-0.05, -0.15); //-0.05, -0.1
     }
 
     @Override

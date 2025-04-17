@@ -47,18 +47,18 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                 ),
                 new LinearDriveToPose(
                     () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                    () -> new ChassisSpeeds(), 
-                    0.05, 
-                    Math.toRadians(6)
+                    () -> new ChassisSpeeds()
+                    // 0.05, 
+                    // Math.toRadians(6)
                 ) // drive to a intermediate pose      
             ),
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     new LinearDriveToPose(
                         () -> AlignmentUtil.getClosestAlgayPose(),
-                        () -> new ChassisSpeeds(), 
-                        0.03, 
-                        Math.toRadians(4)
+                        () -> new ChassisSpeeds()
+                        // 0.03, 
+                        // Math.toRadians(4)
                     ), // drive to a intermediate pose  
                     new WaitCommand(0.1)
                 ),
@@ -67,9 +67,9 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
             new StopClaw(),
             new LinearDriveToPose(
                 () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                () -> new ChassisSpeeds(), 
-                0.05, 
-                Math.toRadians(6)
+                () -> new ChassisSpeeds()
+                // 0.05, 
+                // Math.toRadians(6)
             ), // drive to a intermediate pose                     
 
             new MovePivotStow(),

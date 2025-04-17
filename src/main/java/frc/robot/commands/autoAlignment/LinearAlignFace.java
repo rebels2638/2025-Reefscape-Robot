@@ -21,9 +21,19 @@ public class LinearAlignFace extends ConditionalCommand {
                     new WaitUntilCommand(
                         () -> Math.abs(RobotState.getInstance().getEstimatedPose().getRotation().minus(goalPoseSupplier.get().getRotation()).getDegrees()) < 45  // check if rotating will first increase the bumper profile while driving to the goal
                     ),
-                    new LinearDriveToPose(() -> AlignmentUtil.offsetCoralPoseToPreAlignment(goalPoseSupplier.get()), () -> chassisSpeedsSupplier.get(), 0.05, Math.toRadians(6)) // drive to a intermediate pose                     
+                    new LinearDriveToPose(
+                        () -> AlignmentUtil.offsetCoralPoseToPreAlignment(goalPoseSupplier.get()), 
+                        () -> chassisSpeedsSupplier.get() 
+                        // 0.05, 
+                        // Math.toRadians(6)
+                    ) // drive to a intermediate pose                     
                 ),
-                new LinearDriveToPose(() -> AlignmentUtil.offsetCoralPoseToVisionReading(goalPoseSupplier.get()), () -> chassisSpeedsSupplier.get(), 0.05, Math.toRadians(6)), // drive to a intermediate pose                     
+                new LinearDriveToPose(
+                    () -> AlignmentUtil.offsetCoralPoseToVisionReading(goalPoseSupplier.get()), 
+                    () -> chassisSpeedsSupplier.get()
+                    // 0.05, 
+                    // Math.toRadians(6)
+                ), // drive to a intermediate pose                     
 
                 // new ParallelDeadlineGroup(
                 //     new WaitUntilCommand(

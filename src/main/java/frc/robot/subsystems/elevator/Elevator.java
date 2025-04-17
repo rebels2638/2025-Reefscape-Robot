@@ -23,9 +23,9 @@ public class Elevator extends SubsystemBase {
     public enum Height {
         STOW(0.0),
         L1(0.1),
-        L2(0.37),
+        L2(0.425),
         L3(0.82),
-        L4(1.44);
+        L4(1.42);
     
         private final double extensionHeight;
     

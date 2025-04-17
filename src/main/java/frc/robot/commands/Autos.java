@@ -75,7 +75,7 @@ public class Autos {
     public static final Command start_mid_1xL4_2xBarge = 
         new SequentialCommandGroup(
             resetPose("MS_T_LB"),
-            cycleCoral("MS_T_LB", null, Height.L4, Branch.LEFT),
+            cycleCoral("MS_T_LB", null, Height.L2, Branch.LEFT),
             cycleAlgay("T_LB_T_AG_INTER", "T_AG_B_B", Height.L2),
             cycleAlgay("B_B_TL_AG_INTER", "TL_AG_B_T", Height.L3),
             new ParallelCommandGroup(
