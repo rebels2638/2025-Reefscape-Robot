@@ -145,12 +145,12 @@ public class SwerveDrivetrainConfigComp extends SwerveDrivetrainConfigBase {
     
     @Override
     public double getBumperLengthMeters() {
-        return 0.707;
+        return 0.682;
     }
 
     @Override
     public Translation2d getBranchOffsetFromRobotCenter() {
-        return new Translation2d(0,-0.0063); // increasing the y value will move the robot to the left of the branch // 0.015
+        return new Translation2d(0,0.0256); // increasing the y value will move the robot to the left of the branch // 0.015
     }
 
     @Override

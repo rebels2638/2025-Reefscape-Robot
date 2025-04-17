@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotState;
 import frc.robot.commands.AbsoluteFieldDrive;
 import frc.robot.commands.autoAlignment.LinearAlignFace;
+import frc.robot.commands.autoAlignment.LinearDriveToPose;
 import frc.robot.commands.claw.simple.HoldAlgayClaw;
 import frc.robot.commands.claw.simple.InClaw;
 import frc.robot.commands.claw.simple.RunClawIntake;
@@ -44,29 +45,33 @@ public class AlignToAlgayLinearAndRemove extends SequentialCommandGroup {
                     new WaitForNonStowState(),
                     new DequeueElevatorAction()
                 ),
-                new LinearAlignFace(
+                new LinearDriveToPose(
                     () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                    () -> new ChassisSpeeds(),
-                    3.6
-                )
+                    () -> new ChassisSpeeds(), 
+                    0.05, 
+                    Math.toRadians(6)
+                ) // drive to a intermediate pose      
             ),
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    new LinearAlignFace(
+                    new LinearDriveToPose(
                         () -> AlignmentUtil.getClosestAlgayPose(),
-                        () -> new ChassisSpeeds(),
-                        3.6
-                    ),
+                        () -> new ChassisSpeeds(), 
+                        0.03, 
+                        Math.toRadians(4)
+                    ), // drive to a intermediate pose  
                     new WaitCommand(0.1)
                 ),
                 new RunClawIntake()
             ),
             new StopClaw(),
-            new LinearAlignFace(
+            new LinearDriveToPose(
                 () -> AlignmentUtil.getClosestAlgayRecessedPose(),
-                () -> new ChassisSpeeds(),
-                3.6
-            ),
+                () -> new ChassisSpeeds(), 
+                0.05, 
+                Math.toRadians(6)
+            ), // drive to a intermediate pose                     
+
             new MovePivotStow(),
             new QueueStowAction(),
             new DequeueElevatorAction()

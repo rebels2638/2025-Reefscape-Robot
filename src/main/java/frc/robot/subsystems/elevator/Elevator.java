@@ -24,8 +24,8 @@ public class Elevator extends SubsystemBase {
         STOW(0.0),
         L1(0.1),
         L2(0.37),
-        L3(0.77),
-        L4(1.42);
+        L3(0.82),
+        L4(1.44);
     
         private final double extensionHeight;
     
