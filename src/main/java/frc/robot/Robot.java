@@ -15,6 +15,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
@@ -65,8 +66,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
 
-        // SignalLogger.enableAutoLogging(true); // TODO: ABSOLUTELY NEED TO BE HERE FOR
-        // COMPS
+        SignalLogger.enableAutoLogging(true); // TODO: ABSOLUTELY NEED TO BE HERE FOR COMPS
         // Record metadata
         // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -190,7 +190,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void teleopInit() {
-        Elastic.selectTab(0);  // called on ds init, selects teleoperated tab on Elastic
+        // Elastic.selectTab(0);  // called on ds init, selects teleoperated tab on Elastic
 
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to

@@ -332,7 +332,9 @@ public class AlignmentUtil {
     }
 
     public static Pose2d offsetCoralPoseToVisionReading(Pose2d pose) {
-        return offsetPoseToPreAlignment(faceCandidates.get(getClosestReefFace(pose, faceCandidates)), 0.3);
+        // return offsetPoseToPreAlignment(faceCandidates.get(getClosestReefFace(pose, faceCandidates)), 0.3);
+        return offsetPoseToPreAlignment(pose, 0.3);
+
     }
 
     public static Pose2d offsetPoseToPreAlignment(Pose2d pose, double distance) {

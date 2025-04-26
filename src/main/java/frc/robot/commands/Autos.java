@@ -52,6 +52,7 @@ import frc.robot.subsystems.roller.Roller;
 import frc.robot.commands.pivot.simple.MovePivotAlgay;
 import frc.robot.commands.pivot.simple.MovePivotBargeBackwards;
 import frc.robot.commands.pivot.simple.MovePivotBargeForwards;
+import frc.robot.commands.pivot.simple.MovePivotIdle;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 import frc.robot.commands.autoAlignment.PathPlannerFollowPathWrapper;
 import frc.robot.commands.autoAlignment.barge.PrepareMoveSuperstructureBargeSequence;
@@ -75,16 +76,20 @@ public class Autos {
     public static final Command start_mid_1xL4_2xBarge = 
         new SequentialCommandGroup(
             resetPose("MS_T_LB"),
-            cycleCoral("MS_T_LB", null, Height.L2, Branch.LEFT),
+            cycleCoral("MS_T_LB", null, Height.L4, Branch.LEFT),
             cycleAlgay("T_LB_T_AG_INTER", "T_AG_B_B", Height.L2),
             cycleAlgay("B_B_TL_AG_INTER", "TL_AG_B_T", Height.L3),
             new ParallelCommandGroup(
-                new PathPlannerFollowPathWrapper("B_T_TAXI"),
                 new MovePivotStow(),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.4),
-                    new QueueStowAction(),
-                    new DequeueElevatorAction()
+                    new SequentialCommandGroup(
+                        new QueueStowAction(),
+                        new DequeueElevatorAction()
+                    ),
+                    new SequentialCommandGroup(
+                        new WaitCommand(0.4),
+                        new PathPlannerFollowPathWrapper("B_T_TAXI")
+                    )
                 )
             )
 
@@ -119,6 +124,7 @@ public class Autos {
     public static final Supplier<Pose2d> zero_prac = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(120));
     public static final Supplier<Pose2d> zero_shop = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(0));
     public static final Supplier<Pose2d> zero_pit = () -> new Pose2d(13.675520896911621, 2.948420286178589, Rotation2d.fromDegrees(180));
+    public static final Supplier<Pose2d> zero_feilddasdx = () -> new Pose2d(13.77908992767334 , 2.9970929622650146 , Rotation2d.fromDegrees(120));
 
 
 
@@ -207,7 +213,7 @@ public class Autos {
                     //         () -> level == Height.L4
                     //     )
                     // ),
-                    new MovePivotStow(),
+                    new MovePivotIdle(),
                     new SequentialCommandGroup(
                         new ParallelRaceGroup(
                             waitForAlign(toReefPath),

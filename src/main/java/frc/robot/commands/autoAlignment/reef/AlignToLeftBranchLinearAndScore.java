@@ -17,12 +17,15 @@ import frc.robot.commands.elevator.simple.QueueStowAction;
 import frc.robot.commands.elevator.simple.WaitForNonStowState;
 import frc.robot.commands.elevator.simple.isElevatorExtendable;
 import frc.robot.commands.roller.EjectCoral;
+import frc.robot.commands.roller.EjectCoralL4;
 import frc.robot.commands.roller.IntakeCoral;
+import frc.robot.commands.roller.simple.RunRollerEjectL4;
 import frc.robot.lib.input.XboxController;
 import frc.robot.lib.util.AlignmentUtil;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.Elevator.Height;
 import frc.robot.subsystems.roller.Roller;
+import frc.robot.commands.pivot.simple.MovePivotIdle;
 import frc.robot.commands.pivot.simple.MovePivotStow;
 
 public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
@@ -42,16 +45,25 @@ public class AlignToLeftBranchLinearAndScore extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                     new isElevatorExtendable(),
                     new WaitForNonStowState(),
+                    // new ConditionalCommand(
+                    //     new MovePivotIdle(),              
+                    //     new MovePivotStow(),
+                    //     () -> Elevator.getInstance().getRequestedLevel() == Height.L4
+                    // ),
+                    new MovePivotIdle(),              
                     new DequeueElevatorAction()
                 ),
                 new LinearAlignFace(
                     () -> AlignmentUtil.getClosestLeftBranchPose(),
                     () -> new ChassisSpeeds(),
                     3.6
-                ),
-                new MovePivotStow()
+                )
             ),
-            new EjectCoral(),
+            new ConditionalCommand(
+                new EjectCoralL4(), 
+                new EjectCoralL4(), 
+                () -> Elevator.getInstance().getRequestedLevel() == Height.L4
+            ),
             new QueueStowAction(),
             new DequeueElevatorAction(),
             new InstantCommand(() -> RobotState.getInstance().requestGlobalVisionEstimateScale())

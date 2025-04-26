@@ -108,8 +108,10 @@ public class AutoRunner {
     }
     
     public static Supplier<Pose2d> getAutonomousZeroSupplier() {
-        return Autos.zero_pit;
+        return Autos.zero_start_mid_1xL4_2xBarge
+        ;
     }
+
 
 
     public PathConstraints getPathConstraints() {
